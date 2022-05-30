@@ -1,0 +1,63 @@
+{% extends 'admin_base.html' %}
+{% block title %}
+    Users-List
+{% endblock %}
+
+{% block content%} 
+
+{% for message in messages %}
+<div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+    <strong>Message:</strong> {{ message }}
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+<span aria-hidden="true">&times;</span>
+</button>
+</div>
+{% endfor %}
+
+<div class="pt-3 pl-5 row">
+<form class="form-inline pt-3 pl-3 my-lg-0" method="POST" action="{% url 'admin_panel' %}">
+    {% csrf_token %}
+    <input class="form-control mr-sm-2" type="search" placeholder="Search for username" aria-label="Search" name="searched">
+    <button class="btn btn-outline-secondary my-2 my-sm-0" type="submit">Search</button>
+  </form>  &nbsp &nbsp &nbsp
+  <!-- <div class="mr-auto"> -->
+  <!-- <button type="submit" value="submit"  class="btn btn-primary  mx-auto " ><a href="/add" class="btn btn-primary">Add New User</a></button>  &nbsp &nbsp &nbsp -->
+  <!-- <button type="submit" value="submit"  class="btn btn-primary mr-auto"><a href="/signout" class="btn btn-primary">signout</a></button>   -->
+</div>
+<!-- </div> -->
+
+<div class="p-5">
+<table class="table text-center table-bordered table-hover table-active" >  
+    <thead class="thead-dark ">  
+    <tr>  
+        <!-- <th>ID</th>   -->
+        <th>UserName</th> 
+        <th>FirstName</th>  
+        <th>LastName</th>  
+        <th>Email</th>  
+        <!-- <th>Password</th>   -->
+        <th>Actions</th>  
+    </tr>  
+    </thead>  
+    <tbody>  
+{% for user in users %}  
+    <tr>  
+        <!-- <td>{{ user.id }}</td> -->
+        <td>{{ user.username }}</td>  
+        <td>{{ user.first_name }}</td>  
+        <td>{{ user.last_name }}</td> 
+        <td>{{ user.email }}</td>  
+        <!-- <td>{{ user.password }}</td>   -->
+        <td>  
+            <a href="/userblock/"><span class="glyphicon glyphicon-pencil" >Block</span></a>  
+            &nbsp &nbsp &nbsp
+            <a href="/userunblock/">Unblock</a>  
+        </td>  
+    </tr>  
+{% endfor %}  
+    </tbody>  
+</table>  
+
+</div>
+
+{% endblock %}

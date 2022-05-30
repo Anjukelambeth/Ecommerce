@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}  Oh Baby! 
+{% endblock %}
+{% block content %}
+
+{% for message in messages %}
+<div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+    <strong>Message:</strong> {{ message }}
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+<span aria-hidden="true">&times;</span>
+</button>
+</div>
+{% endfor %}
+
+<div class="d-lg-flex half p-5">
+    <!-- <div class="bg order-1 order-md-2" style="background-image: url{% static 'img/image1.jpg' %}"></div> -->
+    <div class="contents order-2 order-md-1">
+
+      <div class="container">
+        <div class="row align-items-center justify-content-center">
+          <div class="col-md-7">
+            <h3>Login to <strong>Oh Baby!</strong></h3>
+            <p class="mb-4">Lowest prize best quality, Don't wait for anyone come and shop with us.</p>
+            <form action="{% url 'verification' %}"  method="post">
+              {% csrf_token %}
+              <div class="form-group first">
+                <label for="phone_number">Phone Number</label>
+                <input type="text" class="form-control" name="phone_number" placeholder="Enter Your Phone Number" id="phone_number" Required>
+              </div>
+              <!-- <div class="form-group last mb-3">
+                <label for="otp">OTP</label>
+                <input type="text" class="form-control" name="otp" placeholder="Enter Your OTP"  id="otp" Required>
+              </div> -->
+              
+              <!-- <div class="d-flex mb-5 align-items-center">
+                <label class="control control--checkbox mb-0"><span class="caption">Remember me</span>
+                  <input type="checkbox" checked="checked"/>
+                  <div class="control__indicator"></div>
+                </label>
+                <span class="ml-auto"><a href="#" class="forgot-pass">Forgot Password</a></span> 
+              </div> -->
+
+              <input type="submit" value="Log In" class="btn btn-block btn-primary">
+
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="d-lg-flex half p-5 ">
+        <img class="img-fluid" width="500" height="600" src="{% static 'img/images.jpg'%}" alt="Image">
+  </div>
+    
+  
+
+  </div>
+
+
+{% endblock %}
