@@ -26,8 +26,8 @@
 </div>
 <!-- </div> -->
 
-<div class="p-5">
-<table class="table text-center table-bordered table-hover table-active" >  
+<div class="p-5 float-right ">
+<table class="table center table-bordered table-hover table-active" >  
     <thead class="thead-dark ">  
     <tr>  
         <!-- <th>ID</th>   -->
@@ -49,7 +49,7 @@
         <td>{{ user.cat_images }}</td>  
         <!-- <td>{{ user.password }}</td>   -->
         <td>  
-            <a href="/editcategory/"><span class="glyphicon glyphicon-pencil" >Edit</span></a>  
+            <a href="/edit_category/{{ category.id }}"><span class="glyphicon glyphicon-pencil" >Edit</span></a>  
             &nbsp &nbsp &nbsp
             <a href="/deletecategory/">Delete</a>  
         </td>  

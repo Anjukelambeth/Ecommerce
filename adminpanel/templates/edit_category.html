@@ -1,0 +1,35 @@
+{% extends 'admin_base.html' %}
+{% block title %}
+    Category-Edit
+{% endblock %}
+
+{% block content %}
+
+
+
+       <div class="d-lg-flex  p-5 justify-content-center">
+        <div class="contents order-2 order-md-1">
+    
+            <div class="container ">
+              <div class="row align-items-center justify-content-center">
+                <div class="col-md-7">
+                    <form method="post"  class="post-form" action="">
+                    {% csrf_token %}
+                    <!-- <div class="form-group last mb-3"> -->
+                      <h5>Kindly Edit category details</h5>
+                      {%for field in form.visible_fields %}
+                      <div class="form-group">
+                        {{field.label_tag}}
+                        {{field}}
+                      </div>
+                      {%endfor%}
+                        <input type="submit" value="Save" class="btn btn-block btn-primary">
+                      <!-- </div> -->
+                    </form>
+                </div>
+              </div>
+            </div>
+          </div>
+    </div>
+
+{% endblock  %}
