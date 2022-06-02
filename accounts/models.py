@@ -1,9 +1,13 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser,BaseUserManager
-from django.core.validators import RegexValidator
+from django.core.validators import RegexValidator,MinLengthValidator
 # Create your models here.
-# phone_regex = RegexValidator(regex=r'^\+?1?\d{9,15}$', 
-#                                 message = "Phone number must be entered in the format: '+999999999999'. Up to 15 digits allowed.")
+phone_regex = RegexValidator(regex=r'^\+?1?\d{9,13}$', 
+                                message = "Phone number must be entered in the format: '+999999999999'. Up to 13 digits allowed.")
+nameMinlength=MinLengthValidator(3,'Min 3 char required')
+nameValidator=RegexValidator(regex=r'^[A-Za-z][A-Za-z ]*$',message ="Enter a valid name")
+
+# extra_kwargs = {'phone': {'error_messages': {'blank': 'New blank error message'}}}
 
 class MyAccountManager(BaseUserManager):
     def create_user(self,first_name,last_name,user_name,email,password=None):
@@ -37,11 +41,11 @@ class MyAccountManager(BaseUserManager):
         return user
 
 class Account(AbstractBaseUser):
-    first_name = models.CharField(max_length=50)
-    last_name = models.CharField(max_length=50)
+    first_name = models.CharField(max_length=50,validators=[nameValidator,nameMinlength])
+    last_name = models.CharField(max_length=50,validators=[nameValidator,nameMinlength])
     user_name = models.CharField(max_length=50, unique=True)
     email = models.EmailField(max_length=50, unique=True)
-    phone_number = models.CharField(max_length=50)
+    phone_number = models.CharField(max_length=13,validators=[phone_regex],blank=False, unique=True)
     
 
     #required 

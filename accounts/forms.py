@@ -1,9 +1,11 @@
-from dataclasses import fields
-from pyexpat import model
+
+from asyncio.windows_events import NULL
+from django.forms import ValidationError
 from django import forms
 from .models import Account
 
 class RegistrationForm(forms.ModelForm):
+ 
     password=forms.CharField(widget=forms.PasswordInput(attrs={
         'placeholder':'Enter your password',
         'class':'form-control'

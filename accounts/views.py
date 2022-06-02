@@ -1,4 +1,5 @@
 from itertools import product
+from unicodedata import category
 from products.models import Products
 from django.contrib import auth
 from django.contrib import messages
@@ -13,8 +14,12 @@ import random
 # Create your views here.
 def index(request):
     products= Products.objects.all().filter(is_available=True)
-
-    return render(request,'index.html',{'products':products})
+    # category= category.objects.all()
+    context={
+        'products':products,
+        # 'category':category,
+        }
+    return render(request,'index.html',context)
 
 def signin(request):
     if request.method == 'POST':
