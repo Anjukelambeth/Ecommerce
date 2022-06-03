@@ -10,5 +10,6 @@ urlpatterns = [
     path('signout/',views.signout,name='signout'),
     path('verification/',views.verification,name='verification'),
     path('verification1/<int:id>',views.verification1,name='verification1'),
+    path('account_view/',views.account_view,name='account_view')
 
 ]

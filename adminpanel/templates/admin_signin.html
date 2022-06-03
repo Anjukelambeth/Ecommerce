@@ -30,6 +30,14 @@
 </head>
 
 <body>
+    {% for message in messages %}
+    <div class="alert text-center alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+        <strong>{{ message }}</strong> 
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+    </button>
+    </div>
+    {% endfor %}
     <div class="auth-wrapper">
         <div class="auth-content">
             <div class="auth-bg">

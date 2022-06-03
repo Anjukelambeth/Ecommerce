@@ -14,39 +14,41 @@
 </div>
 {% endfor %}
 
-<div class="pt-3 pl-5 row">
+<div class="pl-5">
+<!-- <div class="pt-3 pl-5 row">
 <form class="form-inline pt-3 pl-3 my-lg-0" method="POST" action="{% url 'admin_panel' %}">
     {% csrf_token %}
     <input class="form-control mr-sm-2" type="search" placeholder="Search for username" aria-label="Search" name="searched">
     <button class="btn btn-outline-secondary my-2 my-sm-0" type="submit">Search</button>
   </form>  &nbsp &nbsp &nbsp
-  <!-- <div class="mr-auto"> -->
-  <!-- <button type="submit" value="submit"  class="btn btn-primary  mx-auto " ><a href="/add" class="btn btn-primary">Add New User</a></button>  &nbsp &nbsp &nbsp -->
-  <!-- <button type="submit" value="submit"  class="btn btn-primary mr-auto"><a href="/signout" class="btn btn-primary">signout</a></button>   -->
-</div>
+  <div class="mr-auto">
+  <button type="submit" value="submit"  class="btn btn-primary  mx-auto " ><a href="/add" class="btn btn-primary">Add New User</a></button>  &nbsp &nbsp &nbsp
+  <button type="submit" value="submit"  class="btn btn-primary mr-auto"><a href="/signout" class="btn btn-primary">signout</a></button>  
+</div> -->
 <!-- </div> -->
 
-<div class="p-5 justify-content-center">
+<div class="p-5 justify-content-center pull-left" style="line-height: 1">
 <table class="table table-bordered table-hover table-active table-responsive" >  
     <thead class="thead-dark ">  
-    <tr>  
-        <!-- <th>ID</th>   -->
-        <th>Product Name</th> 
-        <th>Product Description</th>  
-        <th>Price</th>  
-        <th>Image</th>  
-        <th>Stock</th>  
-        <th>Actions</th>  
+    <tr class="col-9">  
+        <th scope="col">ID</th>  
+        <th scope="col">Product Name</th> 
+        <th scope="col">Product Description</th>  
+        <th scope="col">Price</th>  
+        <th scope="col">Image</th>  
+        <th scope="col">Stock</th>  
+        <th scope="col">Actions</th>  
     </tr>  
     </thead>  
     <tbody>  
 {% for product in products %}  
-    <tr>  
-        <!-- <td>{{ user.id }}</td> -->
+    <tr class="col-9 ">  
+        <td>{{ product.id }}</td>
         <td>{{ product.product_name }}</td>  
-        <td>{{ product.product_description}}</td>  
+        <td >{{ product.product_description}}</td>  
         <td>{{ product.price }}</td> 
-        <td>{{ product.cat_images }}</td>  
+        <td><img width=30rem src="{{product.images.url}}" alt="">
+        </td>  
         <td>{{ product.stock }}</td>  
         <td>  
             <a href="/edit_products/{{product.id}}"><span class="glyphicon glyphicon-pencil" >Edit</span></a>  
@@ -59,6 +61,7 @@
 </table>  
 <div class="mr-auto "> 
  <button type="submit" value="submit"  class="btn btn-primary  mx-auto " ><a href="/add_products" class="btn btn-primary">Add New Products</a></button>  &nbsp &nbsp &nbsp
+</div>
 </div>
 </div>
 {% endblock %} 

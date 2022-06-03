@@ -79,16 +79,21 @@
                     </div>
                 </form>
             </div>
+            
             <div class="col-lg-3 col-6 text-right">
-                <a href="" class="btn border">
-                    <i class="fas fa-heart text-primary"></i>
-                    <span class="badge">0</span>
-                </a>
-                <a href="" class="btn border">
+               
+                    <!-- <a href="" class="btn border">
+                        <i class="fas fa-heart text-primary"></i>
+                        <span class="badge">0</span>
+                    </a> -->
+                <a href="{% url 'cart' %}" class="btn border">
                     <i class="fas fa-shopping-cart text-primary"></i>
-                    <span class="badge">0</span>
+                    <span class="badge badge-pill badge-danger notify ">{{cart_count}}</span>
                 </a>
+                
+              
             </div>
+            
         </div>
     </div>
     <!-- Topbar End -->
@@ -136,16 +141,18 @@
                             
                             <div class="nav-item dropdown">
                                 <a href="#" class="nav-link dropdown-toggle active" data-toggle="dropdown">Buy</a>
-                                <div class="dropdown-menu rounded-0 m-0">
-                                    <a href="cart.html" class="dropdown-item">Shopping Cart</a>
-                                    <a href="checkout.html" class="dropdown-item">Checkout</a>
-                                </div>
+                                {%for product in products %}
+                                    <div class="dropdown-menu rounded-0 m-0">
+                                        <a href="{% url 'add_cart' product.id %}" class="dropdown-item">Shopping Cart</a>
+                                        <a href="checkout.html" class="dropdown-item">Checkout</a>
+                                    </div>
+                                {%endfor%}
                             </div>
                             <a href="contact.html" class="nav-item nav-link">Contact</a>
                         </div>
                         {% if user.is_authenticated %}
                         <div class="navbar-nav ml-auto py-0">
-                            <a href="#" class="nav-item nav-link">{{user.first_name}}</a>
+                            <a href="/account_view" class="nav-item nav-link">{{user.first_name}}</a>
                             <a href="/signout" class="nav-item nav-link">Signout</a>
                         </div>
                         {% else %}

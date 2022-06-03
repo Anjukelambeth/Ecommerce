@@ -4,6 +4,15 @@
 {% endblock %}
 {% block content %}
 
+{% if not cart_items %}
+<div class="inline-flex text-center mb-4 p-5">
+<h2 >Your Shopping Cart is empty</h2>
+<br>
+<div class="text-centre">
+    <a href="{% url 'store' %}" class="btn btn-primary">Continue Shopping</a>
+</div>
+</div>
+{%else%}
 <!-- Cart Start -->
 <div class="container-fluid p-5">
     <div class="row px-xl-5">
@@ -83,5 +92,5 @@
     </div>
 </div>
 <!-- Cart End -->
-
+{%endif%}
 {% endblock %}

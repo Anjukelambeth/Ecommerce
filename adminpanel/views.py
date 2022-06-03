@@ -7,35 +7,38 @@ from category.models import category
 from products.models import Products
 from category.forms import CategoryForm
 from products.forms import ProductsForm
+from django.contrib.auth.decorators import login_required
 # from django.contrib.auth.decorators import user_passes_test
 # Create your views here.
 
 
-# @user_passes_test(lambda user: user.is_superuser)
+
 def admin_panel(request):
-    # admin_panel = user_passes_test(lambda u: u.is_superuser)(admin_panel)
-    if request.method == 'POST':
     
+    if request.method == 'POST':
         email= request.POST['email']
         password= request.POST['password']
         # phone_number=Customer.objects.get('phone_number')
-        user = authenticate(email=email,password=password)
+        user = authenticate(request,email=email,password=password)
 
         if user is not None:
-            login(request,user)
-            return render(request,'admin_home.html')
-        
+            if user.is_admin==True:
+                login(request,user)
+                return render(request,'admin_home.html')
+            messages.error(request, "You are not permited to login!")
+            return redirect('admin_panel')
         else:
-            messages.error(request, "Bad Credentials!!")
+            messages.warning(request, "Bad Credentials!!")
             return redirect('admin_panel')
     
     return render(request,'admin_signin.html')
-# admin_panel = user_passes_test(lambda u: u.is_superuser)(admin_panel)   
+
+@login_required(login_url='admin_panel')
 def admin_home(request):
     return render(request,'admin_home.html')
 
+@login_required(login_url='admin_panel')
 def admin_signout(request):
-    
     if request.user.is_authenticated:
         logout(request)
     messages.success(request, "Logged Out Successfully!!")
@@ -47,22 +50,25 @@ def admin_usersview(request):
         return render(request,'admin_usersview.html',{'users':users})
     return redirect('admin_home')
 
-def userblock(request):
-    if request.user.is_authenticated:
-        messages.info(request, "Are you really want to block this user!")
-    return render(request,'block.html')
+# @login_required(login_url='admin_panel')
+# # def userblock(request):
+#     # if request.user.is_authenticated:
+#     #     messages.warning(request, "Are you really want to block this user!?")
+#     return render(request,'block.html')
 
+@login_required(login_url='admin_panel')
 def admin_userblock(request,id):
     user = Account.objects.get(id=id)
-    user.is_active = True
+    user.is_active = False
     user.save()
     return redirect(admin_usersview)
 
 def userunblock(request,id):
-    if request.user.is_authenticated:
-        messages.info(request, "Are you really want to unblock this user!")
-    return render(request,'unblock.html')
-
+    user = Account.objects.get(id=id)
+    user.is_active = True
+    user.save()
+    return redirect(admin_usersview)
+    
 def admin_category(request):  
     if request.user.is_authenticated:
         categories = category.objects.all()

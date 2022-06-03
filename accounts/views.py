@@ -10,6 +10,8 @@ from accounts.forms import RegistrationForm
 from accounts.models import Account
 from twilio.rest import Client
 import random
+from django.contrib.auth.decorators import login_required
+
 
 # Create your views here.
 def index(request):
@@ -20,6 +22,15 @@ def index(request):
         # 'category':category,
         }
     return render(request,'index.html',context)
+
+def base(request):
+    products= Products.objects.all().filter(is_available=True)
+    # category= category.objects.all()
+    context={
+        'products':products,
+        # 'category':category,
+        }
+    return render(request,'base.html',context)
 
 def signin(request):
     if request.method == 'POST':
@@ -109,4 +120,7 @@ def signout(request):
     messages.success(request, "Logged Out Successfully!!")
     return redirect('signin')
 
-# Create your views here.
+    
+@login_required(login_url='signin')
+def account_view(request):
+     return render(request,'account_view.html')

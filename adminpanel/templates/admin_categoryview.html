@@ -13,41 +13,39 @@
 </button>
 </div>
 {% endfor %}
-
-<div class="pt-3 pl-5 row">
+<div class="p-5 justify-content-center pull-left" style="line-height: 1">
+<!-- <div class="pt-3 pl-5 row">
 <form class="form-inline pt-3 pl-3 my-lg-0" method="POST" action="{% url 'admin_panel' %}">
     {% csrf_token %}
     <input class="form-control mr-sm-2" type="search" placeholder="Search for username" aria-label="Search" name="searched">
     <button class="btn btn-outline-secondary my-2 my-sm-0" type="submit">Search</button>
   </form>  &nbsp &nbsp &nbsp
-  <!-- <div class="mr-auto"> -->
-  <!-- <button type="submit" value="submit"  class="btn btn-primary  mx-auto " ><a href="/add" class="btn btn-primary">Add New User</a></button>  &nbsp &nbsp &nbsp -->
-  <!-- <button type="submit" value="submit"  class="btn btn-primary mr-auto"><a href="/signout" class="btn btn-primary">signout</a></button>   -->
-</div>
+  <div class="mr-auto">
+  <button type="submit" value="submit"  class="btn btn-primary  mx-auto " ><a href="/add" class="btn btn-primary">Add New User</a></button>  &nbsp &nbsp &nbsp
+  <button type="submit" value="submit"  class="btn btn-primary mr-auto"><a href="/signout" class="btn btn-primary">signout</a></button>  
+</div> -->
 <!-- </div> -->
 
-<div class="p-5 float-right ">
-<table class="table center table-bordered table-hover table-active" >  
+<div class="p-5 justify-content-center  ">
+<table class="table center table-bordered table-hover table-active " >  
     <thead class="thead-dark ">  
     <tr>  
-        <!-- <th>ID</th>   -->
-        <th>Category Name</th> 
-        <th>Slug</th>  
-        <th>Description</th>  
-        <th>Image</th>  
-        <!-- <th>Password</th>   -->
-        <th>Actions</th>  
+        <th scope="col">ID</th>  
+        <th scope="col">Category Name</th> 
+        <th scope="col">Slug</th>  
+        <th scope="col">Description</th>  
+        <th scope="col">Image</th>  
+        <th scope="col">Actions</th>  
     </tr>  
     </thead>  
     <tbody>  
 {% for category in category %}  
     <tr>  
-        <!-- <td>{{ user.id }}</td> -->
+        <td>{{ category.id }}</td>
         <td>{{ category.category_name }}</td>  
         <td>{{ category.slug }}</td>  
         <td>{{ category.description }}</td> 
-        <td>{{ user.cat_images }}</td>  
-        <!-- <td>{{ user.password }}</td>   -->
+        <td><img width=30rem src="{{category.images.url}}" alt=""></td>  
         <td>  
             <a href="/edit_category/{{ category.id }}"><span class="glyphicon glyphicon-pencil" >Edit</span></a>  
             &nbsp &nbsp &nbsp
@@ -59,6 +57,7 @@
 </table>  
 <div class="mr-auto"> 
  <button type="submit" value="submit"  class="btn btn-primary  mx-auto " ><a href="/add_category" class="btn btn-primary">Add New Category</a></button>  &nbsp &nbsp &nbsp
+</div>
 </div>
 </div>
 {% endblock %} 

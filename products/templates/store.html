@@ -149,7 +149,8 @@
                             <span class="price">₹{{product.price}}</span>
                         </div> <!-- price-wrap.// -->
                     </div>
-                    <a href="{% url 'add_cart' product.id %}" class="btn btn-block btn-primary">Add to cart </a>	
+                    <!-- <a href="{% url 'product_detail' product.category.slug product.slug %}" class="btn btn-block btn-primary">View Detail </a>	 -->
+                    <a href="{% url 'product_detail' product.category.slug product.slug %}" class="btn btn-block btn-outline-primary text-primary p-0"><i class="fas fa-eye text-primary mr-1"></i>View Detail</a>
                 </figcaption>
             </figure>
         </div> <!-- col.// -->
