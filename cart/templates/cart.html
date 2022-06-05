@@ -31,7 +31,8 @@
                     {%for cart_item in cart_items%}
                     <tr>
                         
-                        <td class="align-middle"><img src="{{cart_item.product.images.url}}" alt="" style="width: 50px;"> {{cart_item.product.product_name}}</td>
+                        <td class="align-middle"><img src="{{cart_item.product.images.url}}" alt="" style="width: 50px;"> 
+                            <a href="{% url 'product_detail' cart_item.product.category.slug cart_item.product.slug %}" class="title-text-dark">{{cart_item.product.product_name}}</a></td>
                         <td class="align-middle">₹{{cart_item.product.price}}</td>
                         <td class="align-middle">
                             <div class="input-group quantity mx-auto" style="width: 100px;">
@@ -85,7 +86,7 @@
                     <p class="text-center mb-3 p-3">
                         <img src="{% static 'img/payments.png' %}" height="26">
                     </p>
-                    <button class="btn btn-block btn-primary font-weight-bold my-3 py-3">Proceed To Checkout</button>
+                    <a href="{% url 'checkout' %}"><button class="btn btn-block btn-primary font-weight-bold my-3 py-3">Proceed To Checkout</button></a>
                 </div>
             </div>
         </div>

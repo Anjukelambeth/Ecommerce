@@ -53,7 +53,7 @@
         <td>  
             <a href="/edit_products/{{product.id}}"><span class="glyphicon glyphicon-pencil" >Edit</span></a>  
             &nbsp &nbsp &nbsp
-            <a href="/deleteproducts/">Delete</a>  
+            <a href="{% url 'delete_products' product.id%}">Delete</a>  
         </td>  
     </tr>  
 {% endfor %}  

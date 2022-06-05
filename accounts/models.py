@@ -76,3 +76,16 @@ class Account(AbstractBaseUser):
 
     # # def __str__(self):
     # #     return self.user.username
+class UserAddresses(models.Model):
+    user = models.ForeignKey(Account, on_delete=models.CASCADE,null=True)
+    address_line_1=models.CharField(max_length=200,blank=True)
+    address_line_2=models.CharField(max_length=200,blank=True)
+    city=models.CharField(max_length=200,blank=True)
+    zipcode=models.CharField(max_length=200,blank=True)
+    state=models.CharField(max_length=200,blank=True)
+
+    def __str__(self):
+        return self.address_line_1
+    
+    def full_address(self):
+        return f'{self.address_line_1} {self.address_line_2}'

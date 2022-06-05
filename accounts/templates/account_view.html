@@ -4,19 +4,24 @@
 {% endblock %}
 {% block content %}
 <!-- My Account Start -->
-<div class="my-account p-3">
-    <div class="container-fluid">
+<section style="background-color: #eee;">
+    <div class="container py-5">
+    <!-- <div class="container-fluid"> -->
         <div class="row">
             <div class="col-md-3">
+                <div class="card mb-4">
+                <div class="card-body text-center">
                 <div class="nav flex-column nav-pills" role="tablist" aria-orientation="vertical">
-                    <a class="nav-link active" id="dashboard-nav" data-toggle="pill" href="#dashboard-tab" role="tab"><i class="fa fa-tachometer-alt"></i>Dashboard</a>
+                    <a class="nav-link" id="dashboard-nav" data-toggle="pill" href="#dashboard-tab" role="tab"><i class="fa fa-tachometer-alt"></i>Dashboard</a>
                     <a class="nav-link" id="orders-nav" data-toggle="pill" href="#orders-tab" role="tab"><i class="fa fa-shopping-bag"></i>Orders</a>
-                    <a class="nav-link" id="payment-nav" data-toggle="pill" href="#payment-tab" role="tab"><i class="fa fa-credit-card"></i>Payment Method</a>
-                    <a class="nav-link" id="address-nav" data-toggle="pill" href="#address-tab" role="tab"><i class="fa fa-map-marker-alt"></i>address</a>
-                    <a class="nav-link" id="account-nav" data-toggle="pill" href="#account-tab" role="tab"><i class="fa fa-user"></i>Account Details</a>
+                    <a class="nav-link" href="/change_password" ><i class="fa fa-credit-card"></i>Change Password</a>
+                    <a class="nav-link"  href="/add_address" ><i class="fa fa-map-marker-alt"></i>Address</a>
+                    <a class="nav-link"  href="{% url 'user_profile' %}"><i class="fa fa-user"></i>Account Details</a>
                     <a class="nav-link" href="/signout"><i class="fa fa-sign-out-alt"></i>Logout</a>
                 </div>
             </div>
+        </div>
+    </div>
             <div class="col-md-9">
                 <div class="tab-content">
                     <div class="tab-pane fade show active" id="dashboard-tab" role="tabpanel" aria-labelledby="dashboard-nav">
@@ -90,29 +95,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="tab-pane fade" id="account-tab" role="tabpanel" aria-labelledby="account-nav">
-                        <h4>Account Details</h4>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <input class="form-control" type="text" placeholder="First Name">
-                            </div>
-                            <div class="col-md-6">
-                                <input class="form-control" type="text" placeholder="Last Name">
-                            </div>
-                            <div class="col-md-6">
-                                <input class="form-control" type="text" placeholder="Mobile">
-                            </div>
-                            <div class="col-md-6">
-                                <input class="form-control" type="text" placeholder="Email">
-                            </div>
-                            <div class="col-md-12">
-                                <input class="form-control" type="text" placeholder="Address">
-                            </div>
-                            <div class="col-md-12">
-                                <button class="btn">Update Account</button>
-                                <br><br>
-                            </div>
-                        </div>
+                    
                         <h4>Password change</h4>
                         <div class="row">
                             <div class="col-md-12">
@@ -136,5 +119,5 @@
 </div>
 <!-- My Account End -->
 
-
+</section>
 {% endblock %}

@@ -1,13 +1,16 @@
 from itertools import product
+from re import U
 from unicodedata import category
+from cart.models import Cart
+from cart.views import _cart_id
 from products.models import Products
 from django.contrib import auth
 from django.contrib import messages
 from django.contrib.auth.models import User
-from django.shortcuts import render,redirect
+from django.shortcuts import get_object_or_404, render,redirect
 from django.contrib.auth import authenticate,login,logout
-from accounts.forms import RegistrationForm
-from accounts.models import Account
+from accounts.forms import RegistrationForm,UserForm,UserAddressForm
+from accounts.models import Account,UserAddresses
 from twilio.rest import Client
 import random
 from django.contrib.auth.decorators import login_required
@@ -40,6 +43,11 @@ def signin(request):
         user = authenticate(email=email,password=password)
 
         if user is not None:
+            try:
+                cart=Cart.objects.get(cart_id=_cart_id(request))
+
+            except:
+                pass
             login(request,user)
             return render(request,'index.html')
         
@@ -124,3 +132,79 @@ def signout(request):
 @login_required(login_url='signin')
 def account_view(request):
      return render(request,'account_view.html')
+
+
+def user_profile(request):
+    profile = Account.objects.get(first_name=request.user.first_name)
+    
+    context = {
+        'profile':profile
+    }
+    return render(request,'user_profile.html',context)
+
+#profile edit
+@login_required(login_url='signin')
+def user_profile_edit(request):
+    # profile = get_object_or_404(Account,user=request.user)
+    # form = RegistrationForm(instance=profile)
+    if request.method =="POST":
+        user_form = UserForm(request.POST,instance=request.user)
+        if user_form.is_valid():
+            user_form.save()
+            messages.success(request,'Your profile has been updated')
+            return redirect ('user_profile_edit')
+        else:
+            messages.info(request,'Unable to edit')
+    else:
+        user_form = UserForm(instance=request.user)
+    return render(request,'user_profile_edit.html',{'form':user_form,'profile':request.user})
+
+@login_required(login_url='signin')
+def add_address(request):
+    # profile = get_object_or_404(UserAddresses,user=request.user)
+    if request.method =="POST":
+        form = UserAddressForm(request.POST,instance=request.user)
+        if form.is_valid():
+            data=UserAddresses()
+            data.user=request.user
+            data.address_line_1= form.cleaned_data['address_line_1']
+            data.address_line_2= form.cleaned_data['address_line_2']
+            data.city= form.cleaned_data['city']
+            data.zipcode= form.cleaned_data['zipcode']
+            data.state= form.cleaned_data['state']
+            user_address=UserAddresses.objects.create(address_line_1=data.address_line_1,address_line_2=data.address_line_2,city=data.city,zipcode=data.zipcode,state=data.state)
+            user_address.save()
+            form.save()
+            data.save()
+            messages.success(request,'Your profile has been updated')
+            return redirect ('add_address')
+        else:
+            messages.info(request,'Unable to edit')
+    else:
+        form = UserAddressForm(instance=request.user)
+    # add=UserAddresses.objects.filter(user=request.user)
+    return render(request,'add_address.html',{'form':form,'profile':request.user})
+
+@login_required(login_url='signin')
+def change_password(request):
+    if request.method == 'POST':
+        current_password=request.POST['current_password']
+        new_password=request.POST['new_password']
+        confirm_password=request.POST['confirm_password']
+
+        user=Account.objects.get(user_name__exact=request.user.user_name)
+
+        if new_password==confirm_password:
+            success =user.check_password(current_password)
+            if success:
+                user.set_password(new_password)
+                user.save()
+                messages.success(request,'Your password has been updated')
+                return redirect ('change_password')
+            else:
+                messages.error(request,'Please enter valid current password')
+                return redirect ('change_password')
+        else:
+            messages.error(request,'Password is not match')
+            return redirect ('change_password')
+    return render(request,'change_password.html')

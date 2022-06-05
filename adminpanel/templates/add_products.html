@@ -8,10 +8,10 @@
 <div class="d-lg-flex  p-5 justify-content-center">
     <div class="contents order-2 order-md-1">
 
-        <div class="container ">
+        <div class="container bg-light">
           <div class="row align-items-center justify-content-center">
-            <div class="col-md-7">
-              <form action="{% url 'add_products' %}"  method="post">
+            <!-- <div class="col-md-7"> -->
+              <form action="{% url 'add_products' %}"  method="post" style="padding:2rem;margin:auto; " enctype="multipart/form-data">
                 {% csrf_token %}
                 <!-- <div class="form-group last mb-3"> -->
                   <h5>Kindly Add New Products details here</h5>
@@ -24,8 +24,7 @@
                     <input type="submit" value="Save" class="btn btn-block btn-primary">
                   <!-- </div> -->
                 </form>
-                
-            </div>
+            <!-- </div> -->
           </div>
         </div>
       </div>

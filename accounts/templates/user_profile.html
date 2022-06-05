@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}  Profile
+{% endblock %}
+{% block content %}
+
+<section style="background-color: #eee;">
+    <div class="container py-5">
+      
+  
+      <div class="row">
+        <div class="col-lg-4">
+          <div class="card mb-4">
+            <div class="card-body text-center">
+              <div class="nav flex-column nav-pills" role="tablist" aria-orientation="vertical">
+                    <a class="nav-link active" id="dashboard-nav" data-toggle="pill" href="#dashboard-tab" role="tab"><i class="fa fa-tachometer-alt"></i>Dashboard</a>
+                    <a class="nav-link" id="orders-nav" data-toggle="pill" href="#orders-tab" role="tab"><i class="fa fa-shopping-bag"></i>Orders</a>
+                    <a class="nav-link" href="/change_password" ><i class="fa fa-credit-card"></i>Change Password</a>
+                    <a class="nav-link" href="/add_address"><i class="fa fa-map-marker-alt"></i>Address</a>
+                    <a class="nav-link" href="{% url 'user_profile' %}"><i class="fa fa-user"></i>Account Details</a>
+                    <a class="nav-link" href="/signout"><i class="fa fa-sign-out-alt"></i>Logout</a>
+                </div>
+            </div>
+          </div>
+          
+        </div>
+        <div class="col-lg-8">
+          <div class="card mb-4">
+            <div class="card-body">
+              <div class="row">
+                <div class="col-sm-3">
+                  <p class="mb-0">First Name</p>
+                </div>
+                <div class="col-sm-9">
+                  <p class="text-muted mb-0">{{profile.first_name}}</p>
+                </div>
+              </div>
+              <hr>
+              <div class="row">
+                <div class="col-sm-3">
+                  <p class="mb-0">Last Name</p>
+                </div>
+                <div class="col-sm-9">
+                  <p class="text-muted mb-0">{{profile.last_name}} </p>
+                </div>
+              </div>
+              <hr>
+              <div class="row">
+                <div class="col-sm-3">
+                  <p class="mb-0">Email</p>
+                </div>
+                <div class="col-sm-9">
+                  <p class="text-muted mb-0">{{profile.email}}</p>
+                </div>
+              </div>
+              
+              <hr>
+              <div class="row">
+                <div class="col-sm-3">
+                  <p class="mb-0">Date Joined</p>
+                </div>
+                <div class="col-sm-9">
+                  <p class="text-muted mb-0">{{profile.date_joined}}</p>
+                </div>
+              </div>
+              <hr>
+              <div class="row">
+                <div class="col-sm-3">
+                  <p class="mb-0">Mobile</p>
+                </div>
+                <div class="col-sm-9">
+                  <p class="text-muted mb-0">{{profile.phone_number}}</p>
+                </div>
+              </div>
+              <hr>
+              <div class="row">
+                <!-- <div class="col-sm-3">
+                  <p class="mb-0">Address</p>
+                </div>
+                <div class="col-sm-7">
+                  <p class="text-muted mb-0">Bay Area, San Francisco, CA</p>
+                </div> -->
+                <div class="col-sm-1">
+                  
+                <a style="color:red;" href="{% url 'user_profile_edit' %}""><i class="fa fa-edit mb-5">Edit</i></a>
+                </div>
+                
+              </div>
+            </div>
+          </div>
+          
+        </div>
+      </div>
+    </div>
+  </section>
+
+{% endblock %}

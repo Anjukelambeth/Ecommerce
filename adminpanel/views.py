@@ -4,10 +4,13 @@ from django.contrib.auth import authenticate,login,logout
 from django.contrib import messages
 from accounts.models import Account
 from category.models import category
+from orders.models import OrderProduct
 from products.models import Products
 from category.forms import CategoryForm
 from products.forms import ProductsForm
 from django.contrib.auth.decorators import login_required
+import os
+from slugify import slugify
 # from django.contrib.auth.decorators import user_passes_test
 # Create your views here.
 
@@ -89,7 +92,7 @@ def edit_category(request,id):
     return render (request,'edit_category.html',{'form':form})
 
 def add_category(request):
-    form = CategoryForm(request.POST or None)
+    form = CategoryForm(request.POST,request.FILES)
     if form.is_valid():
         form.save()
         messages.info(request,'Category added successfully')
@@ -100,10 +103,11 @@ def add_category(request):
     return render (request,'add_category.html',context)
 
 
-def deletecategory(request,id):  
-    category = category.objects.get(id=id)  
-    category.delete()  
-    return redirect("/admin_categoryview")  
+def delete_category(request,id):  
+
+    categori = category.objects.get(id=id)  
+    categori.delete()  
+    return redirect(admin_category)  
 
 def admin_products(request):  
     if request.user.is_authenticated:
@@ -111,28 +115,43 @@ def admin_products(request):
         return render(request,'admin_products.html',{'products':product})
     return redirect('admin_home')
 
+# def edit_products(request,id):
+#     product = Products.objects.get(id=id)
+#     form = ProductsForm(instance=product)
+#     if request.method =="POST":
+#         form = CategoryForm(request.POST or None,request.FILES, instance=product)
+#         if form.is_valid():  
+#             form.save()  
+#             messages.success(request,'Product updated successfully')
+#             return redirect(admin_products)
+#         else:
+#             print(form.errors)
+#     return render (request,'edit_products.html',{'form':form})
+
 def edit_products(request,id):
     product = Products.objects.get(id=id)
     form = ProductsForm(instance=product)
     if request.method =="POST":
-        form = CategoryForm(request.POST or None, instance=product)
-        if form.is_valid():  
-            form.save()  
-            messages.success(request,'Product updated successfully')
-            return redirect('admin_category')
-        else:
-            print(form.errors)
-    return render (request,'edit_category.html',{'form':form})
+        form = ProductsForm(request.POST,request.FILES,instance=product)
+        if len(request.FILES)!=0:
+            if len(product.images)>0:
+                os.remove(product.images.path)
+            product.images = request.FILES['images']
+            
+            product.save()
+            messages.success(request,'Product edited successfully')
+            return redirect(admin_products)
+    return render (request,'edit_products.html',{'form':form,'product':product})
 
 
-def deleteproducts(request,id):  
-    category = category.objects.get(id=id)  
-    category.delete()  
-    return redirect("/admin_categoryview") 
+def delete_products(request,id):  
+    product = Products.objects.get(id=id)  
+    product.delete()  
+    return redirect(admin_products) 
     
 def add_products(request):
     # if request.method=='POST':
-    form = ProductsForm(request.POST or None)
+    form = ProductsForm(request.POST,request.FILES)
     if form.is_valid():
         form.save()
         messages.info(request,'Products added successfully')
@@ -142,3 +161,10 @@ def add_products(request):
     }
     return render (request,'add_products.html',context)
 
+def admin_order(request):
+    orders = OrderProduct.objects.all()
+    context = {
+        'orders':orders,
+        
+    }
+    return render (request,'admin_panel/order_manage.html',context)
