@@ -1,8 +1,11 @@
+from inspect import modulesbyfile
 from itertools import product
+from multiprocessing import context
 from re import U
 from unicodedata import category
 from cart.models import Cart
 from cart.views import _cart_id
+from orders.models import Order, OrderProduct
 from products.models import Products
 from django.contrib import auth
 from django.contrib import messages
@@ -36,6 +39,8 @@ def base(request):
     return render(request,'base.html',context)
 
 def signin(request):
+    if request.user.is_authenticated :
+        return redirect('signin')
     if request.method == 'POST':
         email= request.POST['email']
         password= request.POST['password']
@@ -59,8 +64,10 @@ def signin(request):
 def verification(request):
     if request.method == 'POST':
         phone_number= request.POST.get('phone_number')
-
+        global mobile_num
+        mobile_num=phone_number
         customer = Account.objects.filter(phone_number=phone_number)
+        
         if not customer.exists():
             messages.info(request,'Phone number not registred, Kindly register')
             return redirect('register')
@@ -76,22 +83,28 @@ def verification(request):
                 body="Hello Your Login OTP is"+ otp )
         messages.success(request,'OTP has been sent to your phone number & enter OTP')
         return render (request, 'verification1.html')
+    
     return render(request,'verification.html')
 
-def verification1(request,id):
+def verification1(request):
     if request.method=='POST':
-        # phone_number= request.POST.get('phone_number')
-        customer = Account.objects.get(id=id)
+        # phone_number= Account.objects.get(phone_number=mobile_num)
+    
+        customer = Account.objects.filter(phone_number=mobile_num).first()
         otpvalue = request.POST['otp']
         # user = authenticate(id=customer)
         if otpvalue == otp:
-            login(request,customer)
+            auth.login(request,customer)
             messages.success(request,'You are logged in')
             return render (request, 'index.html')
             
         messages.error(request,'Invalid otp')
         return redirect('verification')
-    return render(request, 'verification1.html')
+    context={
+        'customer':customer,
+        'otpvalue':otpvalue,
+    }
+    return render(request, 'verification1.html',context)
 
 
 
@@ -208,3 +221,31 @@ def change_password(request):
             messages.error(request,'Password is not match')
             return redirect ('change_password')
     return render(request,'change_password.html')
+
+def my_order(request):
+    current_user = request.user
+    orders = Order.objects.filter(user=current_user)
+    context ={
+        'orders':orders, 
+    }
+    return render(request,'my_order.html',context)
+@login_required(login_url='signin')
+def order_view(request,order_id):
+    # ord = Order.objects.filter(order_number=id).filter(user=request.user).first()
+    # orders = OrderProduct.objects.filter(order=ord)
+    order_view=OrderProduct.objects.filter(order__order_number=order_id)
+    order=Order.objects.get(order_number=order_id)
+    context ={
+        # 'orders':orders,
+        # 'ord':ord,
+        'order_view':order_view,
+        'order':order,
+    }
+    return render(request,'order_view.html',context)
+
+
+def user_order_cancel(request,order_number):
+    ord = Order.objects.get(order_number=order_number)
+    ord.status='Cancelled'
+    ord.save()
+    return redirect('my_order')

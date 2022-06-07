@@ -11,14 +11,18 @@ from products.models import Products
 # Create your views here.
 def place_order(request,total = 0,quantity = 0):
     current_user = request.user
-
+    grand_total=0
     cart_items = CartItem.objects.filter(user=current_user)
     cart_count = cart_items.count()
     # if (cart_count <= 0):
     #     return redirect('store')
+    # for cart_item in cart_items:
+    #     total += (cart_item.product.price * cart_item.quantity)
+    #     quantity += cart_item.quantity
     for cart_item in cart_items:
-        total += (cart_item.product.price * cart_item.quantity)
-        quantity += cart_item.quantity
+            total +=(cart_item.product.price * cart_item.quantity)
+            quantity += cart_item.quantity
+    grand_total=total+100
 
     
     if request.method=='POST':
@@ -56,7 +60,7 @@ def place_order(request,total = 0,quantity = 0):
                 'order':order,
                 'cart_items':cart_items,
                 'total':total,
-                
+                'grand_total':grand_total,
             }
             return render(request,'payments.html',context)
         else:
@@ -112,3 +116,13 @@ def cash_on_delivery(request,order_number):
         orderproduct.save()
         #delete cart item from usercart after ordered
         CartItem.objects.filter(user=current_user).delete()
+
+    order = Order.objects.get(order_number = order_number )
+    order_product = OrderProduct.objects.filter(order=order)
+    transID = OrderProduct.objects.filter(order=order).first()
+    context = {
+        'order':order,
+        'order_product':order_product,
+        'transID':transID
+    }
+    return render(request,'success.html',context)

@@ -1,0 +1,214 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}  Order
+{% endblock %}
+{% block content %}
+<section style="background-color: #eee;">
+    <div class="container py-5">
+      
+  
+      <div class="row">
+        <div class="col-lg-4">
+          <div class="card mb-4">
+            <div class="card-body text-center">
+              <div class="nav flex-column nav-pills" role="tablist" aria-orientation="vertical">
+                    <a class="nav-link" href="/account_view"><i class="fa fa-tachometer-alt"></i>Dashboard</a>
+                    <a class="nav-link"  href="/my_order" ><i class="fa fa-shopping-bag"></i>Orders</a>
+                    <a class="nav-link" href="/change_password" ><i class="fa fa-credit-card"></i>Change Password</a>
+                    <a class="nav-link" href="/add_address"><i class="fa fa-map-marker-alt"></i>Address</a>
+                    <a class="nav-link" href="{% url 'user_profile' %}"><i class="fa fa-user"></i>Account Details</a>
+                    <a class="nav-link" href="/signout"><i class="fa fa-sign-out-alt"></i>Logout</a>
+                </div>
+            </div>
+          </div>
+          
+        </div>
+        <div class="col-lg-8 pl-5">
+            <div class="col-lg-10 p-4 bg-light">
+                <table class="table table-bordered table-hover table-active bg-light">
+                    <thead>
+                        <tr>
+                            <th>Order Id</th>
+                            <th>Ordered at</th>
+                            <th>Name of party</th>
+                            <th>Status</th>
+                           
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+                        <tr>
+                            <td>{{order.order_number}}</td>
+                            <td>{{order.created_at}}</td>
+                            <td>{{order.first_name}}</td>
+                            <td>{{order.status}}</td>
+                            
+                                                        
+                        </tr>
+                       
+                    </tbody>
+                
+                </table>
+                <div class="card center" style="width: 30rem;">
+                          
+                    <div class="card-body ">
+                      <h4 class="card-title ">Shipping Address</h4>
+                  
+                      <p class="card-text" style="font-size: 1rem;">
+                       Name: {{order.first_name}}  {{ord.last_name}} <br>
+                        Address:{{order.address_line1}} <br> 
+                        City:{{order.city}} <br>
+                        State:{{order.state}} <br>
+                        Country:{{order.country}} <br>
+                        Pincode:{{order.zip}}</p>
+                    
+                    </div>
+    
+                </div>
+            </div>
+              
+            </div>
+          
+            
+        
+      </div>
+      <div class="container p-3">
+        <div class="row">
+            <div class="col-lg-4">
+                
+            </div>
+                <div class="col-lg-8 p-4">
+                <table class="table">
+                   
+                    
+                    <button style="margin-bottom: 15px;margin-left:80%;"  type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#ord-{{ord.order_number}}">
+                        Track Order
+                      </button>
+                    <thead>
+                        <tr style="font-size: 1.2rem; text-align: center;">
+                          
+                            <th>Image</th>
+                            <th>Product name</th>
+                            <th>Order Number</th>
+                            <th>Quantity</th>
+                            <th>Status</th>
+                           
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for item in order_view %}
+                        <tr style="text-align: center;">
+                          
+                        
+                            
+                            <td><img src="{{item.product.images.url}}" alt="" height="45rem"></td>
+                            <td>{{item.product.product_name}}</td>
+                            <td>{{order.order_number}}</td>
+                            <td>{{item.quantity}}</td>
+                           
+                            <td>{{order.status}}</td>
+                            
+                            
+                           
+                        </tr>
+                    {% endfor%}
+                    </tbody>
+                   
+                </table>
+                {% if order.status != 'Cancelled'%}
+                <a style="text-decoration: none;margin-right: 15px;" href="{% url 'user_order_cancel' order.order_number %}" class='btn btn-danger'>Cancel order</a>
+                {% if order.status == 'Completed'%}
+                <a style="text-decoration: none;" href="" class='btn btn-info'>Return</a>
+                {% endif %}
+                <!-- Button trigger modal -->
+                 
+               <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+               <!-- Modal -->
+               <div class="modal fade" id="ord-{{ord.order_number}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                 <div class="modal-dialog modal-lg">
+                   <div class="modal-content">
+                     <div class="modal-header">
+                       <h5 class="modal-title" id="exampleModalLabel">#{{order.order_number}}</h5>
+                       
+                     </div>
+                     <div class="modal-body">
+                         <div class="container">
+                             <div class="row">
+                                 <div class="col-lg-4">
+                                    <div class="card" style="width: 18rem;">
+                  
+                                        <div class="card-body">
+                                            <h4 class="card-title">Shipping Address</h4>
+                                        
+                                            <p class="card-text" style="font-size: 1rem;">
+                                                Name: {{order.first_name}}  {{ord.last_name}} <br>
+                                                Address:{{order.address_line1}} <br> 
+                                                City:{{order.city}} <br>
+                                                State:{{order.state}} <br>
+                                                Country:{{order.country}} <br>
+                                                Pincode:{{order.zip}}</p>
+                                            
+                                          </div>
+                        
+                                    </div>
+                                 </div>
+                            
+                    <div class="col-lg-6">
+                        {% for orders in order_view%}
+                         <div style="margin-left: 20%;" class="card">
+                            <div class="card-body">
+                              
+                                
+                                    <div> <img src="{{orders.product.images.url}}" alt="" height="45rem" style="margin-bottom: 10px;"> </div>
+                                    <h5>{{orders.product.product_name}}      </h5>
+                                    <span> Quantity: {{orders.quantity}}</span>
+                                    <br>
+                                
+                                
+                            </div>
+                        </div>
+                        {% endfor%}
+                    </div>
+                </div>
+            </div>
+                    
+                         {% if order.status == 'New'%}
+                        <p style="margin-left:85%; font-size: 1.3rem; color: rgb(221, 55, 33);">Pending</p>
+                        {% elif order.status == 'Accepted'%}
+                        <p style="margin-left:85%; font-size: 1.3rem; color: rgb(22, 120, 211);">Shipped On the way</p>
+                        {% elif order.status == 'Completed'%}
+                        <p style="margin-left:85%; font-size: 1.3rem; color: green;">Delivered</p>
+                        {% endif %}
+                        <div class="progress">
+                            {% if order.status == 'New'%}
+                            <div class="progress-bar" role="progressbar" style="width: 15%" aria-valuenow="15" aria-valuemin="0" aria-valuemax="100"></div>
+                            {% elif order.status == 'Accepted'%}
+                            <div class="progress-bar bg-infor" role="progressbar" style="width: 30%" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100"></div>
+                            {% elif order.status == 'Completed'%}
+                            <div class="progress-bar bg-success" role="progressbar" style="width: 100%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
+                            {% endif %}
+                        
+                        </div>
+                       
+                        
+                     </div>
+                     <div class="modal-footer">
+                         <h6></h6>
+                       <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                       
+                     </div>
+                   </div>
+                 </div>
+                 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+               </div>
+                {% endif%}
+            </div>
+        </div>
+    </div>
+    </div>
+</section>
+      
+            
+   
+
+{% endblock %}

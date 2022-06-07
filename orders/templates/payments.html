@@ -30,16 +30,18 @@
                   
                 </div>
               </div>
+              <br>
               <div class="card">
                 <div class="card-header">
                  Payment Method
                 </div>
                 <div class="card-body">
                  
-                  <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                  <a href="{% url 'cash_on_delivery' order_data.order_number  %}" class="btn btn_1 mt-3" style="padding:17px 35px" >Cash on delivery</a>
+                  
+                  <a href="{% url 'cash_on_delivery' order.order_number  %}" class="btn btn_1 mt-3" style="padding:17px 35px" >Cash on delivery</a>
                 </div>
               </div>
+              <br>
               <div class="card">
                 <div class="card-header">
                   Review Products

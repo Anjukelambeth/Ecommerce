@@ -1,6 +1,6 @@
 {% extends 'admin_base.html' %}
 {% block title %}
-    Category-List
+    Order-List
 {% endblock %}
 
 {% block content%} 
@@ -30,34 +30,35 @@
 <table class="table center table-bordered table-hover table-active " >  
     <thead class="thead-dark ">  
     <tr>  
-        <th scope="col">ID</th>  
-        <th scope="col">Category Name</th> 
-        <th scope="col">Slug</th>  
-        <th scope="col">Description</th>  
-        <th scope="col">Image</th>  
-        <th scope="col">Actions</th>  
+        <th scope="col">Order Id</th>
+        <th scope="col">User</th>
+        <th scope="col">Payment Mode</th>
+        <th scope="col">Status</th>
+        <th scope="col">State</th>
+        <th scope="col">Total price</th>
+        <th scope="col">Edit</th>
+        <th scope="col">Cancel</th> 
     </tr>  
     </thead>  
     <tbody>  
-{% for category in category %}  
+{% for txn in orders %}  
     <tr>  
-        <td>{{ category.id }}</td>
-        <td>{{ category.category_name }}</td>  
-        <td>{{ category.slug }}</td>  
-        <td>{{ category.description }}</td> 
-        <td><img width=30rem src="{{category.images.url}}" alt=""></td>  
-        <td>  
-            <a href="/edit_category/{{ category.id }}"><span class="glyphicon glyphicon-pencil" >Edit</span></a>  
-            &nbsp &nbsp &nbsp
-            <a href="{% url 'delete_category' category.id%}">Delete</a>  
-        </td>  
+        <th scope="row">{{txn.order.order_number}}</th>
+        <th scope="row">{{txn.user}}</th>
+        <td>{{txn.payment.payment_method}}</td>
+        <td> {{txn.order.status}}</td>
+        <td>{{txn.order.state}}</td>
+        <td>{{txn.product_price}}</td>
+        <td><a href="{% url 'admin_orderedit' txn.order.order_number %} ">edit<i class="fas fa-edit"></i></a></td>
+        <td><a href="{% url 'order_cancel' txn.order.order_number %}">cancel<i class="fas fa-delete"></i></a></td>
+        
     </tr>  
 {% endfor %}  
     </tbody>  
 </table>  
-<div class="mr-auto"> 
+<!-- <div class="mr-auto"> 
  <button type="submit" value="submit"  class="btn btn-primary  mx-auto " ><a href="/add_category" class="btn btn-primary">Add New Category</a></button>  &nbsp &nbsp &nbsp
-</div>
+</div> -->
 </div>
 </div>
 {% endblock %} 

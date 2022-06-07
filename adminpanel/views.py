@@ -3,8 +3,9 @@ from django.shortcuts import render,redirect
 from django.contrib.auth import authenticate,login,logout
 from django.contrib import messages
 from accounts.models import Account
+from adminpanel.forms import OrderEditForm
 from category.models import category
-from orders.models import OrderProduct
+from orders.models import Order, OrderProduct
 from products.models import Products
 from category.forms import CategoryForm
 from products.forms import ProductsForm
@@ -17,6 +18,8 @@ from slugify import slugify
 
 
 def admin_panel(request):
+    if request.user.is_authenticated :
+        return redirect('admin_panel')
     
     if request.method == 'POST':
         email= request.POST['email']
@@ -66,6 +69,7 @@ def admin_userblock(request,id):
     user.save()
     return redirect(admin_usersview)
 
+@login_required(login_url='admin_panel')
 def userunblock(request,id):
     user = Account.objects.get(id=id)
     user.is_active = True
@@ -115,33 +119,35 @@ def admin_products(request):
         return render(request,'admin_products.html',{'products':product})
     return redirect('admin_home')
 
-# def edit_products(request,id):
-#     product = Products.objects.get(id=id)
-#     form = ProductsForm(instance=product)
-#     if request.method =="POST":
-#         form = CategoryForm(request.POST or None,request.FILES, instance=product)
-#         if form.is_valid():  
-#             form.save()  
-#             messages.success(request,'Product updated successfully')
-#             return redirect(admin_products)
-#         else:
-#             print(form.errors)
-#     return render (request,'edit_products.html',{'form':form})
-
 def edit_products(request,id):
     product = Products.objects.get(id=id)
     form = ProductsForm(instance=product)
     if request.method =="POST":
-        form = ProductsForm(request.POST,request.FILES,instance=product)
-        if len(request.FILES)!=0:
-            if len(product.images)>0:
-                os.remove(product.images.path)
-            product.images = request.FILES['images']
-            
-            product.save()
-            messages.success(request,'Product edited successfully')
+        form = ProductsForm(request.POST or None,request.FILES, instance=product)
+        if form.is_valid():  
+            form.save()  
+            messages.success(request,'Product updated successfully')
             return redirect(admin_products)
+        else:
+            print(form.errors)
+    
     return render (request,'edit_products.html',{'form':form,'product':product})
+
+# def edit_products(request,id):
+#     product = Products.objects.get(id=id)
+#     form = ProductsForm(instance=product)
+#     if request.method =="POST":
+#         form = ProductsForm(request.POST,request.FILES,instance=product)
+#         if len(request.FILES)!=0:
+#             if len(product.images)>0:
+#                 os.remove(product.images.path)
+#             product.images = request.FILES['images']
+            
+#             product.save()
+#             messages.success(request,'Product edited successfully')
+#             return redirect(admin_products)
+        
+#     return render (request,'edit_products.html',{'form':form,'product':product})
 
 
 def delete_products(request,id):  
@@ -167,4 +173,26 @@ def admin_order(request):
         'orders':orders,
         
     }
-    return render (request,'admin_panel/order_manage.html',context)
+    return render (request,'admin_order.html',context)
+    
+
+def order_cancel(request,order_number):
+    orders = Order.objects.get(order_number=order_number)
+    orders.status ='Cancelled'
+    orders.save()
+    return redirect ('admin_order')
+
+def admin_orderedit(request,order_number):
+    orders = Order.objects.get(order_number=order_number)
+    form = OrderEditForm(instance=orders)
+    if request.method=='POST':
+        form = OrderEditForm(request.POST)
+        status = request.POST.get('status')
+        orders.status = status
+        orders.save()
+        return redirect ('admin_order')
+    context = {
+        'orders':orders,
+        'form':form
+    }
+    return render(request,'admin_orderedit.html',context)

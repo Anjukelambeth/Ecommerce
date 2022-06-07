@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}  Order
+{% endblock %}
+{% block content %}
+<section style="background-color: #eee;">
+    <div class="container py-5">
+      
+  
+      <div class="row">
+        <div class="col-lg-4">
+          <div class="card mb-4">
+            <div class="card-body text-center">
+              <div class="nav flex-column nav-pills" role="tablist" aria-orientation="vertical">
+                    <a class="nav-link" href="/account_view"><i class="fa fa-tachometer-alt"></i>Dashboard</a>
+                    <a class="nav-link"  href="/my_order" ><i class="fa fa-shopping-bag"></i>Orders</a> 
+                    <a class="nav-link" href="/change_password" ><i class="fa fa-credit-card"></i>Change Password</a>
+                    <a class="nav-link" href="/add_address"><i class="fa fa-map-marker-alt"></i>Address</a>
+                    <a class="nav-link" href="{% url 'user_profile' %}"><i class="fa fa-user"></i>Account Details</a>
+                    <a class="nav-link" href="/signout"><i class="fa fa-sign-out-alt"></i>Logout</a>
+                </div>
+            </div>
+          </div>
+          
+        </div>
+        <div class="col-lg-8 pl-5">
+            <div class="col-lg-10 p-4 bg-light">
+                <table class="table table-bordered table-hover table-active bg-light">
+                    <thead>
+                        <tr>
+                            <th>Order Id</th>
+                            <th>Ordered at</th>
+                            <th>Name of party</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                          
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in orders%}
+                        <tr>
+                            <td>{{order.order_number}}</td>
+                            <td>{{order.created_at}}</td>
+                            <td>{{order.first_name}}</td>
+                            <td>{{order.status}}</td>
+                            
+                            <td><a href="{% url 'order_view' order.order_number %}" class="text-primary">View</a></td>
+                            
+                        </tr>
+                        {% endfor%}  
+                    </tbody>
+                
+                </table>
+            </div>
+              
+            </div>
+          
+          
+        
+      </div>
+    </div>
+  </section>
+
+<div class="container p-3">
+    <div class="row">
+      
+            
+    </div>
+</div>
+{% endblock %}

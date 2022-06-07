@@ -1,0 +1,22 @@
+{% extends 'admin_base.html' %}
+{% block title %}
+    Order-List
+{% endblock %}
+
+{% block content%} 
+<div class="p-5 justify-content-center pull-left" style="line-height: 1">
+    <div class="p-5 justify-content-center  ">
+<div class="container-fluid">
+        
+    <div class="col-lg-9">
+<form action="" method="POST" style="padding:2rem;margin:auto; "   enctype="multipart/form-data">
+    {% csrf_token %}
+    {{form.status}}
+    <button type="submit">save</button>
+</form>
+</div>
+</div>
+</div>
+</div>
+</div>
+{% endblock %}
