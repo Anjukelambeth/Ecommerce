@@ -1,0 +1,83 @@
+{% extends 'admin_base.html' %}
+{% block title %}
+    Offer View
+{% endblock %}
+
+{% block content%} 
+
+<div class="pl-5">
+    <!-- <div class="pt-3 pl-5 row">
+    <form class="form-inline pt-3 pl-3 my-lg-0" method="POST" action="{% url 'admin_panel' %}">
+        {% csrf_token %}
+        <input class="form-control mr-sm-2" type="search" placeholder="Search for username" aria-label="Search" name="searched">
+        <button class="btn btn-outline-secondary my-2 my-sm-0" type="submit">Search</button>
+      </form>  &nbsp &nbsp &nbsp
+      <div class="mr-auto">
+      <button type="submit" value="submit"  class="btn btn-primary  mx-auto " ><a href="/add" class="btn btn-primary">Add New User</a></button>  &nbsp &nbsp &nbsp
+      <button type="submit" value="submit"  class="btn btn-primary mr-auto"><a href="/signout" class="btn btn-primary">signout</a></button>  
+    </div> -->
+    <!-- </div> -->
+    
+    <div class="p-5 justify-content-center pull-left" style="line-height: 1">
+    <table class="table table-bordered table-hover table-active table-responsive" >  
+        <thead class="thead-dark ">  
+        <tr class="col-9">  
+            <th scope="col">#</th>
+            <th scope="col">Product</th>
+            <th scope="col">Discount</th>
+            <th scope="col">Valid from</th>
+            <th scope="col">Valid to</th>
+            <th scope="col">active</th>
+            <th scope="col">Edit</th>
+            <th scope="col">Delete</th>
+        </tr>  
+        </thead>  
+        <tbody>  
+     {% for offer in product_offer%}
+     <tr class="col-9">
+        <th scope="row">{{offer.id}}</th>
+        <td>{{offer.product}}</td>
+        <td>{{offer.discount}}%</td>
+        <td>{{offer.valid_from}}</td>
+        <td>{{offer.valid_to}}</td>
+        <td>{{offer.active}}</td>
+       <td><a href="/edit_product_offer/{{offer.id}}"><i class="fas fa-edit"></i></a></td>
+        <td><a   data-bs-toggle="modal" data-bs-target="#offer-{{offer.id}}"><i class="fas fa-trash"></i></a></td>
+        
+    <!-- Modal -->
+    <div class="modal fade" id="offer-{{offer.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Confirm</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p>Do you really want to delete {{offer.product}}</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            
+            <a href="{% url 'delete_product_offer' offer.id%}"><button  type="button" class="btn btn-primary">Confirm</button></a>
+          </div>
+        </div>
+      </div>
+     
+    </div>
+
+        
+    </tr>
+    
+    {% endfor %}  
+        </tbody>  
+    </table>  
+    <div class="mr-auto "> 
+     <button type="submit" value="submit"  class="btn btn-primary  mx-auto " ><a href="/add_product_offer" class="btn btn-primary">Add Product offer</a></button>  &nbsp &nbsp &nbsp
+    </div>
+    </div>
+    </div>
+    {% endblock %} 
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+   
+    

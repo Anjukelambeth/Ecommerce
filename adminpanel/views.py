@@ -1,9 +1,11 @@
+import calendar
 from itertools import product
 from django.shortcuts import render,redirect
 from django.contrib.auth import authenticate,login,logout
 from django.contrib import messages
 from accounts.models import Account
-from adminpanel.forms import OrderEditForm
+from adminpanel.forms import OrderEditForm, ProductOfferForm
+from adminpanel.models import ProductOffer
 from category.models import category
 from orders.models import Order, OrderProduct
 from products.models import Products
@@ -12,6 +14,8 @@ from products.forms import ProductsForm
 from django.contrib.auth.decorators import login_required
 import os
 from slugify import slugify
+from django.db.models.functions import ExtractMonth,ExtractDay
+from django.db.models import Count
 # from django.contrib.auth.decorators import user_passes_test
 # Create your views here.
 
@@ -41,7 +45,60 @@ def admin_panel(request):
 
 @login_required(login_url='admin_panel')
 def admin_home(request):
-    return render(request,'admin_home.html')
+    #ORDER GRAPH
+    orderbyday = Order.objects.annotate(day=ExtractDay('created_at')).values('day').annotate(count=Count('id'))
+    print(orderbyday)
+    dayday =[]
+    orderperday =[]
+    for o in orderbyday:
+        dayday.append(o['day'])
+        orderperday.append(o['count'])
+    order = Order.objects.annotate(month=ExtractMonth('created_at')).values('month').annotate(count=Count('id')).values('month','count')
+    monthNumber = []
+    totalOrder = []
+    for ord in order:
+        monthNumber.append(calendar.month_name[ord['month']])
+        totalOrder.append(ord['count'])
+    #total users
+    users_count = Account.objects.all().count()
+
+    #total revenue
+    revenue=0
+    order = OrderProduct.objects.all()
+    for item in order:
+        revenue = revenue + item.product_price
+
+    #total order
+    order_count = Order.objects.all().count()
+
+    
+    # order_status = Order.objects.annotate(status=Value(Ac)).values('statu').annotate(count=Count('id'))
+    # status_status =[]
+    # status_count =[]
+    
+    # print(order_status)
+    completed_order = Order.objects.filter(status='Completed').count()
+    pending_order = Order.objects.filter(status='New').count()
+    accepted_order = Order.objects.filter(status='Accepted').count()
+    order_status_list = []
+    order_status_list.append(completed_order)
+    order_status_list.append(accepted_order)
+    order_status_list.append(pending_order)
+    print(order_status_list)
+
+    context = {
+        'monthNumber':monthNumber,
+        'totalOrder':totalOrder,
+        'dayday':dayday,
+        'orderperday':orderperday,
+        'users_count':users_count,
+        'revenue':revenue,
+        'order_count':order_count,
+        'order_status_list':order_status_list,
+        # 'today_revenue':today_revenue,
+        }
+    
+    return render(request,'admin_home.html',context)
 
 @login_required(login_url='admin_panel')
 def admin_signout(request):
@@ -196,3 +253,44 @@ def admin_orderedit(request,order_number):
         'form':form
     }
     return render(request,'admin_orderedit.html',context)
+
+def admin_offerview(request):
+    
+    product_offer = ProductOffer.objects.all()
+   
+    context={
+       
+        'product_offer':product_offer,
+        
+    }
+    return render (request,'offer_view.html',context)
+
+def add_product_offer(request):
+    form = ProductOfferForm(request.POST)
+    print("product offer")
+    if form.is_valid():
+        form.save()
+        messages.info(request,'Product offer added successfully')
+        return redirect(admin_offerview)
+    context ={
+        'form':form
+    }
+    return render (request,'add_product_offer.html',context)
+
+#product offer edit
+def edit_product_offer(request,id):
+    offer = ProductOffer.objects.get(id=id)
+    form = ProductOfferForm(instance=offer)
+    if request.method =="POST":
+        form = ProductOfferForm(request.POST,instance=offer)
+        form.save()
+        messages.success(request,'Product offer updated successfully')
+        return redirect('offer_view')
+    return render (request,'edit_product_offer.html',{'form':form,'offer':offer})
+
+#delete category by admin
+def delete_product_offer(request,id):
+    offer = ProductOffer.objects.get(id=id)
+    offer.delete()
+    return redirect(admin_offerview)
+

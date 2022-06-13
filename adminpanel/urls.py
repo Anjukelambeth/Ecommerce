@@ -22,5 +22,11 @@ urlpatterns = [
     path('admin_order/',views.admin_order,name='admin_order'), 
     path('admin_orderedit/<int:order_number>',views.admin_orderedit,name='admin_orderedit'), 
     path('order_cancel/<int:order_number>',views.order_cancel,name='order_cancel'), 
+    path('admin_offerview',views.admin_offerview,name='admin_offerview'),
+    path('add_product_offer',views.add_product_offer,name='add_product_offer'),
+    path('edit_product_offer/<int:id>',views.edit_product_offer,name='edit_product_offer'),
+    path('delete_product_offer/<int:id>',views.delete_product_offer,name='delete_product_offer'),
+
+    
 
 ]

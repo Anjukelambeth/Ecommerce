@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load mathfilters %}
 {% load static %}
 {% block title %}  Oh Baby! 
 {% endblock %}
@@ -184,7 +185,11 @@
                         <a href="{% url 'product_detail' product.category.slug product.slug %}" >
                          <h6 class="text-truncate mb-3">{{product.product_name}}</h6></a>
                         <div class="d-flex justify-content-center">
-                            <h6>₹{{product.price}}</h6><h6 class="text-muted ml-2"><del>₹{{product.price|add:"100"}}</del></h6>
+                            {% if product.product_offer%} 
+                            <h6>₹{{product.product_offer.discount|mul:product.price|div:100|sub:product.price|abs}}</h6>  <h6 class="text-muted ml-2"><del>₹{{product.price}}</del></h6>
+                            {% else%}
+                            <h6>₹{{product.price}}</h6>
+                            {% endif%}
                         </div>
                     </div>
                     <div class="card-footer d-flex justify-content-between bg-light border">
@@ -246,7 +251,11 @@
                         <a href="{% url 'product_detail' product.category.slug product.slug %}" >
                         <h6 class="text-truncate mb-3">{{product.product_name}}</h6></a>
                         <div class="d-flex justify-content-center">
-                            <h6>₹{{product.price}}</h6><h6 class="text-muted ml-2"><del>₹{{product.price |add:"-100"}}</del></h6>
+                            {% if product.product_offer%} 
+                            <h6>₹{{product.product_offer.discount|mul:product.price|div:100|sub:product.price|abs}}</h6>  <h6 class="text-muted ml-2"><del>₹{{product.price}}</del></h6>
+                            {% else%}
+                            <h6>₹{{product.price}}</h6>
+                            {% endif%}
                         </div>
                     </div>
                     <div class="card-footer d-flex justify-content-between bg-light border">

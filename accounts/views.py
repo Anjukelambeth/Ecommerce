@@ -1,8 +1,7 @@
 from inspect import modulesbyfile
 from itertools import product
 from multiprocessing import context
-from re import U
-from unicodedata import category
+from category.models import category
 from cart.models import Cart
 from cart.views import _cart_id
 from orders.models import Order, OrderProduct
@@ -22,10 +21,10 @@ from django.contrib.auth.decorators import login_required
 # Create your views here.
 def index(request):
     products= Products.objects.all().filter(is_available=True)
-    # category= category.objects.all()
+    categorys= category.objects.all()
     context={
         'products':products,
-        # 'category':category,
+        'categorys':categorys,
         }
     return render(request,'index.html',context)
 
@@ -144,7 +143,16 @@ def signout(request):
     
 @login_required(login_url='signin')
 def account_view(request):
-     return render(request,'account_view.html')
+    profile = Account.objects.get(first_name=request.user.first_name)
+    # orders = Order.objects.order_by('-created_at').filter(user_id=request.user.id,is_ordered=True)
+    orders = Order.objects.filter(user=request.user)
+    orders_count=orders.count()
+    context = {
+        'profile':profile,
+        'orders':orders, 
+        'orders_count':orders_count
+    }
+    return render(request,'account_view.html',context)
 
 
 def user_profile(request):
@@ -195,8 +203,8 @@ def add_address(request):
             messages.info(request,'Unable to edit')
     else:
         form = UserAddressForm(instance=request.user)
-    # add=UserAddresses.objects.filter(user=request.user)
-    return render(request,'add_address.html',{'form':form,'profile':request.user})
+        add=UserAddresses.objects.filter(user=request.user)
+    return render(request,'add_address.html',{'form':form,'add':add,'profile':request.user})
 
 @login_required(login_url='signin')
 def change_password(request):
@@ -223,8 +231,8 @@ def change_password(request):
     return render(request,'change_password.html')
 
 def my_order(request):
-    current_user = request.user
-    orders = Order.objects.filter(user=current_user)
+    # current_user = request.user
+    orders = Order.objects.filter(user=request.user,is_ordered=True)
     context ={
         'orders':orders, 
     }
@@ -249,3 +257,9 @@ def user_order_cancel(request,order_number):
     ord.status='Cancelled'
     ord.save()
     return redirect('my_order')
+
+def return_order(request,order_number):
+    ord = Order.objects.get(order_number=order_number)
+    ord.status='Returned'
+    ord.save()
+    return render (request,'order_return.html',{'ord':ord})

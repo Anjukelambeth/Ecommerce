@@ -4,31 +4,33 @@
 {% endblock %}
 {% block content %}
 <!-- My Account Start -->
-<section style="background-color: #eee;">
-    <div class="container py-5">
-    <!-- <div class="container-fluid"> -->
+<section class="pl-0" style="background-color: #eee;">
+    <div class="container pt-3 pl-0">
+    <div class="container mx-auto">
         <div class="row">
             <div class="col-md-3">
-                <div class="card mb-4">
-                <div class="card-body text-center">
-                <div class="nav flex-column nav-pills" role="tablist" aria-orientation="vertical">
-                    <a class="nav-link" href="/account_view"><i class="fa fa-tachometer-alt"></i>Dashboard</a>
+                <!-- <div class="card mb-4" > -->
+                <!-- <div class="card-body text-center" style="color: rgb(138, 133, 133);"> -->
+                <div class="nav flex-column nav-pills" aria-orientation="vertical">
+                    <!-- <a class="nav-link" href="/account_view"><i class="fa fa-tachometer-alt"></i>Dashboard</a> -->
                     <a class="nav-link"  href="/my_order" ><i class="fa fa-shopping-bag"></i>Orders</a>
                     <a class="nav-link" href="/change_password" ><i class="fa fa-credit-card"></i>Change Password</a>
                     <a class="nav-link"  href="/add_address" ><i class="fa fa-map-marker-alt"></i>Address</a>
                     <a class="nav-link"  href="{% url 'user_profile' %}"><i class="fa fa-user"></i>Account Details</a>
                     <a class="nav-link" href="/signout"><i class="fa fa-sign-out-alt"></i>Logout</a>
                 </div>
-            </div>
-        </div>
+            <!-- </div> -->
+        <!-- </div> -->
     </div>
             <div class="col-md-9">
                 <div class="tab-content">
-                    <div class="tab-pane fade show active" id="dashboard-tab" role="tabpanel" aria-labelledby="dashboard-nav">
-                        <h4>Dashboard</h4>
-                        <p>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. In condimentum quam ac mi viverra dictum. In efficitur ipsum diam, at dignissim lorem tempor in. Vivamus tempor hendrerit finibus. Nulla tristique viverra nisl, sit amet bibendum ante suscipit non. Praesent in faucibus tellus, sed gravida lacus. Vivamus eu diam eros. Aliquam et sapien eget arcu rhoncus scelerisque.
-                        </p> 
+                    <div class="tab-pane fade show active"  aria-labelledby="dashboard-nav">
+                        <h4 style="color: rgb(245, 14, 206);">Hai {{profile.first_name}}</h4>
+                        <div class="card-body">
+                            <h5 class="card-title"> Total Order</h5>
+                            <h4>{{orders_count}}</h4>
+                        </div>
+
                     </div>
                     <!-- <div class="tab-pane fade" id="orders-tab" role="tabpanel" aria-labelledby="orders-nav">
                         <div class="table-responsive">

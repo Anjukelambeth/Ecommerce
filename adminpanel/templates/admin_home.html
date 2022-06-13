@@ -1,117 +1,108 @@
 {% extends 'admin_base.html' %}
-{% load static %}
+<!-- {% load static %} -->
 {% block title %}
 Admin-home
 {% endblock %}
 {% block content %}
-    <!-- [ Main Content ] start -->
+    [ Main Content ] start -->
+    
     <div class="pcoded-main-container">
         <div class="pcoded-wrapper">
             <div class="pcoded-content">
                 <div class="pcoded-inner-content">
                     <!-- [ breadcrumb ] start -->
-    
-                                <div class="container-fluid py-4">
-                                    <div class="row">
-                                      <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
-                                        <div class="card">
-                                          <div class="card-header p-3 pt-2">
-                                            <div class="icon icon-lg icon-shape bg-gradient-dark shadow-dark text-center border-radius-xl mt-n4 position-absolute">
-                                              <i class="material-icons opacity-10">weekend</i>
-                                            </div>
-                                            <div class="text-end pt-1">
-                                              <p class="text-sm mb-0 text-capitalize">Today's Money</p>
-                                              <h4 class="mb-0">₹53k</h4>
-                                            </div>
-                                          </div>
-                                          <hr class="dark horizontal my-0">
-                                          <div class="card-footer p-3">
-                                            <p class="mb-0"><span class="text-success text-sm font-weight-bolder">+55% </span>than lask week</p>
-                                          </div>
-                                        </div>
-                                      </div>
-                                      <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
-                                        <div class="card">
-                                          <div class="card-header p-3 pt-2">
-                                            <div class="icon icon-lg icon-shape bg-gradient-primary shadow-primary text-center border-radius-xl mt-n4 position-absolute">
-                                              <i class="material-icons opacity-10">person</i>
-                                            </div>
-                                            <div class="text-end pt-1">
-                                              <p class="text-sm mb-0 text-capitalize">Today's Users</p>
-                                              <h4 class="mb-0">2,300</h4>
-                                            </div>
-                                          </div>
-                                          <hr class="dark horizontal my-0">
-                                          <div class="card-footer p-3">
-                                            <p class="mb-0"><span class="text-success text-sm font-weight-bolder">+3% </span>than lask month</p>
-                                          </div>
-                                        </div>
-                                      </div>
-                                      <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
-                                        <div class="card">
-                                          <div class="card-header p-3 pt-2">
-                                            <div class="icon icon-lg icon-shape bg-gradient-success shadow-success text-center border-radius-xl mt-n4 position-absolute">
-                                              <i class="material-icons opacity-10">person</i>
-                                            </div>
-                                            <div class="text-end pt-1">
-                                              <p class="text-sm mb-0 text-capitalize">New Clients</p>
-                                              <h4 class="mb-0">3,462</h4>
-                                            </div>
-                                          </div>
-                                          <hr class="dark horizontal my-0">
-                                          <div class="card-footer p-3">
-                                            <p class="mb-0"><span class="text-danger text-sm font-weight-bolder">-2%</span> than yesterday</p>
-                                          </div>
-                                        </div>
-                                      </div>
-                                      <div class="col-xl-3 col-sm-6">
-                                        <div class="card">
-                                          <div class="card-header p-3 pt-2">
-                                            <div class="icon icon-lg icon-shape bg-gradient-info shadow-info text-center border-radius-xl mt-n4 position-absolute">
-                                              <i class="material-icons opacity-10">weekend</i>
-                                            </div>
-                                            <div class="text-end pt-1">
-                                              <p class="text-sm mb-0 text-capitalize">Sales</p>
-                                              <h4 class="mb-0">₹103,430</h4>
-                                            </div>
-                                          </div>
-                                          <hr class="dark horizontal my-0">
-                                          <div class="card-footer p-3">
-                                            <p class="mb-0"><span class="text-success text-sm font-weight-bolder">+5% </span>than yesterday</p>
-                                          </div>
-                                        </div>
-                                      </div>
-                                    </div>
-                                    
-                                      
+                    <div class="container-fluid py-4">
+                        <div class="row">
+                            <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+                            <div class="card">
+                                <div class="card-header p-3 pt-2">
+                                
+                                <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
+                                    <i class="fa fa-chart-bar fa-3x text-primary"></i>
+                                    <div class="ms-3">
+                                        <p class="mb-2">Today revenue</p>
+                                        <h6 class="mb-0">{{today_revenue}}</h6>
                                     </div>
                                 </div>
-                           
+                                </div>
+                                <hr class="dark horizontal my-0">
+                                <div class="card-footer p-3">
+                                <p class="mb-0"><span class="text-success text-sm font-weight-bolder">+55% </span>than lask week</p>
+                                </div>
+                            </div>
+                            </div>
+                            <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+                            <div class="card">
+                                <div class="card-header p-3 pt-2">
+                                <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
+                                    <i class="fa fa-chart-line fa-3x text-primary"></i>
+                                    <div class="ms-3">
+                                        <p class="mb-2">Total users &nbsp;</p>
+                                        <h6 class="mb-0"><i class="material-icons opacity-10">person</i> &nbsp;{{users_count}}</h6>
+                                    </div>
+                                </div>
+                                <hr class="dark horizontal my-0">
+                                <div class="card-footer p-3">
+                                <p class="mb-0"><span class="text-success text-sm font-weight-bolder">+3% </span>than lask month</p>
+                                </div>
+                            </div>
+                            </div>
+                        </div>
+                            <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+                            <div class="card">
+                                <div class="card-header p-3 pt-2">
+                                <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
+                                    <i class="fa fa-chart-pie fa-3x text-primary"></i>
+                                    <div class="ms-3">
+                                        <p class="mb-2">Total order</p>
+                                        <h6 class="mb-0">{{order_count}}</h6>
+                                    </div>
+                                </div>
+                                </div>
+                                <hr class="dark horizontal my-0">
+                                <div class="card-footer p-3">
+                                <p class="mb-0"><span class="text-danger text-sm font-weight-bolder">-2%</span> than yesterday</p>
+                                </div>
+                            </div>
+                            </div>
+                            <div class="col-xl-3 col-sm-6">
+                            <div class="card">
+                                <div class="card-header p-3 pt-2">
+                                <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
+                                    <i class="fa fa-chart-area fa-3x text-primary"></i>
+                                    <div class="ms-3">
+                                        <p class="mb-2">Total Revenue</p>
+                                        <h6 class="mb-0">{{revenue}}</h6>
+                                    </div>
+                                </div>
+                                </div>
+                                <hr class="dark horizontal my-0">
+                                <div class="card-footer p-3">
+                                <p class="mb-0"><span class="text-success text-sm font-weight-bolder">+5% </span>than yesterday</p>
+                                </div>
+                            </div>
+                            </div>
+                        </div>
+                        
+                            
+                        </div>
+                    </div>
+                    <!--  -->
+                
                     <!-- [ breadcrumb ] end -->
                     <div class="main-body">
                         <div class="page-wrapper">
                             <!-- [ Main Content ] start -->
-                            <div class="row">
+                            <!-- <div class="row"> -->
                                 <!--[ daily sales section ] start-->
-                                <div class="col-md-6 col-xl-4">
+                                <!-- <div class="col-md-6 col-xl-4">
                                     <div class="card daily-sales">
-                                        <div class="card-block">
-                                            <h6 class="mb-4">Daily Sales</h6>
-                                            <div class="row d-flex align-items-center">
-                                                <div class="col-9">
-                                                    <h3 class="f-w-300 d-flex align-items-center m-b-0"><i class="feather icon-arrow-up text-c-green f-30 m-r-10"></i>₹ 249.95</h3>
-                                                </div>
-
-                                                <div class="col-3 text-right">
-                                                    <p class="m-b-0">67%</p>
-                                                </div>
-                                            </div>
-                                            <div class="progress m-t-30" style="height: 7px;">
-                                                <div class="progress-bar progress-c-theme" role="progressbar" style="width: 50%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
-                                            </div>
-                                        </div>
+                                        <div class="card-block"> -->
+                                            <!-- Sales Chart Start -->
+                                            
                                     </div>
                                 </div>
+                                
                                 <!--[ daily sales section ] end-->
                                 
                                 <!--[ Monthly  sales section ] starts-->
@@ -154,122 +145,7 @@ Admin-home
                                     </div>
                                 </div>
                             
-                                <!--[ Recent Users ] start-->
-                                <!-- <div class="col-xl-8 col-md-6">
-                                    <div class="card Recent-Users">
-                                        <div class="card-header">
-                                            <h5>Recent Users</h5>
-                                        </div>
-                                        <div class="card-block px-0 py-3">
-                                            <div class="table-responsive">
-                                                <table class="table table-hover">
-                                                    <tbody>
-                                                        <tr class="unread">
-                                                            <td><img class="rounded-circle" style="width:40px;" src="{% static 'assets/images/user/avatar-1.jpg' %}" alt="activity-user"></td>
-                                                            <td>
-                                                                <h6 class="mb-1">Isabella Christensen</h6>
-                                                                <p class="m-0">Lorem Ipsum is simply…</p>
-                                                            </td>
-                                                            <td>
-                                                                <h6 class="text-muted"><i class="fas fa-circle text-c-green f-10 m-r-15"></i>11 MAY 12:56</h6>
-                                                            </td>
-                                                            <td><a href="#!" class="label theme-bg2 text-white f-12">Reject</a><a href="#!" class="label theme-bg text-white f-12">Approve</a></td>
-                                                        </tr>
-                                                        <tr class="unread">
-                                                            <td><img class="rounded-circle" style="width:40px;" src="{% static 'assets/images/user/avatar-2.jpg' %}" alt="activity-user"></td>
-                                                            <td>
-                                                                <h6 class="mb-1">Mathilde Andersen</h6>
-                                                                <p class="m-0">Lorem Ipsum is simply text of…</p>
-                                                            </td>
-                                                            <td>
-                                                                <h6 class="text-muted"><i class="fas fa-circle text-c-red f-10 m-r-15"></i>11 MAY 10:35</h6>
-                                                            </td>
-                                                            <td><a href="#!" class="label theme-bg2 text-white f-12">Reject</a><a href="#!" class="label theme-bg text-white f-12">Approve</a></td>
-                                                        </tr>
-                                                        <tr class="unread">
-                                                            <td><img class="rounded-circle" style="width:40px;" src="{% static 'assets/images/user/avatar-3.jpg' %}" alt="activity-user"></td>
-                                                            <td>
-                                                                <h6 class="mb-1">Karla Sorensen</h6>
-                                                                <p class="m-0">Lorem Ipsum is simply…</p>
-                                                            </td>
-                                                            <td>
-                                                                <h6 class="text-muted"><i class="fas fa-circle text-c-green f-10 m-r-15"></i>9 MAY 17:38</h6>
-                                                            </td>
-                                                            <td><a href="#!" class="label theme-bg2 text-white f-12">Reject</a><a href="#!" class="label theme-bg text-white f-12">Approve</a></td>
-                                                        </tr>
-                                                        <tr class="unread">
-                                                            <td><img class="rounded-circle" style="width:40px;" src="{% static 'assets/images/user/avatar-1.jpg' %}" alt="activity-user"></td>
-                                                            <td>
-                                                                <h6 class="mb-1">Ida Jorgensen</h6>
-                                                                <p class="m-0">Lorem Ipsum is simply text of…</p>
-                                                            </td>
-                                                            <td>
-                                                                <h6 class="text-muted f-w-300"><i class="fas fa-circle text-c-red f-10 m-r-15"></i>19 MAY 12:56</h6>
-                                                            </td>
-                                                            <td><a href="#!" class="label theme-bg2 text-white f-12">Reject</a><a href="#!" class="label theme-bg text-white f-12">Approve</a></td>
-                                                        </tr>
-                                                        <tr class="unread">
-                                                            <td><img class="rounded-circle" style="width:40px;" src="{% static 'assets/images/user/avatar-2.jpg' %}" alt="activity-user"></td>
-                                                            <td>
-                                                                <h6 class="mb-1">Albert Andersen</h6>
-                                                                <p class="m-0">Lorem Ipsum is simply dummy…</p>
-                                                            </td>
-                                                            <td>
-                                                                <h6 class="text-muted"><i class="fas fa-circle text-c-green f-10 m-r-15"></i>21 July 12:56</h6>
-                                                            </td>
-                                                            <td><a href="#!" class="label theme-bg2 text-white f-12">Reject</a><a href="#!" class="label theme-bg text-white f-12">Approve</a></td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div> -->
-                                <!--[ Recent Users ] end-->
-
-                                <!-- [ statistics year chart ] start -->
-                                <!-- <div class="col-xl-4 col-md-6">
-                                    <div class="card card-event">
-                                        <div class="card-block">
-                                            <div class="row align-items-center justify-content-center">
-                                                <div class="col">
-                                                    <h5 class="m-0">Upcoming Event</h5>
-                                                </div>
-                                                <div class="col-auto">
-                                                    <label class="label theme-bg2 text-white f-14 f-w-400 float-right">34%</label>
-                                                </div>
-                                            </div>
-                                            <h2 class="mt-3 f-w-300">45<sub class="text-muted f-14">Competitors</sub></h2>
-                                            <h6 class="text-muted mt-4 mb-0">You can participate in event </h6>
-                                            <i class="fab fa-angellist text-c-purple f-50"></i>
-                                        </div>
-                                    </div>
-                                    <div class="card">
-                                        <div class="card-block border-bottom">
-                                            <div class="row d-flex align-items-center">
-                                                <div class="col-auto">
-                                                    <i class="feather icon-zap f-30 text-c-green"></i>
-                                                </div>
-                                                <div class="col">
-                                                    <h3 class="f-w-300">235</h3>
-                                                    <span class="d-block text-uppercase">TOTAL IDEAS</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="card-block">
-                                            <div class="row d-flex align-items-center">
-                                                <div class="col-auto">
-                                                    <i class="feather icon-map-pin f-30 text-c-blue"></i>
-                                                </div>
-                                                <div class="col">
-                                                    <h3 class="f-w-300">26</h3>
-                                                    <span class="d-block text-uppercase">TOTAL LOCATIONS</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div> -->
-                                <!-- [ statistics year chart ] end -->
+                                
                                 <!--[social-media section] start-->
                                 <div class="col-md-12 col-xl-4">
                                     <div class="card card-social">
@@ -504,6 +380,6 @@ Admin-home
             </div>
         </div>
     </div>
-    <!-- [ Main Content ] end -->
+    <!-- [ Main Content ] end
     {% endblock%}
     

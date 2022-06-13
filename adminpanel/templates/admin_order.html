@@ -49,7 +49,16 @@
         <td> {{txn.order.status}}</td>
         <td>{{txn.order.state}}</td>
         <td>{{txn.product_price}}</td>
-        <td><a href="{% url 'admin_orderedit' txn.order.order_number %} ">edit<i class="fas fa-edit"></i></a></td>
+
+        <td>
+            <!-- <select name="size" class="form-control " style ="width:150px" required>
+                 <option value="" disabled selected>select</option> -->
+            <!-- <form action="" method="POST" style="padding:2rem;margin:auto; "   enctype="multipart/form-data">
+                {% csrf_token %}
+                {{form.status}}
+                <button type="submit">save</button> -->
+            <a href="{% url 'admin_orderedit' txn.order.order_number %} ">edit<i class="fas fa-edit"></i></a> </td>
+        
         <td><a href="{% url 'order_cancel' txn.order.order_number %}">cancel<i class="fas fa-delete"></i></a></td>
         
     </tr>  

@@ -31,7 +31,7 @@
                 </div>
               </div>
               <br>
-              <div class="card">
+              <!-- <div class="card">
                 <div class="card-header">
                  Payment Method
                 </div>
@@ -40,7 +40,7 @@
                   
                   <a href="{% url 'cash_on_delivery' order.order_number  %}" class="btn btn_1 mt-3" style="padding:17px 35px" >Cash on delivery</a>
                 </div>
-              </div>
+              </div> -->
               <br>
               <div class="card">
                 <div class="card-header">
@@ -109,7 +109,58 @@
                     <p class="text-center mb-3 p-3">
                         <img src="{% static 'img/payments.png' %}" height="26">
                     </p>
-                    <a href="{% url 'checkout' %}"><button class="btn btn-block btn-primary font-weight-bold my-3 py-3">Proceed To Checkout</button></a>
+                    <a href="{% url 'cash_on_delivery' order.order_number  %}" class="btn btn_1 btn-block  btn-primary mt-3" style="padding:10px 35px" >Cash on delivery</a>
+                    <br><!-- <a href="{% url 'checkout' %}"><button class="btn btn-block btn-primary font-weight-bold my-3 py-3">Proceed To Checkout</button></a> -->
+                    <div id="paypal-button-container"></div> 
+                    <!-- to load paypal button -->
+                    <button class="btn btn_1 btn-block btn-secondary mt-3" style="padding:10px 35px" id="rzp-button1">Pay with Razorpay</button>
+                        <form action={% url 'razor_success' %} method="POST">
+                            
+                            <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+                            <script>
+                            var options = {
+                                "key": "{{ razorpay_merchant_key }}", // Enter the Key ID generated from the Dashboard
+                                "amount": "{{ razorpay_amount }}", // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+                                "currency": "INR",
+                                "name": "My cart",
+                                "description": "Test Transaction",
+                                "image": "https://example.com/your_logo",
+                                "order_id": "{{ razorpay_order_id }}", 
+                                "callback_url": "{{callback_url}}",
+                               
+                                "prefill": {
+                                    "name": "Anju",
+                                    "email": "Ohbaby@gmail.com",
+                                    "contact": "9999999999"
+                                },
+                                "notes": {
+                                    "address": "Razorpay Corporate Office"
+                                },
+                                "theme": {
+                                    "color": "#3399cc",
+                                    "hide_topbar": true 
+                                },
+                                "modal": {
+                                "animation": true,
+                                
+                                }
+                    
+                            };
+                            var rzp1 = new Razorpay(options);
+                            document.getElementById('rzp-button1').onclick = function(e){
+                                rzp1.open();
+                                e.preventDefault();
+                            }
+                            </script>
+                    </form>
+                
+                
+                
+
+
+
+
+
                 </div>
             </div>
         </div>
@@ -117,4 +168,95 @@
 </div>
 <!-- Cart End -->
 {%endif%}
+
+<!-- Set up a container element paypal for the button -->
+<script src="https://www.paypal.com/sdk/js?client-id=AQHXfWRlM_5UNulYzmq-DaLLs0kqtq-EpDj3zNXu7UnWUG4vbpMEAhAE4zHh48XUmanAhZt2J5GT-Ohz&currency=USD"></script>
+<div id="paypal-button-container"></div>
+  <!-- for paypal script -->      
+<script>
+        function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                    }
+            }
+        }
+        return cookieValue;
+        }
+
+        var csrftoken = getCookie('csrftoken');
+        var total = '{{ grand_total }}'
+        var url = "{% url 'payments' %}"
+        var orderID = '{{order.order_number}}'       
+        var payment_method= 'Paypal'
+
+
+
+
+
+        paypal.Buttons({
+
+        // Sets up the transaction when a payment button is clicked
+        createOrder: (data, actions) => {
+
+        return actions.order.create({
+        purchase_units: [{
+        amount: {
+        value: total   
+        }
+        }]
+        });
+        },
+
+        // Finalize the transaction after payer approval
+        onApprove: (data, actions) => {
+        return actions.order.capture().then(function(orderData) {
+
+        console.log('Capture result', orderData, JSON.stringify(orderData, null, 2));
+
+        const transaction = orderData.purchase_units[0].payments.captures[0];
+
+        // completeOrder()
+        sendData();              
+        function sendData(){
+
+        //send payment details to backend
+                                fetch(url, {
+                                method: 'POST',       
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRFToken':csrftoken
+                                },
+                                body: JSON.stringify({
+                                    orderID :orderID,
+                                    transID: orderData.id,
+                                    payment_method:payment_method,
+                                    status:orderData.status,
+                                    total:total,
+                                }),
+                                })
+                                .then(response => response.json())
+                                .then(data => {
+                                console.log('Success:', data);
+                                window.location.href = window.location.origin + '/orders/paypal_complete/'
+                                console.log(window.location)
+                                })
+                                .catch((error) => {
+                                console.error('Error:', error);
+
+                                }); 
+
+        }
+
+        });
+        }
+        }).render('#paypal-button-container');
+</script>     
+
 {% endblock %}

@@ -12,8 +12,8 @@ class Payment(models.Model):
     status = models.CharField(max_length=100)
     created_at = models.DateTimeField(auto_now_add=True)
 
-    def __str__(self):
-        return self.payment_id
+    def __unicode__(self):
+        return self.payment_id,self.user
 
 class Order(models.Model):
     STATUS = (
@@ -87,3 +87,10 @@ class OrderProduct(models.Model):
 
     class Meta:
         ordering= ('-created_at','-updated_at')
+
+class RazorPay(models.Model):
+    order = models.ForeignKey(Order,on_delete=models.CASCADE)
+    razor_pay = models.CharField(max_length=200)
+    
+    def __str__(self):
+        return self.order.order_number

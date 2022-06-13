@@ -1,7 +1,7 @@
 from itertools import product
 from django.db import models
 from accounts.models import Account
-from products.models import Products
+from products.models import Products, Variation
 # Create your models here.
 class Cart(models.Model):
     cart_id=models.CharField(max_length=250,blank=True)
@@ -12,6 +12,7 @@ class Cart(models.Model):
 
 class CartItem(models.Model):
     user = models.ForeignKey(Account, on_delete=models.CASCADE, null=True)
+    variations=models.ManyToManyField(Variation,blank=True)
     product=models.ForeignKey(Products,on_delete=models.CASCADE)
     cart=models.ForeignKey(Cart,on_delete=models.CASCADE)
     quantity=models.IntegerField()

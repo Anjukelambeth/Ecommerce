@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'products',
     'cart',
     'orders',
+    'mathfilters',
 ]
 
 MIDDLEWARE = [
@@ -147,3 +148,15 @@ MESSAGE_TAGS = {
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+RAZOR_KEY_SECRET = 'mlPV94Zso2JPG3lVCMwbPFze'
+RAZOR_KEY_ID='rzp_test_uTxLZg7wSicq7Y'
+
+#to secure cookie in razor payment
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+# CSRF_COOKIE_SAMESITE = 'None'
+# SESSION_COOKIE_SAMESITE = 'None'
+
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
