@@ -1,6 +1,7 @@
 from itertools import product
 from django.db import models
 from accounts.models import Account
+from adminpanel.models import ProductOffer
 from products.models import Products, Variation
 # Create your models here.
 class Cart(models.Model):
@@ -19,8 +20,10 @@ class CartItem(models.Model):
     is_active=models.BooleanField(default=True)
 
     def sub_total(self):
-        return self.product.price * self.quantity
-
+        if ProductOffer.objects.filter(product=self.product).exists():
+            return (self.product.price -  ((self.product.price* self.product.product_offer.discount)/100)) * self.quantity
+        else:
+            return self.product.price * self.quantity
 
     def __str__(self):
         return self.product.product_name

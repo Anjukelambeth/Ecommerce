@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load mathfilters %}
 {% block title %}  Store 
 {% endblock %}
 {% block content %}
@@ -64,7 +65,13 @@
                               <tr>
                                   
                                   <td class="align-middle"><img src="{{cart_item.product.images.url}}" alt="" style="width: 50px;"> {{cart_item.product.product_name}}</td>
-                                  <td class="align-middle">₹{{cart_item.product.price}}</td>
+                                  <td class="align-middle">
+                                    {% if cart_item.product.product_offer%}
+                                   ₹{{cart_item.product.product_offer.discount|mul:cart_item.product.price|div:100|sub:cart_item.product.price|abs}}
+                                  {% else%}
+                                     ₹{{cart_item.product.price}}
+                                  {% endif%}
+                                  </td>
                                   <td class="align-middle">{{cart_item.quantity}} </td>
                                   <td class="align-middle">₹{{cart_item.sub_total}}</td>
                                   
@@ -170,7 +177,7 @@
 {%endif%}
 
 <!-- Set up a container element paypal for the button -->
-<script src="https://www.paypal.com/sdk/js?client-id=AQHXfWRlM_5UNulYzmq-DaLLs0kqtq-EpDj3zNXu7UnWUG4vbpMEAhAE4zHh48XUmanAhZt2J5GT-Ohz&currency=USD"></script>
+<script src="https://www.paypal.com/sdk/js?client-id=AQHXfWRlM_5UNulYzmq-DaLLs0kqtq-EpDj3zNXu7UnWUG4vbpMEAhAE4zHh48XUmanAhZt2J5GT-Ohz&currency=USD&disable-funding=credit,card"></script>
 <div id="paypal-button-container"></div>
   <!-- for paypal script -->      
 <script>

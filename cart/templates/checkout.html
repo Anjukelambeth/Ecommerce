@@ -1,8 +1,19 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load mathfilters %}
 {% block title %}  Buy Now
 {% endblock %}
 <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/sweetalert2@10.10.1/dist/sweetalert2.min.css'>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+<!-- <script>
+  var rates = document.getElementById('addr').value;
+  if (document.getElementById('r1').checked) {
+    rate_value = document.getElementById('r1').value;
+  }
+</script> -->
+
 {% block content %}
 {% for message in messages %}
 <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
@@ -23,62 +34,119 @@
                   <form class="row contact_form" action="{% url 'place_order' %}" method="post">
                     {% csrf_token %}
                     <div class="col-md-6 form-group p_star">
-                      <input type="text" class="form-control" name="first_name" required placeholder="First name"/>
-                      
+                      <input type="text" class="form-control" name="first_name" value=" {{profile.first_name}}" required />
+                     
                     </div>
                     <div class="col-md-6 form-group p_star">
-                      <input type="text" class="form-control" id="last" name="last_name" required placeholder="Last name" />
+                      <input type="text" class="form-control" id="last" name="last_name" required value=" {{profile.last_name}}" />
                     
                     </div>
                     <div class="col-md-6 form-group p_star">
-                      <input type="text" class="form-control" id="number" name="phone_number" required placeholder="Phone number" />
+                      <input type="text" class="form-control" id="number" name="phone_number" required placeholder="Enter Your Phone Number"/>
            
                     </div>
                     <div class="col-md-6 form-group p_star">
-                      <input type="email" class="form-control" id="email" name="email" required placeholder="Email Address" />
+                      <input type="email" class="form-control" id="email" name="email" required value=" {{profile.email}}" />
                       
                     </div>
                     <div class="col-md-6 form-group p_star">
-                      <input type="text" class="form-control" id="" name="country" required placeholder="Country" />
+                      <input type="text" class="form-control" id="country" name="country"  placeholder="Country" />
                       
                     </div>
                     <div class="col-md-6 form-group p_star">
-                      <input type="text" class="form-control" id="add1" name="address_line1" required placeholder="Address line 01"/>
+                      <input type="text" class="form-control" id="address_line1" name="address_line1" required placeholder="Address line 01"/>
                     
                     </div>
                     <div class="col-md-6 form-group p_star">
-                      <input type="text" class="form-control" id="add1" name="address_line2" placeholder="Address line 02" />
+                      <input type="text" class="form-control" id="address_line2"  name="address_line2" required  placeholder="Address line 02" />
                     </div>
                     <div class="col-md-6 form-group p_star">
                       <input type="text" class="form-control" id="city" name="city" required placeholder="Town/City"/>
                       
                     </div>
                     <div class="col-md-6 form-group">
-                      <input type="text" class="form-control" id="city" name="district" placeholder="city" required />
+                      <input type="text" class="form-control" id="district" name="district" placeholder="city" required />
                     </div>
                     <div class="col-md-6 form-group">
                       <input type="text" class="form-control" id="zip" name="zip" placeholder="Postcode/ZIP" />
                     </div>
                     
                     <div class="col-md-6 form-group">
-                      <input type="text" class="form-control" id="zip" name="state" placeholder="State" />
+                      <input type="text" class="form-control" id="state" name="state" placeholder="State" />
                       
                     </div>
                     
                   </div>
                   <div class="col-md-2"> <h3>Select Address</h3>
                     {%for add in add %}
-                      <div class="form-check mt-2 mb-5 pl-3">
-                        <input class="form-check-input" type="radio" value="" name="radAnswer" >
-                        <label class="form-check-label fw-bold" for="">
+                      <div class="form-check mt-2 mb-5 pl-3" id="wrapper">
+                        <input class="form-check-input radio" type="checkbox" class="radio" value="" name="radAnswer" id="check-address" />
+                        <input style="border:none" disabled="disabled" id="txtfname" name="txtfname" value='{{add.address_line_1}}'/>
+                        <input style="border:none" disabled="disabled" id="txtlname" name="txtlname" value='{{add.address_line_2}}'/>
+                        <input style="border:none" disabled="disabled" id="txtaddress" name="txtaddress"  value='{{add.city}}'/>
+                        <input style="border:none" disabled="disabled" id="txtcity" name="txtcity"value='{{add.state}}'/>
+                        <input style="border:none" disabled="disabled"id="txtzip" name="txtzip"value='{{add.zipcode}}'/>
+                        
+                        
+                         
+                        <!-- <label class="form-check-label fw-bold" for="">
                           <h6>Address {{forloop.counter}} </h6>
-                            {{add.address_line_1}},
-                            {{add.address_line_2}} ,
-                            {{add.city}} ,
-                            {{add.state}} -
-                            {{add.zipcode}} </label>
+                          <h6 id="line1"> {{add.address_line_1}},</h6>
+                            <h6> {{add.address_line_2}} ,</h6>
+                              <h6> {{add.city}} ,</h6>
+                                <h6> {{add.state}} -</h6>
+                                  <h6> {{add.zipcode}} </h6>
+                          </label> -->
                       </div>
                       {%endfor%}
+                      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+                      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+                      <script type="text/javascript">
+                         $(document).ready(function(){ 
+                           $('#check-address').on('click',function(event){ 
+                            
+                            if ($('#check-address').is(":checked")) {
+                            $('#address_line1').val($('#txtfname').val());
+                            $('#address_line2').val($('#txtlname').val());
+                            $('#city').val($('#txtaddress').val());
+                            $('#district').val($('#txtaddress').val());
+                            $('#zip').val($('#txtzip').val());
+                            $('#state').val($('#txtcity').val());
+                            
+                           
+                          }else { //Clear on uncheck
+                            $('#address_line1').val("");
+                            $('#address_line2').val("");
+                            $('#city').val("");
+                            $('#district').val("");
+                            $('#zip').val("");
+                           
+                           };
+                          });
+                        });
+                    
+                         
+                      </script>
+                      <script type="text/javascript">
+                          // the selector will match all input controls of type :checkbox
+                          // and attach a click event handler 
+                          $("input:checkbox").on('click', function() {
+                            // in the handler, 'this' refers to the box clicked on
+                            var $box = $(this);
+                            if ($box.is(":checked")) {
+                              // the name of the box is retrieved using the .attr() method
+                              // as it is assumed and expected to be immutable
+                              var group = "input:checkbox[name='" + $box.attr("name") + "']";
+                              // the checked state of the group/box on the other hand will change
+                              // and the current value is retrieved using .prop() method
+                              $(group).prop("checked", false);
+                              $box.prop("checked", true);
+                            } else {
+                              $box.prop("checked", false);
+                            }
+                          });
+                      </script>
+                     
                       </div> 
                 <div class="col-lg-4">
                   <div class="order_box">
@@ -99,10 +167,16 @@
                           <tr>
                               
                               <td class="align-middle"><img src="{{cart_item.product.images.url}}" alt="" style="width: 50px;"> {{cart_item.product.product_name}}</td>
-                              <td class="align-middle">₹{{cart_item.product.price}}</td>
+                              <td class="align-middle">
+                                {% if cart_item.product.product_offer%}
+                                   ₹{{cart_item.product.product_offer.discount|mul:cart_item.product.price|div:100|sub:cart_item.product.price|abs}}
+                                  {% else%}
+                                     ₹{{cart_item.product.price}}
+                                  {% endif%}
+                              </td>
                               <td class="align-middle">{{cart_item.quantity}} </td>
                               <td class="align-middle">₹{{cart_item.sub_total}}</td>
-                              
+                         
                               
                           </tr>
                           
@@ -159,5 +233,5 @@
                         </div>
                         {%endfor%} 
                         -->
-    
+                        
 {% endblock %}

@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load mathfilters %}
 {% block title %}  Store 
 {% endblock %}
 {% block content %}
@@ -89,14 +90,45 @@
                     <h6 class="title">Price range </h6>
                 </a>
             </header>
+            
             <div class="filter-content collapse show" id="collapse_3">
                 <div class="card-body">
                     
                     <div class="form-row">
-                    <div class="form-group col-md-6">
-                      <label>Min</label>
+                    <div class="form-group col-md-12">
+                        <!-- <h3 class="widget-title">
+                            <a data-toggle="collapse" href="#widget-6" role="button" aria-expanded="true" aria-controls="widget-5">
+                                Sort by:
+                            </a>
+                        </h3>
+                        <div class="widget-body">
+                            <select  onchange="location = this.value;" class="form-control">
+                                <option value="" id="price-placeholder" disabled selected hidden>...</option>
+                                <option value="?sort=l2h">Price: Low to High</option>
+                                <option value="?sort=h2l">Price: High to Low</option>
+                                <option value="?sort=date">Newest First</option>
+                            </select>
+                                
+                        </div>
+                        <br> -->
+                        <!-- <h3 class="widget-title">
+                            <a data-toggle="collapse" href="#widget-5" role="button" aria-expanded="true" aria-controls="widget-5">
+                               Price:
+                            </a>
+                        </h3> -->
+                        <div class="widget-body">
+                            <select  onchange="location = this.value;" class="form-control">
+                                <option value="" id="price-placeholder" disabled selected hidden>...</option>
+                                <option id="pr500" value='?price=500' >less than 500</option>
+                                <!-- <option id="pr1000" value='?price=1000' >less than 1000</option> -->
+                                <option id="pr5000" value='?price=5000' >less than 5000</option>
+                                <!-- <option id="pr10000" value='?price=1000' >less than 10000</option> -->
+                              </select>
+                                
+                        </div>
+                      <!-- <label>Min</label> -->
                       <!-- <input class="form-control" placeholder="$0" type="number"> -->
-                          <select class="mr-2 form-control">
+                          <!-- <select class="mr-2 form-control">
                             <option value="0">₹0</option>
                             <option value="50">₹50</option>
                             <option value="100">₹100</option>
@@ -118,8 +150,9 @@
                             <option value="2000">₹2000+</option>
                         </select>
                     </div>
-                    </div> <!-- form-row.// -->
-                    <button class="btn btn-block btn-primary">Apply</button>
+                    </div> form-row.// -->
+                    <br>
+                    <button class="btn btn-block btn-primary" id="priceFilterBtn">Apply</button>
                 </div><!-- card-body.// -->
             </div>
         </article> <!-- filter-group .// -->
@@ -151,7 +184,11 @@
                         <div class="fix-height">
                             <a href="{% url 'product_detail' product.category.slug product.slug %}" class="title">{{product.product_name}}</a>
                             <div class="price-wrap mt-2">
-                                <span class="price">₹{{product.price}}</span>
+                                {% if product.product_offer%} 
+                                <h6>₹{{product.product_offer.discount|mul:product.price|div:100|sub:product.price|abs}}</h6>  <h6 class="text-muted ml-2"><del>₹{{product.price}}</del></h6>
+                                {% else%}
+                                <h6>₹{{product.price}}</h6>
+                                {% endif%}
                             </div> <!-- price-wrap.// -->
                         </div>
                         <!-- <a href="{% url 'product_detail' product.category.slug product.slug %}" class="btn btn-block btn-primary">View Detail </a>	 -->
@@ -201,3 +238,68 @@
     <!-- ========================= SECTION CONTENT END// ========================= -->
 
 {% endblock %}
+<script>
+
+  
+    $(document).ready(function(){
+        $(".ajaxLoader").hide();
+        // Product Filter Start
+        $("#priceFilterBtn").on('click',function(){
+            var _filterObj={};
+            var _minPrice=$('#maxPrice').attr('min');
+            var _maxPrice=$('#maxPrice').val();
+            _filterObj.minPrice=_minPrice;
+            _filterObj.maxPrice=_maxPrice;
+            $(".filter-checkbox").each(function(index,ele){
+                var _filterVal=$(this).val();
+                var _filterKey=$(this).data('filter');
+                _filterObj[_filterKey]=Array.from(document.querySelectorAll('input[data-filter='+_filterKey+']:checked')).map(function(el){
+                     return el.value;
+                });
+            });
+    
+            // Run Ajax
+            $.ajax({
+                url:'/filter-data',
+                data:_filterObj,
+                dataType:'json',
+                beforeSend:function(){
+                    $(".ajaxLoader").show();
+                },
+                success:function(res){
+                    console.log(res);
+                    $("#filteredProducts").html(res.data);
+                    $(".ajaxLoader").hide();
+                }
+            });
+        });
+        // End
+    
+        // Filter Product According to the price
+        $("#maxPrice").on('blur',function(){
+            var _min=$(this).attr('min');
+            var _max=$(this).attr('max');
+            var _value=$(this).val();
+            console.log(_value,_min,_max);
+            if(_value < parseInt(_min) || _value > parseInt(_max)){
+                alert('Values should be '+_min+'-'+_max);
+                $(this).val(_min);
+                $(this).focus();
+                $("#rangeInput").val(_min);
+                return false;
+            }
+        });
+        // End
+    });
+    </script>
+    <!-- <script>
+        // for getting url after applying price filtering
+        function finalurl2() {
+           var url = new URL(window.location.href);
+           var search_params = url.searchParams;
+           search_params.set('price', document.getElementById("price-list").value);
+           url.search = search_params.toString();
+           var new_url = url.toString();
+           return new_url
+         }
+   </script> -->

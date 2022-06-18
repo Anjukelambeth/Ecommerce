@@ -68,19 +68,25 @@
                         <a href="/admin_home" class="nav-link "><span class="pcoded-micon"><i class="feather icon-home"></i></span><span class="pcoded-mtext">Dashboard</span></a>
                     </li>
                     <li data-username="dashboard Default Ecommerce CRM Analytics Crypto Project" class="nav-item active">
-                        <a href="/admin_products" class="nav-link "><span class="pcoded-micon"><i class="feather icon-home"></i></span><span class="pcoded-mtext">Product Management</span></a>
+                        <a href="/admin_products" class="nav-link "><span class="pcoded-micon"><i class="feather icon-menu"></i></span><span class="pcoded-mtext">Product Management</span></a>
                     </li>
                     <li data-username="basic components Button Alert Badges breadcrumb Paggination progress Tooltip popovers Carousel Cards Collapse Tabs pills Modal Grid System Typography Extra Shadows Embeds" class="nav-item active">
                         <a href="/admin_category" class="nav-link "><span class="pcoded-micon"><i class="feather icon-box"></i></span><span class="pcoded-mtext">Category Management</span></a>
                     </li>
                     <li data-username="Table bootstrap datatable footable" class="nav-item active">
-                        <a href="/admin_usersview" class="nav-link "><span class="pcoded-micon"><i class="feather icon-server"></i></span><span class="pcoded-mtext">User Management</span></a>
+                        <a href="/admin_usersview" class="nav-link "><span class="pcoded-micon"><i class="feather icon-user"></i></span><span class="pcoded-mtext">User Management</span></a>
                     </li>
                     <li data-username="form elements advance componant validation masking wizard picker select" class="nav-item active">
                         <a href="/admin_offerview" class="nav-link "><span class="pcoded-micon"><i class="feather icon-file-text"></i></span><span class="pcoded-mtext">Coupon/Offer</span></a>
                     </li>
                     <li data-username="Charts Morris" class="nav-item active"><a href="/admin_order" class="nav-link "><span class="pcoded-micon"><i class="feather icon-pie-chart"></i></span><span class="pcoded-mtext">Orders</span></a></li>
-                    
+                    <li data-username="Table bootstrap datatable footable" class="nav-item active  pcoded-hasmenu">
+                        <a href="javascript:" class="nav-link "><span class="pcoded-micon"><i class="feather icon-clipboard"></i></span><span class="pcoded-mtext">Reports</span></a>
+                        <ul class="pcoded-submenu">
+                            <li class=""><a href="{% url 'report' %}" class="" target="_blank">report</a></li>
+                            <li class=""><a href="{% url 'sales_report' %}" class="" target="_blank">Sales Report</a></li>
+                        </ul>
+                    </li>
             </div>
         </div>
     </nav>

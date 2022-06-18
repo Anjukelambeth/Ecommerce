@@ -49,6 +49,7 @@ class UserForm(forms.ModelForm):
         super(UserForm,self).__init__(*args,**kwargs)
         for field in self.fields:
             self.fields[field].widget.attrs['class']= 'form-control'
+            # self.fields[field].widget.attrs['class']= 'required '
 
 class UserAddressForm(forms.ModelForm):
     class Meta:

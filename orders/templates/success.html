@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load mathfilters %}
 {% block title %}  Store 
 {% endblock %}
 
@@ -110,12 +111,12 @@ input{
                                                         </tr>
                                                         <tr>
                                                             <th colspan="2" class="text-right">Delivery charge:</th>
-                                                            <th class="text-center">5</th>
+                                                            <th class="text-center">100</th>
                                                         </tr>
                                                         
                                                         <tr>
                                                             <th colspan="2" class="text-right">Grand Total:</th>
-                                                            <th class="text-center">{{order.order_total|add:50}}</th>
+                                                            <th class="text-center">{{order.order_total|add:100}}</th>
                                                         </tr>
                                                     </tfoot>
                                                 </table>

@@ -17,11 +17,11 @@ class Payment(models.Model):
 
 class Order(models.Model):
     STATUS = (
-        ('New','New'),
-        ('Accepted','Accepted'),
-        ('Completed','Completed'),
-        ('Cancelled','Cancelled'),
-        ('Returned','Returned')
+        ('Ordered', 'Ordered'),
+        ('Shipped', 'Shipped'),
+        ('Delivered', 'Delivered'),
+        ('Returned', 'Returned'),
+        ('Cancelled', 'Cancelled')
 
     )
     PAYMENT_MODE = (
@@ -44,7 +44,7 @@ class Order(models.Model):
     zip = models.CharField(max_length=10, null=True, blank=True)
     order_note = models.CharField(max_length=100, blank=True)
     order_total = models.FloatField()
-    status = models.CharField(max_length=10, choices=STATUS, default='New')
+    status = models.CharField(max_length=10, choices=STATUS, default='Ordered')
     ip = models.CharField(max_length=20,blank=True)
     is_ordered = models.BooleanField(default=False)
     created_at  = models.DateTimeField(auto_now_add=True)

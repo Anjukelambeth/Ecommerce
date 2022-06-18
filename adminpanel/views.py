@@ -1,5 +1,6 @@
 import calendar
 from itertools import product
+from django.http import FileResponse, HttpResponse
 from django.shortcuts import render,redirect
 from django.contrib.auth import authenticate,login,logout
 from django.contrib import messages
@@ -16,6 +17,19 @@ import os
 from slugify import slugify
 from django.db.models.functions import ExtractMonth,ExtractDay
 from django.db.models import Count
+import csv
+from csv import writer
+from datetime import datetime
+# from weasyprint import HTML, html
+import tempfile
+from django.template.loader import render_to_string
+# import os
+import xlwt
+import io
+from reportlab.pdfgen import canvas
+from reportlab.lib.units import inch
+from reportlab.lib.pagesizes import letter
+# os.add_dll_directory()
 # from django.contrib.auth.decorators import user_passes_test
 # Create your views here.
 
@@ -99,6 +113,64 @@ def admin_home(request):
         }
     
     return render(request,'admin_home.html',context)
+
+#csv export
+def export_csv(request):
+    response = HttpResponse(content_type='text/csf')
+    response['Content-Disposition']='attachement; filename=Expenses' + str(datetime.now())+'.csv'
+    writer = csv.writer(response)
+    writer.writerow(['Amount','name','date','order'])
+    orders = Order.objects.filter(status='Completed')
+    for i in orders:
+        writer.writerow([i.first_name])
+    return response
+
+#excel export 
+def export_excel(request):
+    response = HttpResponse(content_type='applications/ms-excel')
+    response['Content-Disposition']='attachement; filename=Expenses' + str(datetime.now())+'.xls'
+    wb = xlwt.Workbook(encoding='utf-8')
+    ws =wb.add_sheet('Expenses')
+    row_num=0
+    font_style = xlwt.XFStyle()
+    font_style.font.bold = True
+    columns = ['first_name','last_name','order_number','status']
+    for col_num in range(len(columns)):
+        ws.write(row_num,col_num,columns[col_num],font_style)
+    font_style = xlwt.XFStyle()
+    
+    rows = Order.objects.all().values_list('first_name','last_name','order_number','status')
+    for row in rows:
+        row_num+=1
+
+        for col_num in range(len(row)):
+            ws.write(row_num,col_num,str(row[col_num]),font_style)
+    wb.save(response)
+    return response
+
+#export to pdf
+# def export_pdf(request):
+#     response = HttpResponse(content_type='applications/pdf')
+#     response['Content-Disposition']='attachement; inline; filename=Expenses' + str(datetime.now())+'.pdf'
+#     response['Content-Transfer-Encoding']='binary'
+#     orders = Order.objects.all()
+#     context ={
+#         'orders':orders,
+
+#     }
+#     html_string = render_to_string('admin_panel/pdf_output.html',context)
+#     html = HTML(string=html_string)
+#     result = html.write_pdf()
+
+
+#     with tempfile.NamedTemporaryFile(delete=True) as output: 
+#         output.write(result)
+#         output.flush()
+
+#         output = open(output.name,'rb')
+#         response.write(output.read())
+#     return response
+
 
 @login_required(login_url='admin_panel')
 def admin_signout(request):
@@ -226,6 +298,7 @@ def add_products(request):
 
 def admin_order(request):
     orders = OrderProduct.objects.all()
+    
     context = {
         'orders':orders,
         
@@ -238,6 +311,42 @@ def order_cancel(request,order_number):
     orders.status ='Cancelled'
     orders.save()
     return redirect ('admin_order')
+
+def cancel_order_admin(request, order_number):
+    order = Order.objects.get( order_number= order_number)
+    order.status = 'Cancelled'
+    order.save()
+    
+    return redirect('order')
+    
+def return_order_admin(request, order_number):
+    order = Order.objects.get( order_number= order_number)
+    order.status = 'Returned'
+    order.save()
+    
+    return redirect('order')
+
+
+def deliver_order(request, order_number):
+    order = Order.objects.get( order_number= order_number)
+    order.status = 'Delivered'
+    order.save()
+    
+    return redirect('order')
+
+def ship_order(request, order_number):
+    order = Order.objects.get( order_number= order_number)
+    order.status = 'Shipped'
+    order.save()
+    
+    return redirect('order')
+
+def order_order(request, order_number):
+    order = Order.objects.get( order_number= order_number)
+    order.status = 'Ordered'
+    order.save()
+    
+    return redirect('order')
 
 def admin_orderedit(request,order_number):
     orders = Order.objects.get(order_number=order_number)
@@ -257,7 +366,7 @@ def admin_orderedit(request,order_number):
 def admin_offerview(request):
     
     product_offer = ProductOffer.objects.all()
-   
+    
     context={
        
         'product_offer':product_offer,
@@ -294,3 +403,59 @@ def delete_product_offer(request,id):
     offer.delete()
     return redirect(admin_offerview)
 
+
+def report_pdf(request):
+    # create  bytestream buffer
+    buf = io.BytesIO()
+    # create a canvas
+    cnvs = canvas.Canvas(buf, pagesize=letter, bottomup= 0)
+    # create a text object
+    textobj = cnvs.beginText()
+    textobj.setTextOrigin(inch, inch)
+    textobj.setFont("Helvetica", 14)
+    
+    orders = OrderProduct.objects.all()
+    lines = []
+
+    for order in orders:
+        lines.append(str(order.user)) 
+        lines.append(str(order.payment)) 
+        lines.append(str(order.order)) 
+        lines.append(str(order.product)) 
+        lines.append(str(order.product_price)) 
+        lines.append('   ') 
+        
+
+    # loop 
+    for line in lines:
+        textobj.textLine(line)
+        
+
+    # finish
+    cnvs.drawText(textobj)
+    cnvs.showPage()
+    cnvs.save()
+    buf.seek(0)
+
+    return FileResponse(buf, as_attachment=True, filename='weekly sales report.pdf')
+
+def report(request):
+    return render(request, 'admin_report.html')
+
+@login_required(login_url='admin_login')
+def sales_report(request):    
+    if request.method == "POST":        
+        from_date = request.POST["from_date"]
+        to_date = request.POST["to_date"]
+        orders = Order.objects.filter(created_at__range=(from_date, to_date))
+        context = {
+        'orders':orders,          
+        }
+        return render(request,'sales_report.html',context)
+    
+    else:
+        orders = Order.objects.all().order_by('-order_number')
+        context = {
+            'orders':orders,            
+        }
+        return render(request,'sales_report.html',context)

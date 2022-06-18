@@ -36,30 +36,42 @@
         <th scope="col">Status</th>
         <th scope="col">State</th>
         <th scope="col">Total price</th>
-        <th scope="col">Edit</th>
-        <th scope="col">Cancel</th> 
+        <th scope="col">Actions</th>
+        <!-- <th scope="col">Cancel</th>  -->
     </tr>  
     </thead>  
     <tbody>  
-{% for txn in orders %}  
+{% for item in orders %}  
     <tr>  
-        <th scope="row">{{txn.order.order_number}}</th>
-        <th scope="row">{{txn.user}}</th>
-        <td>{{txn.payment.payment_method}}</td>
-        <td> {{txn.order.status}}</td>
-        <td>{{txn.order.state}}</td>
-        <td>{{txn.product_price}}</td>
+        <th scope="row">{{item.order.order_number}}</th>
+        <th scope="row">{{item.user}}</th>
+        <th>{{item.payment.payment_method}}</th>
+        <th> {{item.order.status}}</th>
+        <th>{{item.order.state}}</th>
+        <th>{{item.product_price}}</th>
 
-        <td>
-            <!-- <select name="size" class="form-control " style ="width:150px" required>
-                 <option value="" disabled selected>select</option> -->
-            <!-- <form action="" method="POST" style="padding:2rem;margin:auto; "   enctype="multipart/form-data">
-                {% csrf_token %}
-                {{form.status}}
-                <button type="submit">save</button> -->
-            <a href="{% url 'admin_orderedit' txn.order.order_number %} ">edit<i class="fas fa-edit"></i></a> </td>
+        <th>
+            <!-- {% if item.order.status == 'Cancelled' or item.order.status == 'Returned' or item.order.status == 'Delivered' %}
+            Can't Change
+            {% else %}
+            <div class="dropdown">
+              <button class="btn btn-info text-light dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                Order Status
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                <li><a class="dropdown-item " href="{% url 'order_order' item.order.order_number %}">Ordered</a></li>
+                <li><a class="dropdown-item " href="{% url 'ship_order' item.order.order_number %}">Shipped</a></li>
+                <li><a class="dropdown-item " href="{% url 'deliver_order' item.order.order_number %}">Delivered</a></li>
+                <li><a class="dropdown-item " href="{% url 'cancel_order_admin' item.order.order_number %}">Cancelled</a></li>
+                <li><a class="dropdown-item " href="{% url 'return_order_admin' item.order.order_number%}">Returned</a></li>
+              </ul>
+            </div>
+            {% endif %} -->
+            <a href="{% url 'admin_orderedit' item.order.order_number %} ">edit<i class="fas fa-edit"></i></a>
+                
+        </th>
         
-        <td><a href="{% url 'order_cancel' txn.order.order_number %}">cancel<i class="fas fa-delete"></i></a></td>
+        
         
     </tr>  
 {% endfor %}  

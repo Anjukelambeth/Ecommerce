@@ -1,5 +1,5 @@
 {% extends 'admin_base.html' %}
-<!-- {% load static %} -->
+{% load static %}
 {% block title %}
 Admin-home
 {% endblock %}
@@ -27,7 +27,7 @@ Admin-home
                                 </div>
                                 <hr class="dark horizontal my-0">
                                 <div class="card-footer p-3">
-                                <p class="mb-0"><span class="text-success text-sm font-weight-bolder">+55% </span>than lask week</p>
+                                <!-- <p class="mb-0"><span class="text-success text-sm font-weight-bolder">+55% </span>than lask week</p> -->
                                 </div>
                             </div>
                             </div>
@@ -43,7 +43,7 @@ Admin-home
                                 </div>
                                 <hr class="dark horizontal my-0">
                                 <div class="card-footer p-3">
-                                <p class="mb-0"><span class="text-success text-sm font-weight-bolder">+3% </span>than lask month</p>
+                                <!-- <p class="mb-0"><span class="text-success text-sm font-weight-bolder">+3% </span>than lask month</p> -->
                                 </div>
                             </div>
                             </div>
@@ -61,7 +61,7 @@ Admin-home
                                 </div>
                                 <hr class="dark horizontal my-0">
                                 <div class="card-footer p-3">
-                                <p class="mb-0"><span class="text-danger text-sm font-weight-bolder">-2%</span> than yesterday</p>
+                                <!-- <p class="mb-0"><span class="text-danger text-sm font-weight-bolder">-2%</span> than yesterday</p> -->
                                 </div>
                             </div>
                             </div>
@@ -78,7 +78,7 @@ Admin-home
                                 </div>
                                 <hr class="dark horizontal my-0">
                                 <div class="card-footer p-3">
-                                <p class="mb-0"><span class="text-success text-sm font-weight-bolder">+5% </span>than yesterday</p>
+                                <!-- <p class="mb-0"><span class="text-success text-sm font-weight-bolder">+5% </span>than yesterday</p> -->
                                 </div>
                             </div>
                             </div>
@@ -88,6 +88,119 @@ Admin-home
                         </div>
                     </div>
                     <!--  -->
+                    <div>
+                        <a href="{% url 'export_csv'%}" class="text-primary btn btn_1">export csv</a>
+                      <a href="{% url 'export_excel'%}" class="text-danger btn btn_1">export Excel</a>
+                        <!--  -->
+                       
+                    </div>
+                    <!-- Sales Chart Start -->
+<div class="container-fluid pt-4 px-4">
+    <div class="row g-4">
+        <div class="col-sm-12 col-xl-6">
+            <div class="bg-light text-center rounded p-4">
+                <div class="d-flex align-items-center justify-content-between mb-4">
+                    <h6 class="mb-0">Worldwide Sales</h6>
+                    
+                </div>
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+                <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+                <canvas id="myChart" width="400" height="400"></canvas>
+                <script>
+                const ctx = document.getElementById('myChart').getContext('2d');
+                const myChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ["Completed", "Accepted","New"],
+                        datasets: [{
+                            label: '# Sale',
+                            data: [12, 19, 3, 5, 2, 3],
+                            backgroundColor: [
+                                'rgba(255, 99, 132, 0.2)',
+                                'rgba(54, 162, 235, 0.2)',
+                                'rgba(255, 206, 86, 0.2)',
+                                'rgba(75, 192, 192, 0.2)',
+                                'rgba(153, 102, 255, 0.2)',
+                                'rgba(255, 159, 64, 0.2)'
+                            ],
+                            borderColor: [
+                                'rgba(255, 99, 132, 1)',
+                                'rgba(54, 162, 235, 1)',
+                                'rgba(255, 206, 86, 1)',
+                                'rgba(75, 192, 192, 1)',
+                                'rgba(153, 102, 255, 1)',
+                                'rgba(255, 159, 64, 1)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+                </script>
+                
+            </div>
+        </div>
+        
+        <div class="col-sm-12 col-xl-6">
+            <div class="bg-light text-center rounded p-4">
+                <div class="d-flex align-items-center justify-content-between mb-4">
+                    <h6 class="mb-0">Salse & Revenue</h6>
+                    
+                </div>
+                <canvas id="myChart2" width="400" height="400"></canvas>
+                <script>
+                const ctxn = document.getElementById('myChart2').getContext('2d');
+                const mychart2 = new Chart(ctxn, {
+                    type: 'bar',
+                    data: {
+                        labels: "{{dayday}}",
+                        datasets: [{
+                            label: '# Order',
+                            data: "{{orderperday}}",
+                            backgroundColor: 
+                            ["red", "green","blue","orange","brown"]
+                            ,
+                            borderColor: [
+                                'rgba(255, 99, 132, 1)',
+                                'rgba(54, 162, 235, 1)',
+                                'rgba(255, 206, 86, 1)',
+                                'rgba(75, 192, 192, 1)',
+                                'rgba(153, 102, 255, 1)',
+                                'rgba(255, 159, 64, 1)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+                </script>
+                
+                
+                   
+            </div>
+        </div>
+        
+
+    </div>
+</div>
+
+
+                    
+
+  
+ 
                 
                     <!-- [ breadcrumb ] end -->
                     <div class="main-body">
@@ -106,16 +219,17 @@ Admin-home
                                 <!--[ daily sales section ] end-->
                                 
                                 <!--[ Monthly  sales section ] starts-->
-                                <div class="col-md-6 col-xl-4">
-                                    <div class="card Monthly-sales">
+                                <!-- <div class="col-md-6 col-xl-4 "> -->
+                                    <div class="row">
+                                    <div class="card Monthly-sales ">
                                         <div class="card-block">
                                             <h6 class="mb-4">Monthly Sales</h6>
                                             <div class="row d-flex align-items-center">
                                                 <div class="col-9">
-                                                    <h3 class="f-w-300 d-flex align-items-center  m-b-0"><i class="feather icon-arrow-down text-c-red f-30 m-r-10"></i>₹ 2.942.32</h3>
+                                                    <h3 class="f-w-300 d-flex align-items-center  m-b-0"><i class="feather icon-arrow-down text-c-red f-30 m-r-10"></i>₹ {{revenue}}</h3>
                                                 </div>
                                                 <div class="col-3 text-right">
-                                                    <p class="m-b-0">36%</p>
+                                                    <!-- <p class="m-b-0">36%</p> -->
                                                 </div>
                                             </div>
                                             <div class="progress m-t-30" style="height: 7px;">
@@ -123,10 +237,7 @@ Admin-home
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                                <!--[ Monthly  sales section ] end-->
-                                <!--[ year  sales section ] starts-->
-                                <div class="col-md-12 col-xl-4">
+                               &nbsp;&nbsp;
                                     <div class="card yearly-sales">
                                         <div class="card-block">
                                             <h6 class="mb-4">Yearly Sales</h6>
@@ -144,10 +255,13 @@ Admin-home
                                         </div>
                                     </div>
                                 </div>
-                            
+                            </div>
+                                <!--[ Monthly  sales section ] end-->
+                                <!--[ year  sales section ] starts-->
+                                                            
                                 
-                                <!--[social-media section] start-->
-                                <div class="col-md-12 col-xl-4">
+                                <!-- [social-media section] start
+                                <div class="col-md-3 col-xl-4">
                                     <div class="card card-social">
                                         <div class="card-block border-bottom">
                                             <div class="row align-items-center justify-content-center">
@@ -239,10 +353,10 @@ Admin-home
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                </div> -->
                                 <!--[social-media section] end-->
                                 <!-- [ rating list ] starts-->
-                                <div class="col-xl-4 col-md-6">
+                                <!-- <div class="col-xl-4 col-md-6">
                                     <div class="card user-list">
                                         <div class="card-header">
                                             <h5>Rating</h5>
@@ -295,10 +409,10 @@ Admin-home
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                </div> -->
                                 <!-- [ rating list ] end-->
                                 <!-- <div class="col-xl-8 col-md-12 m-b-30"> -->
-                                    <div class="col-lg-4 col-md-6">
+                                    <!-- <div class="col-lg-4 col-md-6">
                                         <div class="card h-100">
                                           <div class="card-header pb-0">
                                             <h6>Orders overview</h6>
@@ -369,7 +483,7 @@ Admin-home
                                       </div>
                                                   
                                        
-                                    </div>
+                                    </div> -->
                                
 
                             </div>
@@ -380,6 +494,6 @@ Admin-home
             </div>
         </div>
     </div>
-    <!-- [ Main Content ] end
+    <!-- [ Main Content ] end -->
     {% endblock%}
-    
+ 

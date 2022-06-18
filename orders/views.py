@@ -5,6 +5,7 @@ from django.shortcuts import redirect, render
 from datetime import datetime
 from accounts.models import Account, UserAddresses
 from cart.models import CartItem
+from cart.views import offer_check_function
 from orders.forms import OrderForm
 from orders.models import Order, OrderProduct, Payment, RazorPay
 import datetime
@@ -28,7 +29,8 @@ def place_order(request,total = 0,quantity = 0):
         return redirect('store')
     
     for cart_item in cart_items:
-            total +=(cart_item.product.price * cart_item.quantity)
+            new_price = offer_check_function(cart_item)
+            total +=(new_price * cart_item.quantity)
             quantity += cart_item.quantity
     grand_total=total+100
 
@@ -175,6 +177,8 @@ def payments(request):
     return JsonResponse({'completed':'success'})
 
 def cash_on_delivery(request,order_number):
+    # if request.user.is_authenticated :
+    #     return redirect('cash_on_delivery')
     current_user = request.user
     order= Order.objects.get(order_number=order_number)
     

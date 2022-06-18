@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load mathfilters %}
 {% block title %}  Store 
 {% endblock %}
 {% block content %}
@@ -33,7 +34,13 @@
                         
                         <td class="align-middle"><img src="{{cart_item.product.images.url}}" alt="" style="width: 50px;"> 
                             <a href="{% url 'product_detail' cart_item.product.category.slug cart_item.product.slug %}" class="title-text-dark">{{cart_item.product.product_name}}</a></td>
-                        <td class="align-middle">₹{{cart_item.product.price}}</td>
+                        <td class="align-middle">
+                            {% if cart_item.product.product_offer%}
+                            ₹{{cart_item.product.product_offer.discount|mul:cart_item.product.price|div:100|sub:cart_item.product.price|abs}}
+                            {% else%}
+                            ₹{{cart_item.product.price}}
+                            {% endif%}
+                        </td>
                         <td class="align-middle">
                             <div class="input-group quantity mx-auto" style="width: 100px;">
                                 <div class="input-group-btn">

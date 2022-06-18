@@ -4,6 +4,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404, redirect, render
 from accounts.forms import UserAddressForm
 from accounts.models import UserAddresses
+from adminpanel.models import ProductOffer
 from cart.models import Cart, CartItem
 
 from products.models import Products, Variation
@@ -15,6 +16,18 @@ def _cart_id(request):
     if not cart:
         cart= request.session.create()
     return cart
+
+def offer_check_function(item):
+    product = Products.objects.get(product_name=item)
+    print(product)
+    if ProductOffer.objects.filter(product=product).exists():
+     
+            sub_total =  product.price -  ((product.price*product.product_offer.discount)/100) 
+    
+    else:
+        sub_total=product.price
+        print(sub_total)
+    return sub_total
 
 def add_cart(request,product_id):
     product=Products.objects.get(id=product_id) # get the product
@@ -176,7 +189,8 @@ def cart(request,total=0, quantity=0, cart_items=0):
         cart=Cart.objects.get(cart_id=_cart_id(request))
         cart_items=CartItem.objects.filter(cart=cart,is_active=True)
         for cart_item in cart_items:
-            total +=(cart_item.product.price * cart_item.quantity)
+            new_price = offer_check_function(cart_item)
+            total +=(new_price * cart_item.quantity)
             quantity += cart_item.quantity
         grand_total=total+100
     except ObjectDoesNotExist:
@@ -186,6 +200,7 @@ def cart(request,total=0, quantity=0, cart_items=0):
         'quantity': quantity,
         'cart_items': cart_items,
         'grand_total': grand_total,
+        
     }
 
     return render(request,'cart.html',context)
@@ -199,7 +214,8 @@ def checkout(request,total=0, quantity=0, cart_items=0):
         add=UserAddresses.objects.filter(user=request.user)
         form = UserAddressForm(instance=request.user)
         for cart_item in cart_items:
-            total +=(cart_item.product.price * cart_item.quantity)
+            new_price = offer_check_function(cart_item)
+            total +=(new_price * cart_item.quantity)
             quantity += cart_item.quantity
         grand_total=total+100
         

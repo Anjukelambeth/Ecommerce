@@ -1,3 +1,4 @@
+import code
 from inspect import modulesbyfile
 from itertools import product
 from multiprocessing import context
@@ -12,7 +13,7 @@ from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, render,redirect
 from django.contrib.auth import authenticate,login,logout
 from accounts.forms import RegistrationForm,UserForm,UserAddressForm
-from accounts.models import Account,UserAddresses
+from accounts.models import Account,UserAddresses,MyAccountManager
 from twilio.rest import Client
 import random
 from django.contrib.auth.decorators import login_required
@@ -66,7 +67,7 @@ def verification(request):
         global mobile_num
         mobile_num=phone_number
         customer = Account.objects.filter(phone_number=phone_number)
-        
+        request.session['user_mobile'] = phone_number
         if not customer.exists():
             messages.info(request,'Phone number not registred, Kindly register')
             return redirect('register')
@@ -74,12 +75,15 @@ def verification(request):
         account_sid="ACa03806fc4b0964cdfe06651f493789fa"
         auth_token="71136cbf562d9a504a273875e24366e6"
         client=Client(account_sid,auth_token)
-        global otp
-        otp = str(random.randint(1000,9999))
-        message = client.messages.create(
-                to= phone_number, 
-                from_="+19595004778",
-                body="Hello Your Login OTP is"+ otp )
+        verification = client.verify \
+                     .services("VAdf9ac283af0407b66228fa8b2d8e4fd0") \
+                     .verifications \
+                     .create(to=phone_number,channel='sms')
+        print(verification.status)
+        # message = client.messages.create(
+        #         to= phone_number, 
+        #         from_="+19595004778",
+        #         body="Hello Your Login OTP is"+ otp )
         messages.success(request,'OTP has been sent to your phone number & enter OTP')
         return render (request, 'verification1.html')
     
@@ -87,13 +91,29 @@ def verification(request):
 
 def verification1(request):
     if request.method=='POST':
-        # phone_number= Account.objects.get(phone_number=mobile_num)
+        mobile_num= request.session['user_mobile']
     
         customer = Account.objects.filter(phone_number=mobile_num).first()
         otpvalue = request.POST['otp']
         # user = authenticate(id=customer)
-        if otpvalue == otp:
+        
+        account_sid = "ACa03806fc4b0964cdfe06651f493789fa"
+        auth_token = "71136cbf562d9a504a273875e24366e6"
+        client = Client(account_sid, auth_token)
+        verification_check = client.verify \
+                                .services("VAdf9ac283af0407b66228fa8b2d8e4fd0") \
+                                .verification_checks \
+                                .create(to=mobile_num, code= otpvalue)
+        # if otpvalue ==  otp:
+        print(verification_check.status)
+        if verification_check.status == "approved":
             auth.login(request,customer)
+            try:
+                del request.session['user_mobile']
+                
+            except:
+                pass              
+            
             messages.success(request,'You are logged in')
             return render (request, 'index.html')
             
@@ -117,11 +137,23 @@ def register(request):
             phone_number= form.cleaned_data['phone_number']
             password= form.cleaned_data['password']
             username=email.split("@")[0]
-            user= Account.objects.create_user(first_name=first_name,last_name=last_name,email=email,password=password,user_name=username)
-            user.phone_number=phone_number
+
+            request.session['user_email'] = email
+            request.session['user_mobile'] = phone_number
+            user= Account.objects.create_user(first_name=first_name,last_name=last_name,email=email,password=password,phone_number=phone_number,user_name=username)
             user.save()
-            messages.success(request,'Your account is created')
-            return redirect('register')
+
+            account_sid="ACa03806fc4b0964cdfe06651f493789fa"
+            auth_token="71136cbf562d9a504a273875e24366e6"
+            client=Client(account_sid,auth_token)
+            verification = client.verify \
+                        .services("VAdf9ac283af0407b66228fa8b2d8e4fd0") \
+                        .verifications \
+                        .create(to=phone_number,channel='sms')
+            print(verification.status)
+            # messages.success(request,'Your account is created')
+            messages.success(request,'OTP has been sent to your phone number & enter OTP')
+            return redirect('verify_otp')
         else:
             print(form.errors) 
     else:
@@ -132,6 +164,45 @@ def register(request):
         }
     
     return render(request,'register.html',context)
+
+def verify_otp(request):
+    if request.method == "POST":
+        # generated_otp = request.POST['generated_otp']
+        otp_input = request.POST['otp_input']
+        user_mobile = request.session['user_mobile']
+        user_email = request.session['user_email']        
+        # print(user_mobile)   
+        account_sid = "ACa03806fc4b0964cdfe06651f493789fa"
+        auth_token = "71136cbf562d9a504a273875e24366e6"
+        client = Client(account_sid, auth_token)
+        
+        verification_check = client.verify \
+                                .services("VAdf9ac283af0407b66228fa8b2d8e4fd0") \
+                                .verification_checks \
+                                .create(to= user_mobile, code= otp_input)
+    
+        print(verification_check.status)
+        if verification_check.status == "approved":
+            messages.success(request,"OTP verified successfully.")
+            user = Account.objects.get(email=user_email)
+            user.is_active = True           
+            user.save()          
+            auth.login(request,user)          
+            try:
+                del request.session['user_mobile']
+                del request.session['user_email']
+            except:
+                pass              
+            
+            # print('signing in')
+            return redirect('index')
+        else:
+            messages.error(request,"Invalid OTP. Try again with correct OTP")
+            return render(request,'login_otp.html')
+    return render(request,'login_otp.html')
+
+
+       
 
 def signout(request):
     

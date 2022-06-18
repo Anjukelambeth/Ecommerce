@@ -3,9 +3,7 @@
 <html lang="en">
 
 <head>
-    <title>{% block title %}
-      Products-Add
-  {% endblock %}</title>
+    <title>{% block title %}Admin-home{% endblock %}</title>
     <!-- HTML5 Shim and Respond.js IE11 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 11]>
@@ -70,19 +68,25 @@
                         <a href="/admin_home" class="nav-link "><span class="pcoded-micon"><i class="feather icon-home"></i></span><span class="pcoded-mtext">Dashboard</span></a>
                     </li>
                     <li data-username="dashboard Default Ecommerce CRM Analytics Crypto Project" class="nav-item active">
-                        <a href="/admin_products" class="nav-link "><span class="pcoded-micon"><i class="feather icon-home"></i></span><span class="pcoded-mtext">Product Management</span></a>
+                        <a href="/admin_products" class="nav-link "><span class="pcoded-micon"><i class="feather icon-menu"></i></span><span class="pcoded-mtext">Product Management</span></a>
                     </li>
                     <li data-username="basic components Button Alert Badges breadcrumb Paggination progress Tooltip popovers Carousel Cards Collapse Tabs pills Modal Grid System Typography Extra Shadows Embeds" class="nav-item active">
                         <a href="/admin_category" class="nav-link "><span class="pcoded-micon"><i class="feather icon-box"></i></span><span class="pcoded-mtext">Category Management</span></a>
                     </li>
                     <li data-username="Table bootstrap datatable footable" class="nav-item active">
-                        <a href="/admin_usersview" class="nav-link "><span class="pcoded-micon"><i class="feather icon-server"></i></span><span class="pcoded-mtext">User Management</span></a>
+                        <a href="/admin_usersview" class="nav-link "><span class="pcoded-micon"><i class="feather icon-user"></i></span><span class="pcoded-mtext">User Management</span></a>
                     </li>
                     <li data-username="form elements advance componant validation masking wizard picker select" class="nav-item active">
                         <a href="/admin_offerview" class="nav-link "><span class="pcoded-micon"><i class="feather icon-file-text"></i></span><span class="pcoded-mtext">Coupon/Offer</span></a>
                     </li>
                     <li data-username="Charts Morris" class="nav-item active"><a href="/admin_order" class="nav-link "><span class="pcoded-micon"><i class="feather icon-pie-chart"></i></span><span class="pcoded-mtext">Orders</span></a></li>
-                    
+                    <li data-username="Table bootstrap datatable footable" class="nav-item active  pcoded-hasmenu">
+                        <a href="javascript:" class="nav-link "><span class="pcoded-micon"><i class="feather icon-clipboard"></i></span><span class="pcoded-mtext">Reports</span></a>
+                        <ul class="pcoded-submenu">
+                            <li class=""><a href="{% url 'report' %}" class="" target="_blank">report</a></li>
+                            <li class=""><a href="{% url 'sales_report' %}" class="" target="_blank">Sales Report</a></li>
+                        </ul>
+                    </li>
             </div>
         </div>
     </nav>
@@ -113,7 +117,7 @@
                         <li><a class="dropdown-item" href="javascript:">Something else here</a></li>
                     </ul>
                 </li> -->
-                <li class="nav-item">
+                <!-- <li class="nav-item">
                     <div class="main-search">
                         <div class="input-group">
                             <form class="form-inline my-lg-0" method="POST" action="">
@@ -128,7 +132,7 @@
                             </form>
                         </div>
                     </div>
-                </li>
+                </li> -->
             </ul>
             <ul class="navbar-nav ml-auto">
         
@@ -152,102 +156,143 @@
             </ul>
         </div>
     </header>
-
-<link href="https://www.jqueryscript.net/css/jquerysctipttop.css" rel="stylesheet" type="text/css">
-		<link rel="stylesheet" type="text/css" href="{% static 'crop/css/pixelarity.css' %}">
-		
-		<style type="text/css">
-			#result{
-				display: block;
-				position: relative;
-				margin-top: 40px;
-			}
-			.face{
-				position: absolute;
-				height: 0px;
-				width: 0px;
-				background-color: transparent;;
-				border: 4px solid rgba(10,10,10,0.5);
-			}
-		</style>
+    <!-- [ Header ] end -->
 {% block content%} 
 
-<div class="d-lg-flex  p-5 justify-content-center">
-    <div class="contents order-2 order-md-1">
-
-        <div class="container bg-light">
-          <div class="row align-items-center justify-content-center">
-            <!-- <div class="col-md-7"> -->
-              <form action="{% url 'add_products' %}" id="file" type="file" method="post" style="padding:2rem;margin:auto; " enctype="multipart/form-data">
+<link rel="stylesheet" type="text/css"  href="https://cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css" />
+<link rel="stylesheet" type="text/css"  href="https://cdn.datatables.net/buttons/1.4.0/css/buttons.dataTables.min.css" />
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.css">
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.js"></script>
+<div class="container">
+<div>
+<form method="POST" action="{% url 'sales_report' %}">
                 {% csrf_token %}
-                <!-- <div class="form-group last mb-3"> -->
-                  <h5>Kindly Add New Products details here</h5>
-                  {%for field in form.visible_fields %}
-                  <div class="form-group" >
-                    {{field.label_tag}}
-                    {{field}}
-                  </div>
-                  {%endfor%}
-                    <input type="submit" value="Save" class="btn btn-block btn-primary">
-                  <!-- </div> -->
-                </form>
-                <img id="result">  
-            <!-- </div> -->
+              <hr > 
+              <label for="from_date" style="float: left; "> From </label> 
+              <input id= "from_date" type="date" name="from_date" placeholder="From Date" class="form-control col-2 m-2" style="float:left" required> 
+              <label for="to_date" style="float: left;"> To </label> 
+              <input type="date" id="to_date" name="to_date" class="form-control col-2 m-2" placeholder="To Date" style="float:left" required> 
+              <button type="submit" class="btn btn-primary m-2">Filter Orders</button> 
+              </form>
+  </div>
+ </div>
+
+ {% if not orders %}
+ <div> 
+ <h4 class="text-center mt-5"> No orders found in this range. Please check with some other dates. </h4>
+ </div>
+ {% else %}
+ <div class="p-5 justify-content-center  ">
+<div class="card mb-4 mt-4 text-center">
+  <div class="card-header">
+      <i class="fas fa-table me-1"></i>
+      Orders
+     
+   <div class="p-5 justify-content-center  ">   
+  <div class="card-body">
+    <table id="myTable" class="display nowrap" style="width:100%">
+            <thead>
+                <tr>
+                      <th>Customer Name</th>
+                      <th>Order No</th>
+                      <th>Order Dt</th>
+                      {% comment %} <th>Phone No</th> {% endcomment %}
+                      <!-- <th>Email</th> -->
+                      <th>City</th>
+                      <th>State</th>
+                      <th>Order Value</th>
+                      <th>Status</th>
+                      
+                      {% comment %} <th></th> {% endcomment %}
+                     
+                </tr>
+            </thead>
+            <tbody>
+                  {% for order in orders %}
+                    <tr class="gradeX">
+                      <td>{{order.full_name}}</td>
+                      <td>{{order.order_number}}</td>
+                      <td>{{order.created_at}}</td>
+                      {% comment %} <td>{{order.phone}}</td> {% endcomment %}
+                      <!-- <td>{{order.email}}</td> -->
+                      <td>{{order.city}}</td>
+                      <td>{{order.state}}</td>
+                      <td class="text-right">₹ {{order.order_total}}</td>
+                      <td>{{order.status}}</td>
+                      
+                    </tr>
+                  
+                    {% endfor %}
+
+            </tbody>
+            <tfoot>
+                <tr>
+                      <th>Customer Name</th>
+                      <th>Order No</th>
+                      {% comment %} <th>Phone No</th> {% endcomment %}
+                      <!-- <th>Email</th> -->
+                      <th>Order Dt</th>
+                      <th>City</th>
+                      <th>State</th>
+                      <th>Order Value</th>
+                      <th>Status</th>
                    
-              
-            
-          </div>
-        </div>
-      </div>
+                      {% comment %} <th></th> {% endcomment %}
+                </tr>
+            </tfoot>
+        </table>
+    </div>
 </div>
-<div id="carbon-block" style="margin:30px auto"></div>
-<div style="margin:30px auto"><script type="text/javascript">
-google_ad_client = "ca-pub-2783044520727903";
-/* jQuery_demo */
-google_ad_slot = "2780937993";
-google_ad_width = 728;
-google_ad_height = 90;
-//-->
+</div>
+</div>
+{% endif %}
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+<script src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.27/build/pdfmake.min.js"></script>
+<script src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.27/build/vfs_fonts.js"></script>
+<script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.4.0/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.4.0/js/buttons.flash.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.4.0/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.4.0/js/buttons.print.min.js"></script>
+<script type="text/javascript">
+  $(document).ready( function () {
+  $('#myTable').DataTable({
+      "order": [[ 3, "asc" ]],
+      dom: 'Bfrtip',
+      buttons: [
+          'copy', 'csv', 'excel', 'pdf', 'print'
+      ]
+  });
+} );
+</script>
+<script>
+  var today = new Date();
+  var dd = String(today.getDate()).padStart(2, '0');
+  var mm = String(today.getMonth() + 1).padStart(2, '0');
+  var yyyy = today.getFullYear();
+
+  today = yyyy + '-' + mm + '-' + dd;
+  $('#from_date').attr('max', today);
+  $('#to_date').attr('max', today);
+  document.getElementById('from_date').onchange = e => {
+      value = e.target.value
+      $('#to_date').attr('min', value);
+  }
+
+
 </script>
 
-<script type="text/javascript"
-src="https://pagead2.googlesyndication.com/pagead/show_ads.js">
-</script></div>
-<script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha384-vk5WoKIaW/vJyUAd9n/wmopsmNhiy+L2Z+SBxGYnUkunIxVxAv/UtMOhba/xskxh" crossorigin="anonymous"></script>
-		<script type="text/javascript" src="{% static 'crop/js/pixelarity-face.js' %}"></script>
-		<script type="text/javascript" src="{% static 'crop/js/script-face.js'%}"></script>
-    <script type="text/javascript">
 
-      var _gaq = _gaq || [];
-      _gaq.push(['_setAccount', 'UA-36251023-1']);
-      _gaq.push(['_setDomainName', 'jqueryscript.net']);
-      _gaq.push(['_trackPageview']);
-    
-      (function() {
-        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-      })();
-    
-    </script>
-    <script>
-    try {
-      fetch(new Request("https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js", { method: 'HEAD', mode: 'no-cors' })).then(function(response) {
-        return true;
-      }).catch(function(e) {
-        var carbonScript = document.createElement("script");
-        carbonScript.src = "//cdn.carbonads.com/carbon.js?serve=CK7DKKQU&placement=wwwjqueryscriptnet";
-        carbonScript.id = "_carbonads_js";
-        document.getElementById("carbon-block").appendChild(carbonScript);
-      });
-    } catch (error) {
-      console.log(error);
-    }
-    </script>
 {% endblock %}
 <!-- <script src="{% static 'assets/js/vendor-all.min.js' %}"></script> -->
-    <script src="{% static 'assets/plugins/bootstrap/js/bootstrap.min.js' %}"></script>
-    <script src="{% static 'assets/js/pagestyle.js' %}"></script>
+<script src="{% static 'assets/plugins/bootstrap/js/bootstrap.min.js' %}"></script>
+<script src="{% static 'assets/js/pagestyle.js' %}"></script>
 <!-- Latest compiled JavaScript -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
 <!-- Github buttons -->

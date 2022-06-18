@@ -21,11 +21,22 @@ urlpatterns = [
     path('delete_products/<int:id>',views.delete_products,name='delete_products'),
     path('admin_order/',views.admin_order,name='admin_order'), 
     path('admin_orderedit/<int:order_number>',views.admin_orderedit,name='admin_orderedit'), 
+    path('cancel_order_admin/<int:order_number>',views.cancel_order_admin,name='cancel_order_admin'),
+    path('return_order_admin/<int:order_number>',views.return_order_admin,name='return_order_admin'),
+    path('order_order/<int:order_number>',views.order_order,name='order_order'),
+    path('ship_order/<int:order_number>',views.ship_order,name='ship_order'),
+    path('deliver_order/<int:order_number>',views.deliver_order,name='deliver_order'),
     path('order_cancel/<int:order_number>',views.order_cancel,name='order_cancel'), 
     path('admin_offerview',views.admin_offerview,name='admin_offerview'),
     path('add_product_offer',views.add_product_offer,name='add_product_offer'),
     path('edit_product_offer/<int:id>',views.edit_product_offer,name='edit_product_offer'),
     path('delete_product_offer/<int:id>',views.delete_product_offer,name='delete_product_offer'),
+    path('export_csv',views.export_csv,name='export_csv'),
+    path('export_excel',views.export_excel,name='export_excel'),
+    # path('export_pdf',views.export_pdf,name='export_pdf'),
+    path('report', views.report, name='report'),
+    path('report_pdf', views.report_pdf, name='report_pdf'),
+    path('sales_report', views.sales_report, name='sales_report'),
 
     
 

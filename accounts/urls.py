@@ -10,6 +10,7 @@ urlpatterns = [
     path('signout/',views.signout,name='signout'),
     path('verification/',views.verification,name='verification'),
     path('verification1/',views.verification1,name='verification1'),
+     path('verify_otp/',views.verify_otp, name='verify_otp'),
     # path('account_view/',views.account_view,name='account_view'),
     path('user_profile/',views.user_profile,name='user_profile'),
     path('user_profile_edit/',views.user_profile_edit,name='user_profile_edit'),

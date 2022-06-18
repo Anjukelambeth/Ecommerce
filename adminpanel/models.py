@@ -15,3 +15,9 @@ class ProductOffer(models.Model):
 
     def discount_amount(self,sub_total):
         return self.discount/100*sub_total
+        
+    def disc_product_price(self):
+        original_price = self.product_id.price
+        disc_price = original_price - (original_price*(self.discount/100))
+        return disc_price
+        

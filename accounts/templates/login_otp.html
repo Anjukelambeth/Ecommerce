@@ -1,0 +1,143 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}  Oh Baby! 
+{% endblock %}
+{% block content %}
+<style>
+  .error{
+    color: red;
+      font-style: italic;
+  }
+</style>
+{% for message in messages %}
+<div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+    <strong>Message:</strong> {{ message }}
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+<span aria-hidden="true">&times;</span>
+</button>
+</div>
+{% endfor %}
+
+<!-- ========================= SECTION CONTENT ========================= -->
+<section class="section-conten padding-y" style="min-height:84vh">
+
+    <!-- ============================ COMPONENT LOGIN   ================================= -->
+       
+
+    
+    <div class="card mx-auto" style="max-width: 380px; margin-top:100px;">
+            
+            <div class="card-body">
+          <h4 class="card-title mb-4">Verify OTP </h4>
+       
+          <form id="otpForm" action="{% url 'verify_otp' %}" method="POST">
+              {% csrf_token %}
+              <div class="form-group">
+                <input id="otpInp" type="text" data-maxlength="6" class="form-control" placeholder="Enter the OTP received on your mobile" name="otp_input">
+              </div> <!-- form-group// -->
+            <!-- <div id="timerDiv" class="mb-2 text-warning ">Time left = <span id="timer"></span></div> -->
+              <div class="form-group">
+                  <button id="subBtn" type="submit" class="btn btn-primary btn-block"> Submit OTP </button>
+              </div> <!-- form-group// -->    
+          </form>
+          <a href="{% url 'verify_otp' %}">Resend OTP</a>
+          </div> <!-- card-body.// -->
+        </div> <!-- card .// -->
+
+    <!-- ============================ COMPONENT LOGIN  END.// ================================= -->
+    
+       </section>
+    <!-- ========================= SECTION CONTENT END// ========================= -->
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+$('#otpForm').validate({
+    rules:{
+      otp_input:{
+      digits:true,
+      minlength:6,
+      required:true,
+      maxlength:6,
+      
+      },
+    },
+    messages:{
+      otp_input:{
+      required:"Please enter OTP",
+      maxlength:"Maximum 6 digits allowed.",
+      minlength:"Need 6 digit OTP",
+      digits:"Only numbers allowed."
+    },
+    }
+  })
+
+$('#otpInp').keyup(validateMaxLength);
+
+function validateMaxLength() 
+{
+        var text = $(this).val();
+        var maxlength = $(this).data('maxlength');
+
+        if(maxlength > 0)  
+        {
+                $(this).val(text.substr(0, maxlength)); 
+        }
+}
+
+
+let timerOn = true;
+
+function timer(remaining) {
+  var m = Math.floor(remaining / 60);
+  var s = remaining % 60;
+  
+  m = m < 10 ? '0' + m : m;
+  s = s < 10 ? '0' + s : s;
+  document.getElementById('timerDiv').innerHTML = m + ':' + s;
+  remaining -= 1;
+  
+  if(remaining >= 0 && timerOn) {
+    setTimeout(function() {
+        timer(remaining);
+    }, 1000);
+    return;
+  }
+
+  if(!timerOn) {
+    // Do validate stuff here
+    return;
+  }
+  
+  document.getElementById('otpInp').disabled = true
+  document.getElementById('subBtn').disabled = true
+  document.getElementById('timerDiv').hidden = true
+  Swal.fire('OTP Timed out. Please try again.')
+}
+
+timer(120);
+</script>
+
+<script>
+
+
+  $("#otpForm").validate({
+    rules:{
+      otpInp:{
+      required:true,
+      maxlength:6,
+      minlength:6,
+      digits:true,
+      },
+    },
+    messages:{
+      otpInp:{
+      required:"Please enter OTP",
+      maxlength:"Only 6 digits allowed.",
+      minlength:"Need 6 digit OTP",
+      digits:"Only numbers allowed.",
+    },
+    }
+  })
+
+
+</script>
+{% endblock %}
