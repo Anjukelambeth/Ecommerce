@@ -1,4 +1,5 @@
 import code
+from django.core.paginator import Paginator
 from inspect import modulesbyfile
 from itertools import product
 from multiprocessing import context
@@ -12,7 +13,7 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, render,redirect
 from django.contrib.auth import authenticate,login,logout
-from accounts.forms import RegistrationForm,UserForm,UserAddressForm
+from accounts.forms import RegistrationForm,UserForm,AddAddressForm
 from accounts.models import Account,UserAddresses,MyAccountManager
 from twilio.rest import Client
 import random
@@ -253,30 +254,103 @@ def user_profile_edit(request):
 
 @login_required(login_url='signin')
 def add_address(request):
-    # profile = get_object_or_404(UserAddresses,user=request.user)
-    if request.method =="POST":
-        form = UserAddressForm(request.POST,instance=request.user)
-        if form.is_valid():
-            data=UserAddresses()
-            data.user=request.user
-            data.address_line_1= form.cleaned_data['address_line_1']
-            data.address_line_2= form.cleaned_data['address_line_2']
-            data.city= form.cleaned_data['city']
-            data.zipcode= form.cleaned_data['zipcode']
-            data.state= form.cleaned_data['state']
-            user_address=UserAddresses.objects.create(address_line_1=data.address_line_1,address_line_2=data.address_line_2,city=data.city,zipcode=data.zipcode,state=data.state)
-            user_address.save()
-            form.save()
-            data.save()
-            messages.success(request,'Your profile has been updated')
-            return redirect ('add_address')
-        else:
-            messages.info(request,'Unable to edit')
-    else:
-        form = UserAddressForm(instance=request.user)
-        add=UserAddresses.objects.filter(user=request.user)
-    return render(request,'add_address.html',{'form':form,'add':add,'profile':request.user})
+    add=UserAddresses.objects.filter(user=request.user)
+    if request.user.is_authenticated:            
+        if request.method == "POST":
+            # print("Got a POST request")
+            form = AddAddressForm(request.POST)
+            # print("checking the form validation")
+            if form.is_valid():
+                # print("Validation done collectiong, collecting data")
+                user = Account.objects.get(id = request.user.id)
+                first_name = form.cleaned_data['first_name']
+                last_name = form.cleaned_data['last_name']
+                address_line_1 = form.cleaned_data['address_line_1']
+                address_line_2 = form.cleaned_data['address_line_2']
+                mobile = form.cleaned_data['mobile']
+                email = form.cleaned_data['email']
+                city = form.cleaned_data['city']
+                state = form.cleaned_data['state']
+                country = form.cleaned_data['country']
+                zipcode= form.cleaned_data['zipcode']
+                
+                address = UserAddresses.objects.create(user=user,first_name=first_name,last_name=last_name,address_line_1=address_line_1,address_line_2=address_line_2, email=email, mobile=mobile, city=city, state=state, country=country, zipcode=zipcode)
+                # print("going to save address")
+                address.save()
+                # print("address saved")       
 
+                messages.success(request,"Your address has been registered. ")
+                return redirect ('checkout')
+        else:
+            form = AddAddressForm()    
+            context = {
+                    'form':form,
+                    'add':add,
+            }
+    # profile = get_object_or_404(UserAddresses,user=request.user)
+    # if request.method =="POST":
+    #     form = UserAddressForm(request.POST,instance=request.user)
+    #     if form.is_valid():
+    #         data=UserAddresses()
+    #         data.user=request.user
+    #         data.address_line_1= form.cleaned_data['address_line_1']
+    #         data.address_line_2= form.cleaned_data['address_line_2']
+    #         data.city= form.cleaned_data['city']
+    #         data.zipcode= form.cleaned_data['zipcode']
+    #         data.state= form.cleaned_data['state']
+    #         user_address=UserAddresses.objects.create(address_line_1=data.address_line_1,address_line_2=data.address_line_2,city=data.city,zipcode=data.zipcode,state=data.state)
+    #         user_address.save()
+    #         form.save()
+    #         data.save()
+    #         messages.success(request,'Your profile has been updated')
+    #         return redirect ('add_address')
+    #     else:
+    #         messages.info(request,'Unable to edit')
+    # else:
+    #     form = UserAddressForm(instance=request.user)
+    #     add=UserAddresses.objects.filter(user=request.user)
+            return render(request,'add_address.html',context)
+    else:
+        return redirect('signin')
+
+def my_addresses(request):
+
+    add = UserAddresses.objects.filter(user = request.user.id)
+    context = {
+        "add":add,
+    }
+
+    return render(request,'my_addresses.html',context)
+
+def delete_address(request,add_id):
+    # print(add_id)
+    
+    del_add = UserAddresses.objects.filter(user = request.user.id, id= add_id)
+
+    del_add.delete()
+
+    addresses = UserAddresses.objects.filter(user = request.user.id).order_by('-id')
+    context = {
+        "addresses":addresses,
+    }
+    return render(request,'accounts/my_addresses.html', context)
+
+def edit_address(request,id):
+    instance = get_object_or_404(UserAddresses, id=id)
+    form = AddAddressForm(request.POST or None, instance=instance)
+
+    if request.method == "POST":
+        if form.is_valid():
+            form.save()
+            messages.success(request,'Address has been updated')
+            return redirect('my_addresses')
+    else:  
+        context = {
+            'form'     : form,
+            'address':instance,
+            }
+        return render(request, 'edit_address.html',context)
+        
 @login_required(login_url='signin')
 def change_password(request):
     if request.method == 'POST':
@@ -302,7 +376,10 @@ def change_password(request):
     return render(request,'change_password.html')
 
 def my_order(request):
+    
+ 
     # current_user = request.user
+    
     orders = Order.objects.filter(user=request.user,is_ordered=True)
     context ={
         'orders':orders, 
@@ -321,6 +398,22 @@ def order_view(request,order_id):
         'order':order,
     }
     return render(request,'order_view.html',context)
+
+@login_required(login_url='login')
+def order_detail(request,order_id):
+    # print('order detail req recvd')
+    order_detail = OrderProduct.objects.filter(order__order_number = order_id)
+    order = Order.objects.get(order_number = order_id)
+    # print('both details fetced')
+    sub_total = 0
+    for i in order_detail:
+        sub_total += i.product_price * i.quantity
+    context = {
+        'order_detail':order_detail,
+        'order':order,
+        'sub_total': sub_total,
+    }
+    return render (request, 'order_detail.html',context)
 
 
 def user_order_cancel(request,order_number):

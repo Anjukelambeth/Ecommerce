@@ -71,3 +71,28 @@ class UserAddressForm(forms.ModelForm):
     
     def clean(self):
         cleaned_data = super(UserAddressForm, self).clean()
+
+class AddAddressForm(forms.ModelForm):
+
+    class Meta:
+        model = UserAddresses
+        fields = ['first_name','last_name','mobile','email','address_line_1','address_line_2','city','zipcode','state','country']
+       
+
+
+
+    def __init__(self,*args,**kwargs):
+        super(AddAddressForm, self).__init__(*args, **kwargs)
+        self.fields['first_name'].widget.attrs['placeholder']='Enter Firstname'
+        self.fields['last_name'].widget.attrs['placeholder']='Enter last name'
+        self.fields['mobile'].widget.attrs['placeholder']='Enter Mobile number'
+        self.fields['email'].widget.attrs['placeholder']='Enter email address'
+        self.fields['address_line_1'].widget.attrs['placeholder']='Enter your address'
+        self.fields['address_line_2'].widget.attrs['placeholder']='Enter your address'
+        self.fields['city'].widget.attrs['placeholder']='Enter City Name'
+        self.fields['state'].widget.attrs['placeholder']='Enter State'
+        self.fields['country'].widget.attrs['placeholder']='Enter Country'
+        self.fields['zipcode'].widget.attrs['placeholder']='Enter Pincode'
+
+        for field in self.fields:
+            self.fields[field].widget.attrs['class']='form-control'

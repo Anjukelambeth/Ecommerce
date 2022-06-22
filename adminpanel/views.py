@@ -1,19 +1,23 @@
 import calendar
 from itertools import product
 from django.http import FileResponse, HttpResponse
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect,get_object_or_404
 from django.contrib.auth import authenticate,login,logout
 from django.contrib import messages
 from accounts.models import Account
-from adminpanel.forms import OrderEditForm, ProductOfferForm
-from adminpanel.models import ProductOffer
+from adminpanel.forms import CategoryOfferForm, OrderEditForm, ProductOfferForm
+from adminpanel.models import CategoryOffer, ProductOffer
 from category.models import category
+from coupons.forms import CouponApplyForm
+from coupons.models import Coupon
+from orders.forms import OrderStatusForm
 from orders.models import Order, OrderProduct
 from products.models import Products
 from category.forms import CategoryForm
 from products.forms import ProductsForm
 from django.contrib.auth.decorators import login_required
 import os
+from django.views.decorators.cache import cache_control
 from slugify import slugify
 from django.db.models.functions import ExtractMonth,ExtractDay
 from django.db.models import Count
@@ -28,6 +32,7 @@ import xlwt
 import io
 from reportlab.pdfgen import canvas
 from reportlab.lib.units import inch
+from django.core.paginator import Paginator
 from reportlab.lib.pagesizes import letter
 # os.add_dll_directory()
 # from django.contrib.auth.decorators import user_passes_test
@@ -349,42 +354,170 @@ def order_order(request, order_number):
     return redirect('order')
 
 def admin_orderedit(request,order_number):
-    orders = Order.objects.get(order_number=order_number)
-    form = OrderEditForm(instance=orders)
-    if request.method=='POST':
-        form = OrderEditForm(request.POST)
-        status = request.POST.get('status')
-        orders.status = status
-        orders.save()
-        return redirect ('admin_order')
-    context = {
-        'orders':orders,
-        'form':form
-    }
-    return render(request,'admin_orderedit.html',context)
+    
+    instance = get_object_or_404(Order, order_number = order_number)
+
+    form = OrderStatusForm(request.POST or None, instance=instance)
+
+    if request.method == "POST":
+        if form.is_valid():
+            form.save()
+            messages.success(request,'Order Status has been updated')
+            return redirect('admin_order')
+    else:  
+        context = {
+            'form'     : form,
+            'order': instance,
+            }
+    # orders = Order.objects.get(order_number=order_number)
+    # form = OrderEditForm(instance=orders)
+    # if request.method=='POST':
+    #     form = OrderEditForm(request.POST)
+    #     status = request.POST.get('status')
+    #     orders.status = status
+    #     orders.save()
+    #     return redirect ('admin_order')
+    # context = {
+    #     'orders':orders,
+    #     'form':form
+    # }
+        return render(request,'admin_orderedit.html',context)
 
 def admin_offerview(request):
-    
-    product_offer = ProductOffer.objects.all()
-    
-    context={
-       
-        'product_offer':product_offer,
-        
+    coupon_offers = Coupon.objects.all().order_by('-valid_to')
+    prod_offers = ProductOffer.objects.all().order_by('-valid_to')
+    cat_offers = CategoryOffer.objects.all().order_by('-valid_to')
+
+
+    paginator = Paginator(coupon_offers, 5) # Show 25 contacts per page.
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+
+    context = {
+        'coupon_offers': page_obj,
+        'prod_offers': prod_offers,
+        'cat_offers': cat_offers,
+
     }
+    
+    # product_offer = ProductOffer.objects.all()
+    
+    # context={
+       
+    #     'product_offer':product_offer,
+        
+    # }
     return render (request,'offer_view.html',context)
 
+# OFFERS SECTION
+
+# coupon offers
+@login_required(login_url='admin_login')
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
+def add_coupon(request):
+    form = CouponApplyForm(request.POST or None, request.FILES or None)  
+    if request.method == "POST":
+        if form.is_valid():
+            form.save()
+            return redirect('admin_offerview')
+        else:
+            messages.error(request,'form not valid')            
+            context = {
+            'form':form
+            }
+            return render(request,'add_coupon.html',context)
+    else:
+        context = {
+            'form':form
+        }
+        return render(request,'add_coupon.html',context)
+    
+    
+    
+@login_required(login_url='admin_login')
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
+def edit_coupon(request,c_id):
+    instance = get_object_or_404(Coupon, id=c_id)
+    form = CouponApplyForm(request.POST or None, instance=instance)
+
+
+    if request.method == "POST":
+        if form.is_valid():
+            form.save()
+            messages.success(request,'Product has been updated')
+            return redirect('admin_offerview')
+        else:
+             context = {
+            'form'     : form,
+            'coupon':instance,
+            }
+        return render(request, 'edit_coupon_offer.html',context)
+    else:  
+        context = {
+            'form'     : form,
+            'coupon':instance,
+            }
+        return render(request, 'edit_coupon_offer.html',context)
+    
+
+@login_required(login_url='admin_login')
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
+def activate_coupon(request):
+    coupon_id = request.GET['couponId']
+    coupon = Coupon.objects.get(id = coupon_id)
+    coupon.active = True
+    coupon.save()
+
+    return redirect('admin_offerview')
+
+
+@login_required(login_url='admin_login')
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
+def block_coupon(request):
+  
+    coupon_id = request.GET['couponId']
+    coupon = Coupon.objects.get(id = coupon_id)
+    coupon.active = False
+    coupon.save()
+
+    return redirect('admin_offerview')
+
+
+
+@login_required(login_url='admin_login')
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
+def delete_coupon(request):
+    coupon_id = request.GET['couponId']
+    coupon = Coupon.objects.get(id = coupon_id)
+    
+    coupon.delete()
+
+    return redirect('admin_offerview')
+
+
+
+
+
 def add_product_offer(request):
-    form = ProductOfferForm(request.POST)
+    form = ProductOfferForm(request.POST  or None, request.FILES or None)
     print("product offer")
-    if form.is_valid():
-        form.save()
-        messages.info(request,'Product offer added successfully')
-        return redirect(admin_offerview)
-    context ={
-        'form':form
-    }
-    return render (request,'add_product_offer.html',context)
+    if request.method == "POST":
+        if form.is_valid():
+            form.save()
+            messages.info(request,'Product offer added successfully')
+            return redirect(admin_offerview)
+        else:
+            messages.error(request,'form not valid')   
+            context ={
+                    'form':form
+             } 
+            return render (request,'add_product_offer.html',context)
+    else:
+        context ={
+            'form':form
+        }
+        return render (request,'add_product_offer.html',context)
 
 #product offer edit
 def edit_product_offer(request,id):
@@ -397,12 +530,126 @@ def edit_product_offer(request,id):
         return redirect('offer_view')
     return render (request,'edit_product_offer.html',{'form':form,'offer':offer})
 
-#delete category by admin
-def delete_product_offer(request,id):
-    offer = ProductOffer.objects.get(id=id)
-    offer.delete()
-    return redirect(admin_offerview)
+@login_required(login_url='admin_login')
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
+def activate_product_offer(request):
+    offer_id = request.GET['proOffId']
+   
+    offer = ProductOffer.objects.get(id = offer_id)
 
+    offer.is_active = True
+    offer.save()
+
+    return redirect('offer_view')
+
+
+@login_required(login_url='admin_login')
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
+def block_product_offer(request):
+    offer_id = request.GET['proOffId']
+    offer = ProductOffer.objects.get(id = offer_id)
+    offer.is_active = False
+    offer.save()
+
+    return redirect('offer_view')
+
+@login_required(login_url='admin_login')
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
+def delete_product_offer(request):
+    offer_id = request.GET['proOffId']
+    offer = ProductOffer.objects.get(id = offer_id)
+    
+    offer.delete()
+
+    return redirect('offer_view')
+
+
+
+# def delete_product_offer(request,id):
+#     offer = ProductOffer.objects.get(id=id)
+#     offer.delete()
+#     return redirect(admin_offerview)
+
+@login_required(login_url='admin_login')
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
+def add_cat_offer(request):
+
+    form = CategoryOfferForm(request.POST or None, request.FILES or None)  
+    if request.method == "POST":
+        if form.is_valid():
+            form.save()
+            return redirect('offer_view')
+        else:
+            messages.error(request,'form not valid')            
+            context = {
+            'form':form
+            }
+            return render(request,'add_cat_offer.html',context)
+    else:
+        context = {
+            'form':form
+        }
+        return render(request,'add_cat_offer.html',context)
+
+@login_required(login_url='admin_login')
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
+def edit_cat_offer(request,cat_id):
+    instance = get_object_or_404(CategoryOffer, id=cat_id)
+    form = CategoryOfferForm(request.POST or None, instance=instance)
+  
+
+    if request.method == "POST":
+        if form.is_valid():
+            form.save()
+            messages.success(request,'Offer has been updated')
+            return redirect('offer_view')
+        else:
+             context = {
+            'form'     : form,
+            'coupon':instance,
+            }
+        return render(request, 'edit_cat_offer.html',context)
+    else:  
+        context = {
+            'form'     : form,
+            'coupon':instance,
+            }
+        return render(request, 'edit_cat_offer.html',context)
+
+
+@login_required(login_url='admin_login')
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
+def activate_cat_offer(request):
+    offer_id = request.GET['catOffId']
+    
+    offer = CategoryOffer.objects.get(id = offer_id)
+ 
+    offer.is_active = True
+    offer.save()
+
+    return redirect('admin_offers')
+
+
+@login_required(login_url='admin_login')
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
+def block_cat_offer(request):
+    offer_id = request.GET['catOffId']
+    offer = CategoryOffer.objects.get(id = offer_id)
+    offer.is_active = False
+    offer.save()
+
+    return redirect('offer_view')
+
+
+@login_required(login_url='admin_login')
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
+def delete_cat_offer(request):
+    offer_id = request.GET['catOffId']
+    offer = CategoryOffer.objects.get(id = offer_id)
+    
+    offer.delete()
+
+    return redirect('offer_view')
 
 def report_pdf(request):
     # create  bytestream buffer

@@ -1,8 +1,176 @@
-{% extends 'base.html' %}
-{% load static %}
+
 {% load mathfilters %}
-{% block title %}  Store 
-{% endblock %}
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+    <meta charset="utf-8">
+    <title>{% block title %}
+       Oh Baby! {% endblock %}</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="Free HTML Templates" name="keywords">
+    <meta content="Free HTML Templates" name="description">
+    <!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
+    
+    <!-- Favicon -->
+    <link href="data:image/png;base64,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" rel="icon">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet"> 
+
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+
+    <!-- Libraries Stylesheet -->
+    <link href=" { % static 'lib/owlcarousel/assets/owl.carousel.min.css' %}" rel="stylesheet">
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="{ % static'css/style.css' %}" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Topbar Start -->
+    <div class="container-fluid">
+        <div class="row bg-secondary py-2 px-xl-5">
+            <div class="col-lg-6 d-none d-lg-block">
+                <div class="d-inline-flex align-items-center">
+                    <a class="text-dark" href="">FAQs</a>
+                    <span class="text-muted px-2">|</span>
+                    <a class="text-dark" href="">Help</a>
+                    <span class="text-muted px-2">|</span>
+                    <a class="text-dark" href="">Support</a>
+                </div>
+            </div>
+            <div class="col-lg-6 text-center text-lg-right ">
+                <div class="d-inline-flex align-items-center">
+                    <a class="text-dark px-2" href="">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a class="text-dark px-2" href="">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a class="text-dark px-2" href="">
+                        <i class="fab fa-linkedin-in"></i>
+                    </a>
+                    <a class="text-dark px-2" href="">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a class="text-dark pl-2" href="">
+                        <i class="fab fa-youtube"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="row align-items-center py-3 px-xl-5">
+            <div class="col-lg-3 d-none d-lg-block">
+                <a href="" class="text-decoration-none">
+                    <h1 class="m-0 display-5 font-weight-semi-bold"><span class="text-primary font-weight-bold border px-3 mr-1">Oh</span>Baby!</h1>
+                </a>
+            </div>
+            <div class="col-lg-6 col-6 text-left">
+                <form action="{% url 'search' %}" method="GET">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search for products" name="keyword">
+                        <div class="input-group-append">
+                            <!-- <span class="input-group-text bg-transparent text-primary"> -->
+                                <button class="btn btn-primary" type="submit">
+                                    <i class="fa fa-search" ></i>
+                                </button>
+                            <!-- </span> -->
+                        </div>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="col-lg-3 col-6 text-right">
+               
+                    <!-- <a href="" class="btn border">
+                        <i class="fas fa-heart text-primary"></i>
+                        <span class="badge">0</span>
+                    </a> -->
+                <a href="{% url 'cart' %}" class="btn border">
+                    <i class="fas fa-shopping-cart text-primary"></i>
+                    <span class="badge badge-pill badge-danger notify ">{{cart_count}}</span>
+                </a>
+                
+              
+            </div>
+            
+        </div>
+    </div>
+    <!-- Topbar End -->
+
+
+    <!-- Navbar Start -->
+    <div class="container-fluid">
+        <div class="row border-top px-xl-5">
+            <div class="col-lg-3 d-none d-lg-block">
+                <a class="btn shadow-none d-flex align-items-center justify-content-between bg-primary text-white w-100" data-toggle="collapse" href="#navbar-vertical" style="height: 65px; margin-top: -1px; padding: 0 30px;">
+                    <h6 class="m-0">Categories</h6>
+                    <i class="fa fa-angle-down text-dark"></i>
+                </a>
+                <nav class="collapse position-absolute navbar navbar-vertical navbar-light align-items-start p-0 border border-top-0 border-bottom-0 bg-light" id="navbar-vertical" style="width: calc(100% - 30px); z-index: 1;">
+                    <div class="navbar-nav w-100 overflow-hidden" style="height: 210px">
+                        <!-- <div class="nav-item dropdown">
+                            <a href="#" class="nav-link" data-toggle="dropdown">Dresses <i class="fa fa-angle-down float-right mt-1"></i></a>
+                            <div class="dropdown-menu position-absolute bg-secondary border-0 rounded-0 w-100 m-0">
+                                <a href="" class="dropdown-item">Girl's Dresses</a>
+                                <a href="" class="dropdown-item">Boy's Dresses</a>
+                            </div>
+                        </div> -->
+                        <a href="{% url 'store'%}" class="nav-item nav-link">All products</a>
+                        {%for category in links%}
+                        <a href="{{category.get_url}}" class="nav-item nav-link">{{category.category_name}}</a>
+                        <!-- <a href="" class="nav-item nav-link">Accerssories</a> -->
+                        {%endfor%}
+                    </div>
+                </nav>
+            </div>
+            <div class="col-lg-9">
+                <nav class="navbar navbar-expand-lg bg-light navbar-light py-3 py-lg-0 px-0">
+                    <a href="" class="text-decoration-none d-block d-lg-none">
+                        <h1 class="m-0 display-5 font-weight-semi-bold"><span class="text-primary font-weight-bold border px-3 mr-1">E</span>Shopper</h1>
+                    </a>
+                    <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
+                        <div class="navbar-nav mr-auto py-0">
+                            <a href="{% url 'index' %}" class="nav-item nav-link">Home</a>
+                            {%for category in links%}
+                            <a href="{{category.get_url}}" class="nav-item nav-link">{{category.category_name}}</a>
+                            {%endfor%}
+                            
+                            <div class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle active" data-toggle="dropdown">Buy</a>
+                                {%for product in products %}
+                                    <div class="dropdown-menu rounded-0 m-0">
+                                        <a href="{% url 'add_cart' product.id %}" class="dropdown-item">Shopping Cart</a>
+                                        <a href="checkout.html" class="dropdown-item">Checkout</a>
+                                    </div>
+                                {%endfor%}
+                            </div>
+                            <a href="contact.html" class="nav-item nav-link">Contact</a>
+                        </div>
+                        {% if user.is_authenticated %}
+                        <div class="navbar-nav ml-auto py-0">
+                            <a href="{% url 'user_profile' %}" class="nav-item nav-link">{{user.first_name}}</a>
+                            <a href="/signout" class="nav-item nav-link">Signout</a>
+                        </div>
+                        {% else %}
+                        <div class="navbar-nav ml-auto py-0">
+                            <a href="/signin" class="nav-item nav-link">Login</a>
+                            <a href="/register" class="nav-item nav-link">Register</a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </nav>
+            </div>
+        </div>
+    </div>
+    <!-- Navbar End -->
 {% block content %}
 
 {% if not cart_items %}
@@ -88,14 +256,17 @@
               </div>
         </div>
         <div class="col-lg-4">
-            <form class="mb-30" action="">
+            <!-- <form class="mb-30" action=""> -->
                 <div class="input-group">
-                    <input type="text" class="form-control border-1 p-4" placeholder="Coupon Code">
+                    <input type="text" id="couponInp" class="form-control border-1 p-4" placeholder="Coupon Code">
+                    <span id="couponAlert" style="color:orange;" class="text-center"></span>
+                    <span id="couponSuccessAlert" style="color:green;" class="text-center"></span>
                     <div class="input-group-append">
-                        <button class="btn btn-primary">Apply Coupon</button>
+                        <button onclick="claimCoupon()" class="btn btn-primary">Apply Coupon</button>
                     </div>
                 </div>
-            </form>
+            <!-- </form> -->
+            
             <h5 class="section-title position-relative text-uppercase mb-3 pt-3"><span class="bg-light pr-3">Cart Summary</span></h5>
             <div class="bg-light p-30 mb-5">
                 <div class="border-bottom pb-2">
@@ -264,6 +435,157 @@
         });
         }
         }).render('#paypal-button-container');
+
+
+        
+        
+        
+       
 </script>     
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    <script type="text/javascript">
+        function claimCoupon(){
+            document.getElementById('couponAlert').innerText = ""
+            console.log("I am here")  
+            /* alert("coupon claim button clicked") */
+            var code = document.getElementById('couponInp').value
+             /* alert(code) */
+            var data = {
+              'code' : code, 
+              'csrf_token':'{{csrf_token}}'
+            }
+            console.log(code)
+            $.ajax({
+              url: "{% url 'verify_coupon' %}",
+              method:"POST",
+              data:data,
+           
+              success:function(response){
+                var coupon = response.success
+                if (coupon == "valid"){
+                  console.log("Coupon Verified Successfully")
+                  document.getElementById('couponSuccessAlert').innerText = "Coupon successfully applied."
+                  document.getElementById('couponInp').hidden = true
+                  document.getElementById('claimButton').disabled = true  
+                  document.getElementById('discountsID').hidden = false
+                  document.getElementById('discGrandTotal').innerText = response.total_after_coupon
+                  document.getElementById('discAmount').innerText = response.discount_amount
+                 disAmount =  response.total_after_coupon
+        
+                }else if (coupon == "coupon already used"){
+                  document.getElementById('couponAlert').innerText = "Coupon already used."
+                  
+                  console.log("coupon already used")
+                }else{
+                  document.getElementById('couponAlert').innerText = "Invalid Coupon..!!"
+                  
+                  console.log("not a valid coupon")
+              }
+              }
+            }) 
+          }
+        </script>
 
 {% endblock %}
+<!-- Footer Start -->
+<div class="container-fluid bg-secondary text-dark mt-5 pt-5">
+    <div class="row px-xl-5 pt-5">
+        <div class="col-lg-4 col-md-12 mb-5 pr-3 pr-xl-5">
+            <a href="" class="text-decoration-none">
+                <h1 class="mb-4 display-5 font-weight-semi-bold"><span class="text-primary font-weight-bold border border-white px-3 mr-1">Oh</span>Baby!</h1>
+            </a>
+            <p>Lowest prize best quality, Don't wait for anyone come and shop with us</p>
+            <p class="mb-2"><i class="fa fa-map-marker-alt text-primary mr-3"></i>123 Street, Kerala, India</p>
+            <p class="mb-2"><i class="fa fa-envelope text-primary mr-3"></i>info@ohbabyexample.com</p>
+            <p class="mb-0"><i class="fa fa-phone-alt text-primary mr-3"></i>+9112 345 67890</p>
+        </div>
+        <div class="col-lg-8 col-md-12">
+            <div class="row">
+                <div class="col-md-4 mb-5">
+                    <h5 class="font-weight-bold text-dark mb-4">Quick Links</h5>
+                    <div class="d-flex flex-column justify-content-start">
+                        <a class="text-dark mb-2" href="index.html"><i class="fa fa-angle-right mr-2"></i>Home</a>
+                        <a class="text-dark mb-2" href="shop.html"><i class="fa fa-angle-right mr-2"></i>Our Shop</a>
+                        <a class="text-dark mb-2" href="detail.html"><i class="fa fa-angle-right mr-2"></i>Shop Detail</a>
+                        <a class="text-dark mb-2" href="cart.html"><i class="fa fa-angle-right mr-2"></i>Shopping Cart</a>
+                        <a class="text-dark mb-2" href="checkout.html"><i class="fa fa-angle-right mr-2"></i>Checkout</a>
+                        <a class="text-dark" href="contact.html"><i class="fa fa-angle-right mr-2"></i>Contact Us</a>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-5">
+                    <h5 class="font-weight-bold text-dark mb-4">Quick Links</h5>
+                    <div class="d-flex flex-column justify-content-start">
+                        <a class="text-dark mb-2" href="index.html"><i class="fa fa-angle-right mr-2"></i>Home</a>
+                        <a class="text-dark mb-2" href="shop.html"><i class="fa fa-angle-right mr-2"></i>Our Shop</a>
+                        <a class="text-dark mb-2" href="detail.html"><i class="fa fa-angle-right mr-2"></i>Shop Detail</a>
+                        <a class="text-dark mb-2" href="cart.html"><i class="fa fa-angle-right mr-2"></i>Shopping Cart</a>
+                        <a class="text-dark mb-2" href="checkout.html"><i class="fa fa-angle-right mr-2"></i>Checkout</a>
+                        <a class="text-dark" href="contact.html"><i class="fa fa-angle-right mr-2"></i>Contact Us</a>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-5">
+                    <h5 class="font-weight-bold text-dark mb-4">Newsletter</h5>
+                    <form action="">
+                        <div class="form-group">
+                            <input type="text" class="form-control border-0 py-4" placeholder="Your Name" required="required" />
+                        </div>
+                        <div class="form-group">
+                            <input type="email" class="form-control border-0 py-4" placeholder="Your Email"
+                                required="required" />
+                        </div>
+                        <div>
+                            <button class="btn btn-primary btn-block border-0 py-3" type="submit">Subscribe Now</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row border-top border-light mx-xl-5 py-4">
+        <div class="col-md-6 px-xl-0">
+            <p class="mb-md-0 text-center text-md-left text-dark">
+                &copy; <a class="text-dark font-weight-semi-bold" href="#">Your Site Name</a>. All Rights Reserved. Designed
+                by
+                <a class="text-dark font-weight-semi-bold" href="https://htmlcodex.com">HTML Codex</a><br>
+                Distributed By <a href="https://themewagon.com" target="_blank">ThemeWagon</a>
+            </p>
+        </div>
+        <div class="col-md-6 px-xl-0 text-center text-md-right">
+            <img class="img-fluid" src="img/payments.png" alt="">
+        </div>
+    </div>
+</div>
+<!-- Footer End -->
+
+
+<!-- Back to Top -->
+<a href="#" class="btn btn-primary back-to-top"><i class="fa fa-angle-double-up"></i></a>
+
+
+<!-- JavaScript Libraries -->
+<!-- <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script> -->
+<!-- <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script> -->
+<script src="{% static 'js/easing.min.js' %}"></script>
+<script src="{% static 'lib/owlcarousel/owl.carousel.min.js' %}"></script>
+
+<!-- Contact Javascript File -->
+<script src="{% static 'mail/jqBootstrapValidation.min.js' %}"></script>
+<script src="{% static 'mail/contact.js' %}"></script>
+
+<!-- Template Javascript -->
+<script src="{% static 'js/main.js' %}"></script>
+
+<!-- jQuery library -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.slim.min.js"></script> -->
+
+<!-- Popper JS -->
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+
+<!-- Latest compiled JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
+
+
+</body>
+
+</html>
+    

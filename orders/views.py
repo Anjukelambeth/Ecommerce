@@ -1,14 +1,18 @@
 import json
+from django.contrib import messages
 from multiprocessing import context
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 from datetime import datetime
+from accounts.forms import UserAddressForm
 from accounts.models import Account, UserAddresses
 from cart.models import CartItem
 from cart.views import offer_check_function
+from coupons.forms import CouponApplyForm
 from orders.forms import OrderForm
 from orders.models import Order, OrderProduct, Payment, RazorPay
 import datetime
+from datetime import date
 import razorpay
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
@@ -20,54 +24,117 @@ razorpay_client = razorpay.Client(
     auth=(settings.RAZOR_KEY_ID, settings.RAZOR_KEY_SECRET))
 
 # Create your views here.
-def place_order(request,total = 0,quantity = 0):
+
+
+def place_order(request, total=0, quantity=0):
+    try:
+        address_id = request.POST['ship_address']
+        
+    except:
+        messages.error(request,"Please select billing address")
+        return redirect('checkout')
+    # print('Order place request received')
     current_user = request.user
-    grand_total=0
-    cart_items = CartItem.objects.filter(user=current_user)
-    cart_count = cart_items.count()
-    if (cart_count <= 0):
-        return redirect('store')
-    
-    for cart_item in cart_items:
-            new_price = offer_check_function(cart_item)
-            total +=(new_price * cart_item.quantity)
+    #if the cart count is <=0, redirect to store
+    try:
+        order = Order.objects.get(user=current_user, is_ordered=False)
+        # order_count = order.count()
+        # print('order received')
+
+        cart_items = CartItem.objects.filter(user = current_user)
+        grand_total = 0
+        tax = 0
+        for cart_item in cart_items:
+            total   += (cart_item.product.price * cart_item.quantity)
             quantity += cart_item.quantity
-    grand_total=total+100
+        tax = round((5 * total)/100,2)
+        grand_total = round(total + tax,2)
 
-    
-    if request.method=='POST':
-        form = OrderForm(request.POST)
-        if form.is_valid():
-            #store all billing info
+        # print('found one order and rendering')
+
+
+        context             = {
+            'order' : order,
+            'cart_items' : cart_items,
+            'total' : total,
+            'tax' : tax,
+            'grand_total' : grand_total,
+            # 'form':form
+        }
+        return render(request,'payments.html',context)
+
+
+    except:
+        cart_items = CartItem.objects.filter(user = current_user)
+        cart_count = cart_items.count()
+        if cart_count <= 0:
+            return redirect('store')
+        
+
+        grand_total = 0
+        tax = 0
+        for cart_item in cart_items:
+            total   += (cart_item.product.price * cart_item.quantity)
+            quantity += cart_item.quantity
+        tax = round((5 * total)/100,2)
+        grand_total = round(total + tax,2)
+        # print('going to check the post request')
+        if request.method == "POST":
+            # form = OrderForm(request.POST)
+            # # print(form)
+            # print('POST request - going to validate')
+            # if form.is_valid():
+            # print('form validated, getting to the fields')
+            #store all the billing information inside the table
+            form = CouponApplyForm()
+            address_id = request.POST['ship_address']
+            # print(address_id)
+            address =UserAddresses.objects.filter(id = address_id, user = request.user.id)
+            for i in address:
+                first_name = i.first_name
+                last_name = i.last_name
+                mobile = i.mobile
+                email = i.email
+                address_line_1 = i.address_line_1
+                address_line_2 = i.address_line_2
+                country = i.country
+                state = i.state
+                city = i.city
+            # print('collected details going to assign')
             data = Order()
-            data.user = current_user
-            data.first_name = form.cleaned_data['first_name']
-            data.last_name = form.cleaned_data['last_name']
-            data.phone_number = form.cleaned_data['phone_number']
-            data.email = form.cleaned_data['email']
-            data.address_line1 = form.cleaned_data['address_line1']
-            data.address_line2 = form.cleaned_data['address_line2']
-            data.country = form.cleaned_data['country']
-            data.state = form.cleaned_data['state']
-            data.city = form.cleaned_data['city']
-            data.zip = form.cleaned_data['zip']
-            data.order_note = form.cleaned_data['order_note']
-            data.order_total=total
-            data.ip = request.META.get('REMOTE_ADDR')
+            data.user           = current_user
+            data.first_name     = first_name
+            data.last_name      = last_name
+            data.phone          = mobile
+            data.email          = email
+            data.address_line_1 = address_line_1
+            data.address_line_2 = address_line_2
+            data.country        = country
+            data.state          = state
+            data.city           = city
+            data.order_note     = request.POST['order_note']
+            data.order_total    = grand_total
+            # data.tax            = tax
+            data.ip             = request.META.get('REMOTE_ADDR')
+            # print('Assigned all the values and going to save')
             data.save()
 
-            #generate order number yr/m/day/hr/mn/second
-           
-            order_number = str(int(datetime.datetime.now().strftime('%Y%m%d%H%M%S')))
-            data.order_number = order_number
-            data.save()
+            #generate order no
+            yr                  = int(date.today().strftime('%Y'))
+            dt                  = int(date.today().strftime('%d'))
+            mt                  = int(date.today().strftime('%m'))
+            d                   = date(yr,mt,dt)
+            current_date        = d.strftime("%Y%m%d")
 
-            cart_item = CartItem.objects.filter(user=current_user)
+            order_number        = current_date + str(data.id)
+            # print('order number generated')
+            data.order_number   = order_number
+            data.save()
+            # print('details verified and directed to checkout')
             
-           
-            order = Order.objects.get(user=current_user,is_ordered=False,order_number=order_number)
-
-            # authorize razorpay client with API Keys.
+            order               = Order.objects.get(user=current_user, is_ordered=False, order_number=order_number)
+            # print('order value selected and passed to context')
+             # authorize razorpay client with API Keys.
            
             #createe cliten
             razorpay_client = razorpay.Client(
@@ -104,25 +171,12 @@ def place_order(request,total = 0,quantity = 0):
             razor_model.order = order
             razor_model.razor_pay = razorpay_order_id
             razor_model.save()
-            return render(request,'payments.html',context)
+
             
+            return render(request,'payments.html',context)
         else:
-            return HttpResponse('form not valid')
-
-        #     context={
-        #         'order':order,
-        #         'cart_items':cart_items,
-        #         'total':total,
-        #         'grand_total':grand_total,
-        #     }
-        #     return render(request,'payments.html',context)
-        # else:
-        #     return HttpResponse('form not valid')
-        
-    # else:
-    #     return redirect('checkout')    
-
-    return render(request,'checkout.html')
+            # print('entered else case/GET case and redirecting to checkout')
+            return redirect('checkout')
 
 def payments(request):
     # body=json.loads(request.body)

@@ -38,6 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.humanize',
+    'crispy_forms',
     'accounts',
     'adminpanel',
     'category',
@@ -45,6 +47,7 @@ INSTALLED_APPS = [
     'cart',
     'orders',
     'mathfilters',
+    'coupons',
 ]
 
 MIDDLEWARE = [
@@ -58,6 +61,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'ecommerce.urls'
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 TEMPLATES = [
     {
@@ -72,6 +76,7 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'category.context_processors.nav_links',
                 'cart.context_processors.cart_counter',
+                # 'products.context_processors.get_filters',
             ],
         },
     },

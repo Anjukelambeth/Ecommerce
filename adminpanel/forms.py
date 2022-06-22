@@ -1,5 +1,5 @@
 from django import forms
-from adminpanel.models import ProductOffer
+from adminpanel.models import CategoryOffer, ProductOffer
 from orders.models import Order
 from dataclasses import fields
 
@@ -22,3 +22,18 @@ class ProductOfferForm(forms.ModelForm):
             'valid_from':DateTimeLocal(),
             'valid_to':DateTimeLocal(),
         }
+        def __init__(self,*args,**kwargs):
+            super(ProductOfferForm, self).__init__(*args, **kwargs)
+
+class CategoryOfferForm(forms.ModelForm):
+    class Meta:
+        model = CategoryOffer
+        fields = '__all__'
+        widgets = {
+            'valid_from': DateTimeLocal(),
+            'valid_to': DateTimeLocal(),
+        }
+    
+        def __init__(self,*args,**kwargs):
+            super(CategoryOfferForm, self).__init__(*args, **kwargs)
+            

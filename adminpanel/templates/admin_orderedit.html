@@ -2,21 +2,50 @@
 {% block title %}
     Order-List
 {% endblock %}
-
+{% load crispy_forms_tags %}
 {% block content%} 
 <div class="p-5 justify-content-center pull-left" style="line-height: 1">
     <div class="p-5 justify-content-center  ">
 <div class="container-fluid">
         
-    <div class="col-lg-9">
-<form action="" method="POST" style="padding:2rem;margin:auto; "   enctype="multipart/form-data">
-    {% csrf_token %}
-    {{form.status}}
-    <button type="submit">save</button>
-</form>
-</div>
-</div>
-</div>
-</div>
-</div>
+    <!-- ========================= SECTION CONTENT ========================= -->
+<section class="section-content padding-y bg">
+  
+
+    <div class="container-fluid">
+        <div class="row-fluid">
+
+          <div class="col-md-6" style="height: 50%; margin: auto;">
+           
+            <form action="" method="POST" enctype="multipart/form-data" id="post-form" style="margin-bottom: 20px; border: 2px solid grey; padding: 30px 20px;">
+                {% csrf_token %}
+                
+                <fieldset class="form-group">
+                  <legend class="border-bottom mb-4">Update Order Status</legend>
+               
+                  {{ form | crispy }}
+                </fieldset>
+      
+                <div class="form-group">
+                  <div id="image-box" class="image-container"></div>
+                  <button class="btn btn-outline-info" id="crop-btn" style="width: 100%; margin-top: 10px; display: none;" type="button">Crop</button>
+                  <button class="btn btn-outline-info" id="confirm-btn" style="width: 100%; margin-top: 10px;" type="submit">Update Order Status</button>            
+                </div>
+                  </form>
+                  </div>
+
+                </div> <!-- row.// -->
+            </div> <!-- card-body .// -->
+
+            </article> <!-- order-group.// --> 
+        </main>
+    </div> <!-- row.// -->
+    </div>
+    
+    
+    </section>
+    <!-- ========================= SECTION CONTENT END// ========================= -->
+    
+
+
 {% endblock %}
