@@ -89,8 +89,8 @@ Admin-home
                     </div>
                     <!--  -->
                     <div>
-                        <a href="{% url 'export_csv'%}" class="text-primary btn btn_1">export csv</a>
-                      <a href="{% url 'export_excel'%}" class="text-danger btn btn_1">export Excel</a>
+                        <!-- <a href="{% url 'export_csv'%}" class="text-primary btn btn_1">export csv</a>
+                      <a href="{% url 'export_excel'%}" class="text-danger btn btn_1">export Excel</a> -->
                         <!--  -->
                        
                     </div>
@@ -196,8 +196,107 @@ Admin-home
     </div>
 </div>
 
-
+<div class="container-fluid pt-4 px-4">
+    <div class="row g-4">
+        <div class="col-sm-12 col-xl-6">
+            <div class="bg-light text-center rounded p-4">
+                <div class="d-flex align-items-center justify-content-between mb-4">
+                    <h6 class="mb-0">Orders</h6>
                     
+                </div>
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+                <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+                <canvas id="myChart11" width="400" height="400"></canvas>
+                <script>
+                const ctx11 = document.getElementById('myChart11').getContext('2d');
+                const myChart11 = new Chart(ctx11, {
+                    type: 'pie',
+                    data: {
+                        labels: ["Delivered", "Shipped","Ordered","Returned","Cancelled"],
+                        datasets: [{
+                            label: '# Sale',
+                            data: [12, 19, 3, 5, 2, 3],
+                            backgroundColor: [
+                                'rgba(255, 99, 132, 0.2)',
+                                'rgba(54, 162, 235, 0.2)',
+                                'rgba(255, 206, 86, 0.2)',
+                                'rgba(75, 192, 192, 1)',
+                                'rgba(153, 102, 255, 1)',
+                                'rgba(255, 159, 64, 1)'
+                            ],
+                            borderColor: [
+                                'rgba(255, 99, 132, 1)',
+                                'rgba(54, 162, 235, 1)',
+                                'rgba(255, 206, 86, 1)',
+                                'rgba(75, 192, 192, 1)',
+                                'rgba(153, 102, 255, 1)',
+                                'rgba(255, 159, 64, 1)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+                </script>
+                
+            </div>
+        </div>
+        
+        <div class="col-sm-12 col-xl-6">
+            <div class="bg-light text-center rounded p-4">
+                <div class="d-flex align-items-center justify-content-between mb-4">
+                    <h6 class="mb-0">Customers</h6>
+                    
+                </div>
+                <canvas id="myChart22" width="400" height="400"></canvas>
+                <script>
+                const ctxn2 = document.getElementById('myChart22').getContext('2d');
+                const mychart22 = new Chart(ctxn2, {
+                    type: 'line',
+                    data: {
+                        labels: "{{dayday}}",
+                        datasets: [{
+                            label: '# Revenue',
+                            data: "{{revenue}}",
+                            backgroundColor: 
+                            ["red", "green","blue","orange","brown"]
+                            ,
+                            borderColor: [
+                                'rgba(255, 99, 132, 1)',
+                                'rgba(54, 162, 235, 1)',
+                                'rgba(255, 206, 86, 1)',
+                                'rgba(75, 192, 192, 1)',
+                                'rgba(153, 102, 255, 1)',
+                                'rgba(255, 159, 64, 1)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+                </script>
+                
+                
+                   
+            </div>
+        </div>
+        
+
+    </div>
+</div>
+
 
   
  

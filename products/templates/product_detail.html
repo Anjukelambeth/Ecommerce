@@ -229,10 +229,17 @@
               <small class="pt-1">(50 Reviews)</small>
           </div>
           {% if single_product.product_offer%} 
-                                <h3>₹{{single_product.product_offer.discount|mul:single_product.price|div:100|sub:single_product.price|abs}}</h3>  <h6 class="text-muted ml-2"><del>₹{{single_product.price}}</del></h6>
-                                {% else%}
-                                <h3>₹{{single_product.price}}</h3>
-                                {% endif%}
+             <h3>₹{{single_product.product_offer.discount|mul:single_product.price|div:100|sub:single_product.price|abs}}</h3>  <h6 class="text-muted ml-2"><del>₹{{single_product.price}}</del></h6>
+                            
+          {% elif single_product.category.category_offer %} 
+                            
+                <h6>₹{{single_product.category.category_offer.discount|mul:single_product.price|div:100|sub:single_product.price|abs}}</h6>  <h6 class="text-muted ml-2"><del>₹{{single_product.price}}</del></h6>
+                            
+            {% else%}
+                <h3>₹{{single_product.price}}</h3>
+            {% endif%}
+                                
+                                
           <!-- <h3 class="font-weight-semi-bold mb-4">₹{{single_product.price}}</h3> -->
           <p class="mb-4">{{single_product.product_description}}</p>
           <!-- {% if single_product.variation_set.colors and single_product.variation_set.sizes  %} -->

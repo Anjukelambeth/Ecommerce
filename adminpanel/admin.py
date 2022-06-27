@@ -8,7 +8,7 @@ class ProductOfferAdmin(admin.ModelAdmin):
     list_filter = ['product']
 
 class CategoryOfferAdmin(admin.ModelAdmin):
-    list_display = ['category_id','valid_from','valid_to','discount','is_active']
+    list_display = ['category','valid_from','valid_to','discount','is_active']
     list_filter = ['is_active','valid_from','valid_to']
    
 

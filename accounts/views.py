@@ -3,8 +3,9 @@ from django.core.paginator import Paginator
 from inspect import modulesbyfile
 from itertools import product
 from multiprocessing import context
+from adminpanel.models import CategoryOffer, ProductOffer
 from category.models import category
-from cart.models import Cart
+from cart.models import Cart, CartItem
 from cart.views import _cart_id
 from orders.models import Order, OrderProduct
 from products.models import Products
@@ -24,9 +25,14 @@ from django.contrib.auth.decorators import login_required
 def index(request):
     products= Products.objects.all().filter(is_available=True)
     categorys= category.objects.all()
+    product=Products.objects.all()
+    categoery_offer=CategoryOffer.objects.all()
+    pro_offer=ProductOffer.objects.all()
     context={
         'products':products,
         'categorys':categorys,
+        'categoery_offer':categoery_offer,
+        'pro_offer':pro_offer,
         }
     return render(request,'index.html',context)
 
@@ -50,8 +56,38 @@ def signin(request):
 
         if user is not None:
             try:
-                cart=Cart.objects.get(cart_id=_cart_id(request))
-
+                cart    = Cart.objects.get(cart_id = _cart_id(request))
+                is_cart_item_exists = CartItem.objects.filter(cart = cart).exists()
+                if is_cart_item_exists:
+                    cart_item = CartItem.objects.filter(cart=cart)
+                    product_variation = []
+                    for item in cart_item:
+                        variation = item.variations.all()
+                        product_variation.append(list(variation))
+                    
+                    # get the cart items from the user to access his product variations.
+                    cart_item           = CartItem.objects.filter(user=user)           
+                    ex_var_list = []
+                    id = []
+                    for item in cart_item:
+                        existing_variation = item.variations.all()
+                        ex_var_list.append(list(existing_variation))
+                        id.append(item.id)
+                    
+                    for pr in product_variation:
+                        if pr in ex_var_list:
+                            index = ex_var_list.index(pr)
+                            item_id = id[index]
+                            item = CartItem.objects.get(id=item_id)
+                            item.quantity += 1
+                            item.user   = user
+                            item.save()
+                        else:
+                            cart_item = CartItem.objects.filter(cart=cart)
+                            for item in cart_item:
+                                item.user = user
+                                item.save()
+                        
             except:
                 pass
             login(request,user)
@@ -333,7 +369,7 @@ def delete_address(request,add_id):
     context = {
         "addresses":addresses,
     }
-    return render(request,'accounts/my_addresses.html', context)
+    return render(request,'my_addresses.html', context)
 
 def edit_address(request,id):
     instance = get_object_or_404(UserAddresses, id=id)
@@ -380,9 +416,13 @@ def my_order(request):
  
     # current_user = request.user
     
-    orders = Order.objects.filter(user=request.user,is_ordered=True)
+    orders = Order.objects.filter(user=request.user,is_ordered=True).order_by('-created_at')
+    paginator = Paginator(orders, 5) # Show 25 contacts per page.
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
     context ={
-        'orders':orders, 
+        'orders':page_obj, 
     }
     return render(request,'my_order.html',context)
 @login_required(login_url='signin')
@@ -413,7 +453,7 @@ def order_detail(request,order_id):
         'order':order,
         'sub_total': sub_total,
     }
-    return render (request, 'order_detail.html',context)
+    return render (request,'order_detail.html',context)
 
 
 def user_order_cancel(request,order_number):

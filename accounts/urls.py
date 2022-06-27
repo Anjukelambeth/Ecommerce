@@ -21,6 +21,7 @@ urlpatterns = [
     path('change_password/',views.change_password,name='change_password'),
     path('my_order/',views.my_order,name='my_order'),
     path('order_view/<int:order_id>',views.order_view,name='order_view'),
+    path('order_detail/<order_id>/',views.order_detail,name='order_detail'),
     path('user_order_cancel/<int:order_number>',views.user_order_cancel,name='user_order_cancel'),
     path('return_order/<int:order_number>',views.return_order,name='return_order'),
 ]

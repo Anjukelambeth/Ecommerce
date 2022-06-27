@@ -1,5 +1,5 @@
 from django import forms
-from .models import Products
+from .models import Products, Variation
 
 class ProductsForm(forms.ModelForm):
 
@@ -20,3 +20,9 @@ class ProductsForm(forms.ModelForm):
         
         # for field in self.fields:
         #     self.fields[field].widget.attrs['class']= 'form-control'
+
+class VariationForm(forms.ModelForm):
+
+    class Meta:
+        model = Variation
+        fields = ['product','variation_category','variation_value','is_active']

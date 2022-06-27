@@ -5,7 +5,7 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from accounts.forms import UserAddressForm
 from accounts.models import UserAddresses
-from adminpanel.models import ProductOffer
+from adminpanel.models import CategoryOffer, ProductOffer
 from cart.models import Cart, CartItem
 from django.views.decorators.csrf import csrf_exempt
 from products.models import Products, Variation
@@ -22,8 +22,11 @@ def offer_check_function(item):
     product = Products.objects.get(product_name=item)
     print(product)
     if ProductOffer.objects.filter(product=product).exists():
-     
+        if product.product_offer:
             sub_total =  product.price -  ((product.price*product.product_offer.discount)/100) 
+    elif CategoryOffer.objects.filter(category=item.product.category).exists():
+           if item.product.category.category_offer:
+            sub_total =  product.price -  ((product.price*item.product.category.category_offer.discount)/100) 
     
     else:
         sub_total=product.price
@@ -381,8 +384,8 @@ def buyNow(request,category_slug,product_slug,total=0, quantity=0,):
             item  = Products.objects.get(category__slug=category_slug,slug=product_slug)
         # cart=Cart.objects.get(cart_id=_cart_id(request))
         # cart_items=CartItem.objects.filter(cart=cart,is_active=True)
-            add=UserAddresses.objects.filter(user=request.user)
-            form = UserAddressForm(instance=request.user)
+            address=UserAddresses.objects.filter(user=request.user)
+            # form = UserAddressForm(instance=request.user)
             item.quantity=1
             new_price = offer_check_function(item)
             total += new_price * 1
@@ -397,8 +400,10 @@ def buyNow(request,category_slug,product_slug,total=0, quantity=0,):
         'quantity': quantity,
         'item': item,
         'grand_total': grand_total,
-        'add':add,
-        'form':form,
+         'address':address,
+        # 'form':form,
         'profile':request.user
     }
     return render(request,'buyNow.html',context)
+
+

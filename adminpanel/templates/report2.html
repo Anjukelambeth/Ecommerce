@@ -1,0 +1,159 @@
+{% extends 'admin_base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% block title %}
+   report
+{% endblock %}
+{% block content %}
+{% for message in messages %}
+<div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+    <strong>Message:</strong> {{ message }}
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+<span aria-hidden="true">&times;</span>
+</button>
+</div>
+{% endfor %}
+<!-- Recent Sales Start -->
+<div class="p-5 justify-content-center pull-left" style="line-height: 1">
+   
+            <div class="row p-5 ">
+            
+                <div class="dropdown show mx-3">
+                    <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Monthly report
+                    </a>
+                   
+                    <div class="dropdown-menu " aria-labelledby="dropdownMenuLink">
+                        <form method="POST" action="{% url 'monthly_report'  %}">
+                            {% csrf_token %}
+                            <label for="from_date" style="float: left; "> Choose Month </label> 
+                                <select id="from_date" name="from_date">
+                                <option name="from_date" value="01-01-2022">January</option>
+                                <option name="from_date" value="01-02-2022">February</option>
+                                <option name="from_date" value="01-03-2022">March</option>
+                                <option name="from_date" value="01-04-2022">April</option>
+                                <option name="from_date" value="01-05-2022">May</option>
+                                <option name="from_date" value="01-06-2022">June</option>
+                                <option name="from_date" value="01-07-2022">July</option>
+                                <option name="from_date" value="01-08-2022">August</option>
+                                <option name="from_date" value="01-09-2022">September</option>
+                                <option name="from_date" value="01-10-2022">October</option>
+                                <option name="from_date" value="01-11-2022">November</option>
+                                <option name="from_date" value="01-12-2022">December</option>
+                                </select>
+            
+                            <button type="submit" class="btn btn-primary m-2">Get Details</button> 
+                        
+                    </form>
+                    </div>
+                </div>
+                <div class="dropdown show mx-3">
+                    <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Yearly report
+                    </a>
+                    
+                      
+                        <div class="dropdown-menu " aria-labelledby="dropdownMenuLink">
+                            <form method="POST" action="{% url 'yearly_report'  %}">
+                                {% csrf_token %}
+                                <label for="from_date" style="float: left; "> Choose Year </label> 
+                                    <select id="from_date" name="from_date">
+                                    <option name="from_date" value="01-01-2023">2023</option>
+                                    <option name="from_date" value="01-02-2022">2022</option>
+                                    <option name="from_date" value="01-03-2021">2021</option>
+                                    <option name="from_date" value="01-04-2020">2020</option>
+                                    <option name="from_date" value="01-05-2019">2019</option>
+                                    <option name="from_date" value="01-06-2018">2018</option>
+                                    </select>
+                
+                                <button type="submit" class="btn btn-primary m-2">Get Details</button> 
+                            
+                        </form>
+                        </div>
+                    </div>
+                    <!-- <div class="dropdown">
+                        <a class="btn btn-warning dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                          daily report
+                        </a>
+                      
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink" >
+                            <a class="dropdown-item" href="#">week 1</a>
+                            <a class="dropdown-item" href="#">week 2</a>
+                            <a class="dropdown-item" href="#">week 3</a>
+                            <a class="dropdown-item" href="#">week 4</a>
+
+                        </ul>
+                      </div> -->
+
+                    </div>
+            
+                      
+          <!-----------------REPORT DROP DOWN ENDS-------------------------------->
+            </div>
+
+        </div>
+
+
+        
+        {% if not salesreport %}
+        <div> 
+        <h4 class="text-center mt-5"> No orders found in this range. Please check with some other dates. </h4>
+        </div>
+        {% else %}
+        <div class="p-5 justify-content-center  ">
+       <div class="card mb-4 mt-4 text-center">
+         <div class="card-header">
+             <i class="fas fa-table me-1"></i>
+             Orders
+            
+          <div class="p-5 justify-content-center  ">   
+       
+           <table class="table text-center table-bordered table-hover table-active" >
+                   <thead class="thead-dark ">
+                       <tr>
+                             <th>Customer Name</th>
+                             <th>Order No</th>
+                             <th>Order Dt</th>
+                             {% comment %} <th>Phone No</th> {% endcomment %}
+                             <!-- <th>Email</th> -->
+                             <th>City</th>
+                             <th>State</th>
+                             <th>Order Value</th>
+                             <th>Status</th>
+                             
+                             {% comment %} <th></th> {% endcomment %}
+                            
+                       </tr>
+                   </thead>
+                   <tbody>
+                         {% for order in salesreport %}
+                           <tr class="gradeX">
+                             <td>{{order.full_name}}</td>
+                             <td>{{order.order_number}}</td>
+                             <td>{{order.created_at}}</td>
+                             {% comment %} <td>{{order.phone}}</td> {% endcomment %}
+                             <!-- <td>{{order.email}}</td> -->
+                             <td>{{order.city}}</td>
+                             <td>{{order.state}}</td>
+                             <td class="text-right">₹ {{order.order_total}}</td>
+                             <td>{{order.status}}</td>
+                             
+                           </tr>
+                         
+                           {% endfor %}
+       
+                   </tbody>
+               </table>
+           </div>
+       </div>
+       </div>
+       </div>
+       {% endif %}
+<!-- Recent Sales End -->
+
+
+
+
+
+
+{% endblock %}

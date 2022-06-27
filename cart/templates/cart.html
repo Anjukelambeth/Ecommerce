@@ -217,23 +217,26 @@
                         <td class="align-middle">
                             {% if cart_item.product.product_offer%}
                             ₹{{cart_item.product.product_offer.discount|mul:cart_item.product.price|div:100|sub:cart_item.product.price|abs}}
+                            {% elif cart_item.product.category.category_offer %} 
+                            
+                            ₹{{cart_item.product.category.category_offer.discount|mul:cart_item.product.price|div:100|sub:cart_item.product.price|abs}}
                             {% else%}
                             ₹{{cart_item.product.price}}
                             {% endif%}
                         </td>
                         <td class="align-middle">
-                            <div class="input-group quantity mx-auto" style="width: 100px;">
+                            <div class="input-group quantity mx-auto" style="width: 120px;">
                                 <div class="input-group-btn">
                                     
                             {% if cart_item.quantity == 1 %}	
-							<a onclick="deleteCartItem('{{cart_item.product_id}}','{{cart_item.id}}')" class="btn btn-light"  id="minusBtDel"> <i class="fa fa-minus"></i> </a>
+							<a onclick="deleteCartItem('{{cart_item.product_id}}','{{cart_item.id}}')" class="btn btn-light "  id="minusBtDel"> <i class="fa fa-minus"></i> </a>
 							{% else %}
 							<a href="{% url 'remove_cart' cart_item.product_id cart_item.id %}"  onclick="decrementQty('{{cart_item.product_id}}', '{{cart_item.id}}')" class="btn btn-light"  id="button-minus"> <i class="fa fa-minus"></i> </a>
-							<!-- <a onclick="decrementQty('{{cart_item.product_id}}', '{{cart_item.id}}')" class="btn btn-light"  id="button-minus"> <i class="fa fa-minus"></i> </a> -->
+							
 							
 							{% endif %}
                                 </div>
-                                <input type="text" class="form-control form-control-sm bg-light text-dark border-0 text-center" value="{{cart_item.quantity}}">
+                                <input type="text" class="form-control form-control-sm bg-light text-dark border-0 text-center " value="{{cart_item.quantity}}">
                                 <div class="input-group-btn">
                                     
                                         <form action="{% url 'add_cart' cart_item.product_id %}" method="POST"> 
@@ -354,7 +357,7 @@
     
     
       </script>
-      <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+      <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script> -->
 <script type="text/javascript">
 
 function decrementQty(prod_id, cart_item_id){
@@ -379,8 +382,7 @@ function decrementQty(prod_id, cart_item_id){
 
 }
 
-</script>
-<script>
+
 function incrementQty(){
 
 console.log($('.proIncrement').serialize()+'&id='+$('.proIncrement').attr('proId'))
@@ -402,73 +404,9 @@ $('#navWishCart').load('/cart #navWishCart')
 }  
 </script>
 
-<script>	
-	$('.proIncrement').on('submit',(e)=>{
-	e.preventDefault();
-	console.log($(e.currentTarget).serialize()+'&id='+$(e.currentTarget).attr('proId'))
-	alert($(e.currentTarget).serialize()) 	
-	$.ajax({
-		url:"{% url 'add_cart_ajax' %}",
-		method:"POST",
-		data:$(e.currentTarget).serialize()+'&id='+$(e.currentTarget).attr('proId'),
-		success:function(){
-	alert("successfully submitted");
-	$('#navWishCart').load('/cart #navWishCart')
-	$('#cartContainer').load('/cart #cartContainer')
 
-	
-		},
-		error:function(){
 
-		}
-	})
-	})  
-</script>
 
-<!-- <script>
-    function claimCoupon(){
-        document.getElementById('couponAlert').innerText = ""
-        console.log("I am here")  
-        /* alert("coupon claim button clicked") */
-        var code = document.getElementById('couponInp').value
-         /* alert(code) */
-        var data = {
-          'code' : code, 
-          'csrf_token':'{{csrf_token}}'
-        }
-        console.log(code)
-        $.ajax({
-          url: "{% url 'verify_coupon' %}",
-          method:"POST",
-          data:data,
-       
-          success:function(response){
-            var coupon = response.success
-            if (coupon == "valid"){
-              console.log("Coupon Verified Successfully")
-              document.getElementById('couponSuccessAlert').innerText = "Coupon successfully applied."
-              document.getElementById('couponInp').hidden = true
-              document.getElementById('claimButton').disabled = true  
-              document.getElementById('discountsID').hidden = false
-              document.getElementById('discGrandTotal').innerText = response.total_after_coupon
-              document.getElementById('discAmount').innerText = response.discount_amount
-             disAmount =  response.total_after_coupon
-    
-            }else if (coupon == "coupon already used"){
-              document.getElementById('couponAlert').innerText = "Coupon already used."
-              
-              console.log("coupon already used")
-            }else{
-              document.getElementById('couponAlert').innerText = "Invalid Coupon..!!"
-              
-              console.log("not a valid coupon")
-          }
-          }
-        }) 
-      }
-    
-    
-    </script> -->
 
 {% endblock %}
 <!-- Footer Start -->
@@ -560,7 +498,7 @@ $('#navWishCart').load('/cart #navWishCart')
 <script src="{% static 'js/main.js' %}"></script>
 
 <!-- jQuery library -->
-<!-- <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.slim.min.js"></script> -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 
 <!-- Popper JS -->
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>

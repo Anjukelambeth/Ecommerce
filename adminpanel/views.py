@@ -14,13 +14,17 @@ from orders.forms import OrderStatusForm
 from orders.models import Order, OrderProduct
 from products.models import Products
 from category.forms import CategoryForm
-from products.forms import ProductsForm
+from products.forms import ProductsForm, VariationForm
 from django.contrib.auth.decorators import login_required
 import os
+from dateutil.relativedelta import relativedelta
+from datetime import date,datetime,timedelta
+from django.utils.text import Truncator
+from django.db.models.functions import TruncDate, TruncDay, TruncMonth, TruncWeek
 from django.views.decorators.cache import cache_control
 from slugify import slugify
 from django.db.models.functions import ExtractMonth,ExtractDay
-from django.db.models import Count
+from django.db.models import Count,Sum
 import csv
 from csv import writer
 from datetime import datetime
@@ -34,6 +38,9 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.units import inch
 from django.core.paginator import Paginator
 from reportlab.lib.pagesizes import letter
+
+from refferalcode.forms import RefferalApplyForm
+from refferalcode.models import Refferal
 # os.add_dll_directory()
 # from django.contrib.auth.decorators import user_passes_test
 # Create your views here.
@@ -385,6 +392,7 @@ def admin_orderedit(request,order_number):
 
 def admin_offerview(request):
     coupon_offers = Coupon.objects.all().order_by('-valid_to')
+    refferal_offers = Coupon.objects.all().order_by('-valid_to')
     prod_offers = ProductOffer.objects.all().order_by('-valid_to')
     cat_offers = CategoryOffer.objects.all().order_by('-valid_to')
 
@@ -398,6 +406,7 @@ def admin_offerview(request):
         'coupon_offers': page_obj,
         'prod_offers': prod_offers,
         'cat_offers': cat_offers,
+        'refferal_offers': refferal_offers,
 
     }
     
@@ -495,7 +504,88 @@ def delete_coupon(request):
 
     return redirect('admin_offerview')
 
+# refferal offers
+@login_required(login_url='admin_login')
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
+def add_refferal(request):
+    form = RefferalApplyForm(request.POST or None, request.FILES or None)  
+    if request.method == "POST":
+        if form.is_valid():
+            form.save()
+            return redirect('admin_offerview')
+        else:
+            messages.error(request,'form not valid')            
+            context = {
+            'form':form
+            }
+            return render(request,'add_refferal.html',context)
+    else:
+        context = {
+            'form':form
+        }
+        return render(request,'add_refferal.html',context)
+    
+    
+    
+@login_required(login_url='admin_login')
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
+def edit_refferal(request,c_id):
+    instance = get_object_or_404(Refferal, id=c_id)
+    form = RefferalApplyForm(request.POST or None, instance=instance)
 
+
+    if request.method == "POST":
+        if form.is_valid():
+            form.save()
+            messages.success(request,'Code has been updated')
+            return redirect('admin_offerview')
+        else:
+             context = {
+            'form'     : form,
+            'coupon':instance,
+            }
+        return render(request, 'edit_refferal.html',context)
+    else:  
+        context = {
+            'form'     : form,
+            'coupon':instance,
+            }
+        return render(request, 'edit_refferal.html',context)
+    
+
+@login_required(login_url='admin_login')
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
+def activate_refferal(request):
+    coupon_id = request.GET['couponId']
+    coupon = Refferal.objects.get(id = coupon_id)
+    coupon.active = True
+    coupon.save()
+
+    return redirect('admin_offerview')
+
+
+@login_required(login_url='admin_login')
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
+def block_refferal(request):
+  
+    coupon_id = request.GET['couponId']
+    coupon = Refferal.objects.get(id = coupon_id)
+    coupon.active = False
+    coupon.save()
+
+    return redirect('admin_offerview')
+
+
+
+@login_required(login_url='admin_login')
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
+def delete_refferal(request):
+    coupon_id = request.GET['couponId']
+    coupon = Refferal.objects.get(id = coupon_id)
+    
+    coupon.delete()
+
+    return redirect('admin_offerview')
 
 
 
@@ -527,7 +617,7 @@ def edit_product_offer(request,id):
         form = ProductOfferForm(request.POST,instance=offer)
         form.save()
         messages.success(request,'Product offer updated successfully')
-        return redirect('offer_view')
+        return redirect('admin_offerview')
     return render (request,'edit_product_offer.html',{'form':form,'offer':offer})
 
 @login_required(login_url='admin_login')
@@ -540,7 +630,7 @@ def activate_product_offer(request):
     offer.is_active = True
     offer.save()
 
-    return redirect('offer_view')
+    return redirect('admin_offerview')
 
 
 @login_required(login_url='admin_login')
@@ -551,7 +641,7 @@ def block_product_offer(request):
     offer.is_active = False
     offer.save()
 
-    return redirect('offer_view')
+    return redirect('admin_offerview')
 
 @login_required(login_url='admin_login')
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
@@ -561,7 +651,7 @@ def delete_product_offer(request):
     
     offer.delete()
 
-    return redirect('offer_view')
+    return redirect('admin_offerview')
 
 
 
@@ -578,7 +668,7 @@ def add_cat_offer(request):
     if request.method == "POST":
         if form.is_valid():
             form.save()
-            return redirect('offer_view')
+            return redirect('admin_offerview')
         else:
             messages.error(request,'form not valid')            
             context = {
@@ -602,7 +692,7 @@ def edit_cat_offer(request,cat_id):
         if form.is_valid():
             form.save()
             messages.success(request,'Offer has been updated')
-            return redirect('offer_view')
+            return redirect('admin_offerview')
         else:
              context = {
             'form'     : form,
@@ -638,7 +728,7 @@ def block_cat_offer(request):
     offer.is_active = False
     offer.save()
 
-    return redirect('offer_view')
+    return redirect('admin_offerview')
 
 
 @login_required(login_url='admin_login')
@@ -649,7 +739,7 @@ def delete_cat_offer(request):
     
     offer.delete()
 
-    return redirect('offer_view')
+    return redirect('admin_offerview')
 
 def report_pdf(request):
     # create  bytestream buffer
@@ -706,3 +796,129 @@ def sales_report(request):
             'orders':orders,            
         }
         return render(request,'sales_report.html',context)
+
+def sales_report2(request):
+    salesreport = Order.objects.all().order_by('-created_at')
+    total = 0
+    total= salesreport.aggregate(Sum('order_total')).get('order_total__sum')
+    RoundTotal =("{:0.2f}".format(total))
+    
+    context = {
+        'salesreport': salesreport ,
+        'total':    total,
+        'RoundTotal': RoundTotal,
+
+    }
+    return render(request,'report2.html',context)
+
+
+
+
+def monthly_report(request):
+    context = None
+    # frmdate = date
+    if request.method == "POST": 
+        from_date = request.POST["from_date"]
+    
+    
+
+        fm=datetime.strptime(from_date, "%d-%m-%Y")
+    
+        to_date = fm + timedelta(days=30)
+    # fm = [ 2022 , frmdate , 1 ]
+    # todt = [2022 , frmdate , 28 ]
+    # fm=datetime.strptime(fm, "%d %B, %Y")
+    # todt=datetime.strptime(todt, "%d %B, %Y")
+    
+    # print(fm)
+            
+        salesreport = Order.objects.filter(created_at__gte=datetime.date(fm), created_at__lte=datetime.date(to_date))
+    
+        if len(salesreport) > 0 :   
+            context = {
+                    'salesreport' : salesreport ,  
+                
+                }
+            print(salesreport)
+            print("111")
+            return render(request,'search_report_sales.html',context)
+            return render(request,'admin/sales_report_search.html',context)
+        else:
+            messages.info(request,"No Orders")
+    return render(request,'report2.html',context)
+
+
+
+def yearly_report(request):
+    context = None
+    frmdate = date
+    if request.method == "POST": 
+        from_date = request.POST["from_date"]
+    
+    
+
+        fm=datetime.strptime(from_date, "%d-%m-%Y")
+    
+        to_date = fm + relativedelta(months=11)
+   
+    # fm = [ frmdate , 1 , 1 ]
+    # todt = [frmdate , 12 , 30 ]
+
+    # print(fm)
+            
+        salesreport = Order.objects.filter(created_at__gte=datetime.date(fm), created_at__lte=datetime.date(to_date))
+        if len(salesreport) > 0 :   
+            context = {
+                    'salesreport' : salesreport ,   
+                }
+            print(salesreport)
+            print("222222222222222222222222222222222222222")
+            return render(request,'search_report_sales.html',context)
+        else:
+            print("44444444444444444")
+            messages.info(request,"No Orders")
+    return render(request,'report2.html',context)
+
+
+
+def weekly_report(request,date):
+    context = None
+    frmdate = date
+   
+    fm = [ 2022 , 1 , frmdate ]
+    todt = [2022 , 12 , frmdate ]
+    
+    print(fm)
+            
+    salesreport = Order.objects.filter(created_at__range=(fm, todt)).order_by('-weekly')
+    if len(salesreport) > 0 :   
+        context = {
+                'salesreport' : salesreport ,   
+            }
+        print(salesreport)
+        print("222222222222222222222222222222222222222")
+        return render(request,'search_report_sales.html',context)
+    else:
+        print("44444444444444444")
+        messages.info(request,"No Orders")
+    return render(request,'report2.html',context)
+
+@login_required(login_url='admin_login')
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
+def add_prod_variation(request):
+    form = VariationForm(request.POST or None)
+    if request.method == "POST":
+        if form.is_valid():
+            form.save()
+            messages.success(request,'Product variation updated.')
+            return redirect('add_prod_variation')
+        else:
+            context = {
+            'form'     : form,
+            }
+        return render(request, 'add_prod_variation.html',context)
+    else:  
+        context = {
+            'form'     : form,
+            }
+        return render(request, 'add_prod_variation.html',context)

@@ -45,12 +45,20 @@ urlpatterns = [
     path('activate_coupon',views.activate_coupon, name = 'activate_coupon'),     
     path('block_coupon',views.block_coupon, name = 'block_coupon'),
     path('delete_coupon',views.delete_coupon, name = 'delete_coupon'),
+    path('add_refferal',views.add_refferal, name = 'add_refferal'),
+    path('edit_refferal/<int:c_id>',views.edit_refferal, name = 'edit_refferal'),    
+    path('activate_refferal',views.activate_refferal, name = 'activate_refferal'),     
+    path('block_refferal',views.block_refferal, name = 'block_refferal'),
+    path('delete_refferal',views.delete_coupon, name = 'delete_refferal'),
     path('add_cat_offer',views.add_cat_offer, name = 'add_cat_offer'),
     path('edit_cat_offer/<int:cat_id>',views.edit_cat_offer, name="edit_cat_offer"),
     path('activate_cat_offer',views.activate_cat_offer, name = 'activate_cat_offer'),     
     path('block_cat_offer',views.block_cat_offer, name = 'block_cat_offer'),
     path('delete_cat_offer',views.delete_cat_offer, name = 'delete_cat_offer'),
-
-    
+    path('sales_report2/', views.sales_report2, name='sales_report2'),
+    path('monthly_report/', views.monthly_report, name='monthly_report'),
+    path('yearly_report/', views.yearly_report, name='yearly_report'),
+    # path('weekly_report/<int:date>/', views.weekly_report, name='weekly_report'),
+    path('add_prod_variation/',views.add_prod_variation, name = 'add_prod_variation'),
 
 ]

@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'orders',
     'mathfilters',
     'coupons',
+    'refferalcode',
 ]
 
 MIDDLEWARE = [

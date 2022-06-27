@@ -139,7 +139,7 @@
 
 
     <!-- Offer Start -->
-    <div class="container-fluid offer pt-5">
+    <!-- <div class="container-fluid offer pt-5">
         <div class="row px-xl-5">
             <div class="col-md-6 pb-4">
                 <div class="position-relative bg-secondary text-center text-md-right text-white mb-2 py-5 px-5">
@@ -162,7 +162,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
     <!-- Offer End -->
 
 
@@ -185,10 +185,15 @@
                         <a href="{% url 'product_detail' product.category.slug product.slug %}" >
                          <h6 class="text-truncate mb-3">{{product.product_name}}</h6></a>
                         <div class="d-flex justify-content-center">
-                            {% if product.product_offer%} 
-                            <h6>₹{{product.product_offer.discount|mul:product.price|div:100|sub:product.price|abs}}</h6>  <h6 class="text-muted ml-2"><del>₹{{product.price}}</del></h6>
+                            {% if product.product_offer.discount %} 
+                                <h6>₹{{product.product_offer.discount|mul:product.price|div:100|sub:product.price|abs}}</h6>  <h6 class="text-muted ml-2"><del>₹{{product.price}}</del></h6>
+                            
+                            {% elif product.category.category_offer %} 
+                            
+                                <h6>₹{{product.category.category_offer.discount|mul:product.price|div:100|sub:product.price|abs}}</h6>  <h6 class="text-muted ml-2"><del>₹{{product.price}}</del></h6>
+                            
                             {% else%}
-                            <h6>₹{{product.price}}</h6>
+                                <h6>₹{{product.price}}</h6>
                             {% endif%}
                         </div>
                     </div>
