@@ -1,4 +1,5 @@
 from ast import keyword
+from functools import reduce
 from itertools import product
 from multiprocessing import context
 from django.http import HttpResponse, JsonResponse
@@ -7,17 +8,33 @@ from django.shortcuts import get_object_or_404, render,redirect
 from django.db.models import Q
 from products.models import Products
 from django.template.loader import render_to_string
-from .models import Products
+from .models import Products, Variation
 from django.contrib import messages
 from cart.models import CartItem
 from cart.views import _cart_id
 from django.core.paginator import EmptyPage,PageNotAnInteger,Paginator
 # Create your views here.
+
+
 def store(request,category_slug=None):
     categories=None
     products=None
 
     price = request.GET.get('price', "")
+    color = request.GET.get('color' or None)
+    print(color,'*********************************************')
+    variation = Variation.objects.all()
+    values = []
+    for i in variation:
+        for j in i.variation_value:
+            if j.isdigit():
+                break
+            else:
+                values.append(i.variation_value)
+    values = list(set(values))
+    
+    print( values)
+    
 
     if category_slug != None:
         categories = get_object_or_404(category, slug=category_slug)
@@ -28,21 +45,37 @@ def store(request,category_slug=None):
         # filter by 
         filter_by = request.GET.get("price") 
         if filter_by == "500":  
-             products = Products.objects.all().filter(price__lte=500).order_by('-price')
+             products = Products.objects.all().filter(category= categories,price__lte=500).order_by('-price')
         elif filter_by == "1000":  
-             products = Products.objects.all().filter(price__lte=1000).order_by('-price')
+             products = Products.objects.all().filter(category= categories,price__lte=1000).order_by('-price')
         elif filter_by == "5000":  
-             products = Products.objects.all().filter(price__lte=5000).order_by('-price')
+             products = Products.objects.all().filter(category= categories,price__lte=5000).order_by('-price')
         elif filter_by == "10000":  
-             products = Products.objects.all().filter(price__lte=10000).order_by('-price')
+             products = Products.objects.all().filter(category= categories,price__lte=10000).order_by('-price')
 
         
-        
+        # filter by 
+        filter_by = request.GET.get("color") 
 
-        p = Paginator(products, 4)
+        try:
+            if filter_by == color: 
+                products = Products.objects.distinct().filter(variation__variation_value__icontains=color).order_by('-price')
+        except:
+            pass
+
+        p = Paginator(products, 9)
         page = request.GET.get('page')
         page_products = p.get_page(page)
-        product_count = products.count()         
+        product_count = products.count()  
+        
+    elif color:
+        print(color,'********************************************************************************')
+        page_products = Products.objects.distinct().filter(variation__variation_value__icontains=color)
+        print(page_products,"___________________________________________________________")
+        product_count = page_products.count() 
+        total_count =product_count
+
+            
 
     else:
         products = Products.objects.all().filter(is_available=True).order_by('product_name')
@@ -61,7 +94,7 @@ def store(request,category_slug=None):
         
         
 
-        p = Paginator(products, 4)
+        p = Paginator(products, 6)
         page = request.GET.get('page')
         page_products = p.get_page(page)
         product_count = products.count()    
@@ -69,6 +102,7 @@ def store(request,category_slug=None):
         
 
     context = { 
+        'values':values,
         'products' : page_products,
         'product_count' : product_count,
         'total_count' : total_count,
@@ -99,6 +133,9 @@ def search(request):
         context={
             'products':products,
             'product_count':product_count,
+            'keyword':keyword,
         }
+
+
     return render(request,'store.html',context)
 

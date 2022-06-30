@@ -567,6 +567,7 @@ def buy_cash_on_delivery(request,category_slug,product_slug,order_number):
     context = {
         'order':order,
         'order_product':order_product,
-        'transID':transID
+        'transID':transID,
+        'item':item,
     }
     return render(request,'buy_success.html',context)

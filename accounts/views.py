@@ -14,20 +14,29 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, render,redirect
 from django.contrib.auth import authenticate,login,logout
-from accounts.forms import RegistrationForm,UserForm,AddAddressForm
+from accounts.forms import RegistrationForm, UserAddressForm,UserForm,AddAddressForm
 from accounts.models import Account,UserAddresses,MyAccountManager
 from twilio.rest import Client
 import random
 from django.contrib.auth.decorators import login_required
 
+from refferalcode.models import ReferralCode
+
 
 # Create your views here.
-def index(request):
+def index(request, *args, **kwargs):
     products= Products.objects.all().filter(is_available=True)
     categorys= category.objects.all()
-    product=Products.objects.all()
+    # product=Products.objects.all()
     categoery_offer=CategoryOffer.objects.all()
     pro_offer=ProductOffer.objects.all()
+    code = str(kwargs.get('ref_code'))
+    try:
+        profile = ReferralCode.objects.get(code=code)
+        request.session['ref_profile'] = profile.id
+    except:
+        pass
+
     context={
         'products':products,
         'categorys':categorys,
@@ -53,7 +62,7 @@ def signin(request):
         password= request.POST['password']
         # phone_number=Customer.objects.get('phone_number')
         user = authenticate(email=email,password=password)
-
+       
         if user is not None:
             try:
                 cart    = Cart.objects.get(cart_id = _cart_id(request))
@@ -162,8 +171,6 @@ def verification1(request):
     }
     return render(request, 'verification1.html',context)
 
-
-
 def register(request):
     if request.method=='POST':
         form=RegistrationForm(request.POST)
@@ -179,7 +186,8 @@ def register(request):
             request.session['user_mobile'] = phone_number
             user= Account.objects.create_user(first_name=first_name,last_name=last_name,email=email,password=password,phone_number=phone_number,user_name=username)
             user.save()
-
+            refcode=ReferralCode.objects.create(user=user)
+            print(refcode)
             account_sid="ACa03806fc4b0964cdfe06651f493789fa"
             auth_token="71136cbf562d9a504a273875e24366e6"
             client=Client(account_sid,auth_token)
@@ -201,6 +209,63 @@ def register(request):
         }
     
     return render(request,'register.html',context)
+
+def ref_register(request,*args, **kwargs):
+    code = str(kwargs.get('ref_code'))
+    try:
+        profile = ReferralCode.objects.get(code=code)
+        request.session['ref_profile'] = profile.id
+    except:
+        pass
+    profile_id = request.session.get('ref_profile')
+    if request.method=='POST':
+        form=RegistrationForm(request.POST)
+        if form.is_valid():
+            if profile_id is not None:
+                recommended_by_profile = ReferralCode.objects.get(id=profile_id)
+                first_name= form.cleaned_data['first_name']
+                last_name= form.cleaned_data['last_name']
+                email= form.cleaned_data['email']
+                phone_number= form.cleaned_data['phone_number']
+                password= form.cleaned_data['password']
+                username=email.split("@")[0]
+
+            
+                user= Account.objects.create_user(first_name=first_name,last_name=last_name,email=email,password=password,phone_number=phone_number,user_name=username)
+                user.save()
+                # refcode=ReferralCode.objects.create(user=user)
+                print(refcode)
+                print(999999)
+                # saving form for referral system///actually form here iam user 
+                instance = user.save()
+                refcode=ReferralCode.objects.create(user=instance)
+                registered_user = Account.objects.get(id = user.id)
+                registered_profile = ReferralCode.objects.get(user=registered_user) 
+                registered_profile.recommended_by = recommended_by_profile.user
+                registered_profile.save()
+            account_sid="ACa03806fc4b0964cdfe06651f493789fa"
+            auth_token="71136cbf562d9a504a273875e24366e6"
+            client=Client(account_sid,auth_token)
+            verification = client.verify \
+                        .services("VAdf9ac283af0407b66228fa8b2d8e4fd0") \
+                        .verifications \
+                        .create(to=phone_number,channel='sms')
+            print(verification.status)
+            # messages.success(request,'Your account is created')
+            messages.success(request,'OTP has been sent to your phone number & enter OTP')
+            return redirect('verify_otp')
+        else:
+            print(form.errors) 
+    else:
+
+        form = RegistrationForm()
+    context = {
+            'form':form
+        }
+    
+    return render(request,'register.html',context)
+  
+            
 
 def verify_otp(request):
     if request.method == "POST":
@@ -262,12 +327,20 @@ def account_view(request):
     }
     return render(request,'account_view.html',context)
 
-
+@login_required(login_url='signin')
 def user_profile(request):
     profile = Account.objects.get(first_name=request.user.first_name)
-    
+    # user_details = Account.objects.get(id= request.user.id)
+    refers = ReferralCode.objects.get(user= request.user)
+    my_recommends = refers.get_recommended_profiles()
+
+    your_code = refers.get_your_refer_code()
+
     context = {
-        'profile':profile
+        'profile':profile,
+        'my_recommends' : my_recommends,
+        'your_code' : your_code,
+        # 'user_details':user_details,
     }
     return render(request,'user_profile.html',context)
 
@@ -372,8 +445,9 @@ def delete_address(request,add_id):
     return render(request,'my_addresses.html', context)
 
 def edit_address(request,id):
-    instance = get_object_or_404(UserAddresses, id=id)
-    form = AddAddressForm(request.POST or None, instance=instance)
+    instance = UserAddresses.objects.get(id=id)
+    # instance = get_object_or_404(UserAddresses, id=id)
+    form = UserAddressForm(request.POST or None, instance=instance)
 
     if request.method == "POST":
         if form.is_valid():
@@ -425,32 +499,32 @@ def my_order(request):
         'orders':page_obj, 
     }
     return render(request,'my_order.html',context)
-@login_required(login_url='signin')
-def order_view(request,order_id):
-    # ord = Order.objects.filter(order_number=id).filter(user=request.user).first()
-    # orders = OrderProduct.objects.filter(order=ord)
-    order_view=OrderProduct.objects.filter(order__order_number=order_id)
-    order=Order.objects.get(order_number=order_id)
-    context ={
-        # 'orders':orders,
-        # 'ord':ord,
-        'order_view':order_view,
-        'order':order,
-    }
-    return render(request,'order_view.html',context)
+
+# @login_required(login_url='signin')
+# def order_view(request,order_id):
+#     ord = Order.objects.filter(order_number=id).filter(user=request.user).first()
+#     # orders = OrderProduct.objects.filter(order=ord)
+#     order_view=OrderProduct.objects.filter(order__order_number=order_id)
+#     orders=Order.objects.get(user=request.user,order_number=order_id)
+#     context ={
+#         'ord':ord,
+#         'order_view':order_view,
+#         'orders':orders,
+#     }
+#     return render(request,'order_view.html',context)
 
 @login_required(login_url='login')
 def order_detail(request,order_id):
     # print('order detail req recvd')
     order_detail = OrderProduct.objects.filter(order__order_number = order_id)
-    order = Order.objects.get(order_number = order_id)
+    orders = Order.objects.get(order_number = order_id)
     # print('both details fetced')
     sub_total = 0
     for i in order_detail:
         sub_total += i.product_price * i.quantity
     context = {
         'order_detail':order_detail,
-        'order':order,
+        'order':orders,
         'sub_total': sub_total,
     }
     return render (request,'order_detail.html',context)
@@ -467,3 +541,24 @@ def return_order(request,order_number):
     ord.status='Returned'
     ord.save()
     return render (request,'order_return.html',{'ord':ord})
+
+@login_required(login_url='signin')
+def referrals(request):
+    refers = ReferralCode.objects.get(user= request.user)
+    list=[]
+    my_recommends = refers.get_recommended_profiles()
+
+    your_code = refers.get_your_refer_code()
+    for refferal in my_recommends:
+        list.append(refferal)
+    count=len(list)
+    print(count)
+    print(8888)
+    amount=count*50
+    context ={
+        'my_recommends' : my_recommends,
+        'your_code' : your_code,
+        'count':count,
+        'amount':amount,
+    }
+    return render(request, 'refers.html', context)

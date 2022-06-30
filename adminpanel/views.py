@@ -12,7 +12,7 @@ from coupons.forms import CouponApplyForm
 from coupons.models import Coupon
 from orders.forms import OrderStatusForm
 from orders.models import Order, OrderProduct
-from products.models import Products
+from products.models import Products, Variation
 from category.forms import CategoryForm
 from products.forms import ProductsForm, VariationForm
 from django.contrib.auth.decorators import login_required
@@ -190,7 +190,7 @@ def admin_signout(request):
         logout(request)
     messages.success(request, "Logged Out Successfully!!")
     return redirect('admin_panel')
-
+@login_required(login_url='admin_panel')
 def admin_usersview(request):  
     if request.user.is_authenticated:
         users = Account.objects.all()
@@ -216,13 +216,15 @@ def userunblock(request,id):
     user.is_active = True
     user.save()
     return redirect(admin_usersview)
-    
+
+@login_required(login_url='admin_panel')    
 def admin_category(request):  
     if request.user.is_authenticated:
         categories = category.objects.all()
         return render(request,'admin_categoryview.html',{'category':categories})
     return redirect('admin_home')
 
+@login_required(login_url='admin_panel')
 def edit_category(request,id):
     categorys = category.objects.get(id=id)
     form = CategoryForm(instance=categorys)
@@ -236,6 +238,7 @@ def edit_category(request,id):
             print(form.errors)
     return render (request,'edit_category.html',{'form':form})
 
+@login_required(login_url='admin_panel')
 def add_category(request):
     form = CategoryForm(request.POST,request.FILES)
     if form.is_valid():
@@ -247,19 +250,21 @@ def add_category(request):
     }
     return render (request,'add_category.html',context)
 
-
+@login_required(login_url='admin_panel')
 def delete_category(request,id):  
 
     categori = category.objects.get(id=id)  
     categori.delete()  
     return redirect(admin_category)  
 
+@login_required(login_url='admin_panel')
 def admin_products(request):  
     if request.user.is_authenticated:
         product = Products.objects.all()
         return render(request,'admin_products.html',{'products':product})
     return redirect('admin_home')
 
+@login_required(login_url='admin_panel')
 def edit_products(request,id):
     product = Products.objects.get(id=id)
     form = ProductsForm(instance=product)
@@ -290,12 +295,13 @@ def edit_products(request,id):
         
 #     return render (request,'edit_products.html',{'form':form,'product':product})
 
-
+@login_required(login_url='admin_panel')
 def delete_products(request,id):  
     product = Products.objects.get(id=id)  
     product.delete()  
     return redirect(admin_products) 
-    
+
+@login_required(login_url='admin_panel')    
 def add_products(request):
     # if request.method=='POST':
     form = ProductsForm(request.POST,request.FILES)
@@ -308,6 +314,17 @@ def add_products(request):
     }
     return render (request,'add_products.html',context)
 
+@login_required(login_url='admin_panel')
+def admin_variation_table(request):
+    variation = Variation.objects.all()
+    
+    context = {
+        'variation':variation,
+        
+    }
+    return render (request,'admin_variation.html',context)
+
+@login_required(login_url='admin_panel')
 def admin_order(request):
     orders = OrderProduct.objects.all()
     
@@ -317,20 +334,22 @@ def admin_order(request):
     }
     return render (request,'admin_order.html',context)
     
-
+@login_required(login_url='admin_panel')
 def order_cancel(request,order_number):
     orders = Order.objects.get(order_number=order_number)
     orders.status ='Cancelled'
     orders.save()
     return redirect ('admin_order')
 
+@login_required(login_url='admin_panel')
 def cancel_order_admin(request, order_number):
     order = Order.objects.get( order_number= order_number)
     order.status = 'Cancelled'
     order.save()
     
     return redirect('order')
-    
+
+@login_required(login_url='admin_panel')    
 def return_order_admin(request, order_number):
     order = Order.objects.get( order_number= order_number)
     order.status = 'Returned'
@@ -338,7 +357,7 @@ def return_order_admin(request, order_number):
     
     return redirect('order')
 
-
+@login_required(login_url='admin_panel')
 def deliver_order(request, order_number):
     order = Order.objects.get( order_number= order_number)
     order.status = 'Delivered'
@@ -346,6 +365,7 @@ def deliver_order(request, order_number):
     
     return redirect('order')
 
+@login_required(login_url='admin_panel')
 def ship_order(request, order_number):
     order = Order.objects.get( order_number= order_number)
     order.status = 'Shipped'
@@ -353,6 +373,7 @@ def ship_order(request, order_number):
     
     return redirect('order')
 
+@login_required(login_url='admin_panel')
 def order_order(request, order_number):
     order = Order.objects.get( order_number= order_number)
     order.status = 'Ordered'
@@ -360,6 +381,7 @@ def order_order(request, order_number):
     
     return redirect('order')
 
+@login_required(login_url='admin_panel')
 def admin_orderedit(request,order_number):
     
     instance = get_object_or_404(Order, order_number = order_number)
@@ -390,9 +412,10 @@ def admin_orderedit(request,order_number):
     # }
         return render(request,'admin_orderedit.html',context)
 
+@login_required(login_url='admin_panel')
 def admin_offerview(request):
     coupon_offers = Coupon.objects.all().order_by('-valid_to')
-    refferal_offers = Coupon.objects.all().order_by('-valid_to')
+    # refferal_offers = Coupon.objects.all().order_by('-valid_to')
     prod_offers = ProductOffer.objects.all().order_by('-valid_to')
     cat_offers = CategoryOffer.objects.all().order_by('-valid_to')
 
@@ -406,7 +429,7 @@ def admin_offerview(request):
         'coupon_offers': page_obj,
         'prod_offers': prod_offers,
         'cat_offers': cat_offers,
-        'refferal_offers': refferal_offers,
+        # 'refferal_offers': refferal_offers,
 
     }
     
@@ -505,90 +528,90 @@ def delete_coupon(request):
     return redirect('admin_offerview')
 
 # refferal offers
-@login_required(login_url='admin_login')
-@cache_control(no_cache=True, must_revalidate=True, no_store=True)
-def add_refferal(request):
-    form = RefferalApplyForm(request.POST or None, request.FILES or None)  
-    if request.method == "POST":
-        if form.is_valid():
-            form.save()
-            return redirect('admin_offerview')
-        else:
-            messages.error(request,'form not valid')            
-            context = {
-            'form':form
-            }
-            return render(request,'add_refferal.html',context)
-    else:
-        context = {
-            'form':form
-        }
-        return render(request,'add_refferal.html',context)
+# @login_required(login_url='admin_login')
+# @cache_control(no_cache=True, must_revalidate=True, no_store=True)
+# def add_refferal(request):
+#     form = RefferalApplyForm(request.POST or None, request.FILES or None)  
+#     if request.method == "POST":
+#         if form.is_valid():
+#             form.save()
+#             return redirect('admin_offerview')
+#         else:
+#             messages.error(request,'form not valid')            
+#             context = {
+#             'form':form
+#             }
+#             return render(request,'add_refferal.html',context)
+#     else:
+#         context = {
+#             'form':form
+#         }
+#         return render(request,'add_refferal.html',context)
     
     
     
-@login_required(login_url='admin_login')
-@cache_control(no_cache=True, must_revalidate=True, no_store=True)
-def edit_refferal(request,c_id):
-    instance = get_object_or_404(Refferal, id=c_id)
-    form = RefferalApplyForm(request.POST or None, instance=instance)
+# @login_required(login_url='admin_login')
+# @cache_control(no_cache=True, must_revalidate=True, no_store=True)
+# def edit_refferal(request,c_id):
+#     instance = get_object_or_404(Refferal, id=c_id)
+#     form = RefferalApplyForm(request.POST or None, instance=instance)
 
 
-    if request.method == "POST":
-        if form.is_valid():
-            form.save()
-            messages.success(request,'Code has been updated')
-            return redirect('admin_offerview')
-        else:
-             context = {
-            'form'     : form,
-            'coupon':instance,
-            }
-        return render(request, 'edit_refferal.html',context)
-    else:  
-        context = {
-            'form'     : form,
-            'coupon':instance,
-            }
-        return render(request, 'edit_refferal.html',context)
+#     if request.method == "POST":
+#         if form.is_valid():
+#             form.save()
+#             messages.success(request,'Code has been updated')
+#             return redirect('admin_offerview')
+#         else:
+#              context = {
+#             'form'     : form,
+#             'coupon':instance,
+#             }
+#         return render(request, 'edit_refferal.html',context)
+#     else:  
+#         context = {
+#             'form'     : form,
+#             'coupon':instance,
+#             }
+#         return render(request, 'edit_refferal.html',context)
     
 
-@login_required(login_url='admin_login')
-@cache_control(no_cache=True, must_revalidate=True, no_store=True)
-def activate_refferal(request):
-    coupon_id = request.GET['couponId']
-    coupon = Refferal.objects.get(id = coupon_id)
-    coupon.active = True
-    coupon.save()
+# @login_required(login_url='admin_login')
+# @cache_control(no_cache=True, must_revalidate=True, no_store=True)
+# def activate_refferal(request):
+#     coupon_id = request.GET['couponId']
+#     coupon = Refferal.objects.get(id = coupon_id)
+#     coupon.active = True
+#     coupon.save()
 
-    return redirect('admin_offerview')
+#     return redirect('admin_offerview')
 
 
-@login_required(login_url='admin_login')
-@cache_control(no_cache=True, must_revalidate=True, no_store=True)
-def block_refferal(request):
+# @login_required(login_url='admin_login')
+# @cache_control(no_cache=True, must_revalidate=True, no_store=True)
+# def block_refferal(request):
   
-    coupon_id = request.GET['couponId']
-    coupon = Refferal.objects.get(id = coupon_id)
-    coupon.active = False
-    coupon.save()
+#     coupon_id = request.GET['couponId']
+#     coupon = Refferal.objects.get(id = coupon_id)
+#     coupon.active = False
+#     coupon.save()
 
-    return redirect('admin_offerview')
+#     return redirect('admin_offerview')
 
 
 
-@login_required(login_url='admin_login')
-@cache_control(no_cache=True, must_revalidate=True, no_store=True)
-def delete_refferal(request):
-    coupon_id = request.GET['couponId']
-    coupon = Refferal.objects.get(id = coupon_id)
+# @login_required(login_url='admin_login')
+# @cache_control(no_cache=True, must_revalidate=True, no_store=True)
+# def delete_refferal(request):
+#     coupon_id = request.GET['couponId']
+#     coupon = Refferal.objects.get(id = coupon_id)
     
-    coupon.delete()
+#     coupon.delete()
 
-    return redirect('admin_offerview')
+#     return redirect('admin_offerview')
 
 
-
+@login_required(login_url='admin_panel')
 def add_product_offer(request):
     form = ProductOfferForm(request.POST  or None, request.FILES or None)
     print("product offer")
@@ -610,6 +633,7 @@ def add_product_offer(request):
         return render (request,'add_product_offer.html',context)
 
 #product offer edit
+@login_required(login_url='admin_panel')
 def edit_product_offer(request,id):
     offer = ProductOffer.objects.get(id=id)
     form = ProductOfferForm(instance=offer)
@@ -741,6 +765,7 @@ def delete_cat_offer(request):
 
     return redirect('admin_offerview')
 
+@login_required(login_url='admin_panel')
 def report_pdf(request):
     # create  bytestream buffer
     buf = io.BytesIO()
@@ -813,7 +838,7 @@ def sales_report2(request):
 
 
 
-
+@login_required(login_url='admin_panel')
 def monthly_report(request):
     context = None
     # frmdate = date
@@ -848,7 +873,7 @@ def monthly_report(request):
     return render(request,'report2.html',context)
 
 
-
+@login_required(login_url='admin_panel')
 def yearly_report(request):
     context = None
     frmdate = date
@@ -880,7 +905,7 @@ def yearly_report(request):
     return render(request,'report2.html',context)
 
 
-
+@login_required(login_url='admin_panel')
 def weekly_report(request,date):
     context = None
     frmdate = date

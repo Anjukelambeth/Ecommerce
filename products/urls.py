@@ -22,7 +22,7 @@ from django.conf.urls.static import static
 from ecommerce.settings import MEDIA_ROOT
 
 urlpatterns = [
-    path('',views.store,name='store'),
+    path('store/',views.store,name='store'),
     path('category/<slug:category_slug>/',views.store,name='products_by_category'),
     path('category/<str:category_slug>/<str:product_slug>/',views.product_detail,name='product_detail'),
     path('search/',views.search,name='search'),

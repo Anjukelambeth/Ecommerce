@@ -84,7 +84,13 @@
                         <a href="/admin_offerview" class="nav-link "><span class="pcoded-micon"><i class="feather icon-file-text"></i></span><span class="pcoded-mtext">Coupon/Offer</span></a>
                     </li>
                     <li data-username="Charts Morris" class="nav-item active"><a href="/admin_order" class="nav-link "><span class="pcoded-micon"><i class="feather icon-pie-chart"></i></span><span class="pcoded-mtext">Orders</span></a></li>
-                    
+                    <li data-username="Table bootstrap datatable footable" class="nav-item active  pcoded-hasmenu">
+                      <a href="javascript:" class="nav-link "><span class="pcoded-micon"><i class="feather icon-clipboard"></i></span><span class="pcoded-mtext">Reports</span></a>
+                      <ul class="pcoded-submenu">
+                          <li class=""><a href="{% url 'sales_report2' %}" class="" target="_blank">Monthly/Yearly Report</a></li>
+                          <li class=""><a href="{% url 'sales_report' %}" class="" target="_blank">Sales Report</a></li>
+                      </ul>
+                  </li>
             </div>
         </div>
     </nav>
@@ -155,30 +161,12 @@
         </div>
     </header>
 
-<link href="https://www.jqueryscript.net/css/jquerysctipttop.css" rel="stylesheet" type="text/css">
-		<link rel="stylesheet" type="text/css" href="{% static 'crop/css/pixelarity.css' %}">
-		
-		<style type="text/css">
-			#result{
-				display: block;
-				position: relative;
-				margin-top: 40px;
-			}
-			.face{
-				position: absolute;
-				height: 0px;
-				width: 0px;
-				background-color: transparent;;
-				border: 4px solid rgba(10,10,10,0.5);
-			}
-		</style>
-
 {% block content%} 
 <div class="pl-5">
 <div class="p-5 justify-content-center pull-left" style="line-height: 1">
 <div class="d-flex justify-content-between">
   <div class="text-right mb-3 mr-3"><hr><a href="{% url 'add_coupon' %}" class="btn btn-primary"> Add Coupon </a></div>
-  <div class="text-right mb-3 mr-3"><hr><a href="{% url 'add_refferal' %}" class="btn btn-primary"> Add Refferal Code</a></div>
+ 
   <div class="text-right mb-3 mr-3"><hr><a href="{% url 'add_product_offer' %}" class="btn btn-primary"> Add Product Offer</a></div>
   <div class="text-right mb-3 mr-3"><hr><a href="{% url 'add_cat_offer' %}" class="btn btn-primary"> Add Category Offer</a></div>
 </div>
@@ -208,7 +196,7 @@
           <tbody>
          
                {% for offer in coupon_offers %}
-            <tr>
+            <tr class="gradeX">
           
                <td>{{offer.code}}</td>
               <td>{{offer.valid_from }}</td>
@@ -233,53 +221,6 @@
   </div>
 </div>
 
-<div class="card mb-3">
-  <div class="card-header">
-      <i class="fas fa-table me-1"></i>
-      Refferal Offers
-  </div>
-  <div class="card-body"> 
-      <table id="datatablesSimple"  class="table table-bordered data-table table-hover" >
-          <thead>
-              <tr>
-                <th>Refferal Code</th>
-                  <th>Valid From</th>
-                  <th>Valid To</th>
-                  <th>Discount</th>
-                  <th>Edit</th>
-                <th scope="col">Block/Activate</th>
-                <!-- <th>Edit User</th> -->
-                <th scope="col">Delete Code</th>
-              </tr>
-          </thead>
-          
-          <tbody>
-         
-               {% for offer in refferal_offers %}
-            <tr>
-          
-               <td>{{offer.code}}</td>
-              <td>{{offer.valid_from}}</td>
-              <td>{{offer.valid_to}}</td>
-              <td>{{offer.discount}}</td>
-              <td> <a href="{% url 'edit_refferal' offer.id %}" class="btn btn-primary">Edit</a></td>
-              {% if offer.active %}
-              <td><a class="confirm-block" id="blockRefferalBtn"
-                onclick="blockRefferal('{{offer.id}}')">
-                <button class="btn btn-warning"> <i class="icon-ban-circle"></i>Deactivate</button> </a></td>
-              {% else %}
-              <td><a class="confirm-activate" id="actRefferalBtn" onclick="actRefferal('{{offer.id}}')"><button class="btn btn-success"> <i class="icon-play"></i>Activate</button></a></td>
-              {% endif %}
-              <!-- <td><a href="admin_user_edit/{{user.id}}" onclick="return confirm('Are you sure you want to EDIT this user?')"><button class="btn btn-primary "> <i class="icon-edit"></i> Edit</button></a></td> -->
-              <td><a  class="confirm-delete" id="delRefferalBtn" onclick="delRefferal('{{offer.id}}')" >  <button class="btn btn-danger"> <i class="icon-trash"></i> Delete </button></a></td>
-              <!-- <td class="center">4</td> -->
-            </tr>
-           
-            {% endfor %}       
-          </tbody>
-      </table>
-  </div>
-</div>
 
 <!-- experimenting below this -->
 
@@ -288,7 +229,7 @@
       <i class="fas fa-table me-1"></i>
       Category Offers
   </div>
-<div  class="card-body">
+<div  class="card-body ">
   <table class="table table-bordered data-table table-hover">
     <thead>
       <tr>
@@ -344,7 +285,7 @@
       Product Offers
   </div>
     <div  class="card-body">
-      <table class="table table-bordered data-table table-hover">
+      <table class="table table-bordered data-table table-hover table-responsive" >
         <thead>
           <tr>
             <th>Coupon Code</th>
@@ -367,7 +308,7 @@
           <tr class="gradeX">
             
             <td>{{offer.code}}</td>
-            <td>{{offer.product.product_name}}</td>
+            <td ><div>{{offer.product.product_name}}</td>
 
             <td>{{offer.valid_from}}</td>
             <td>{{offer.valid_to }}</td>
@@ -509,104 +450,7 @@ function delCoupon(couponId){
 }
 
 
-function blockRefferal(couponId){
-  var data = {'couponId' : couponId}
 
-  Swal.fire({
-    title: 'Are you sure?',
-    text: "This will block the offer related to this coupon.",
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonColor: '#3085d6',
-    cancelButtonColor: '#d33',
-    confirmButtonText: 'Deactivate'
-  }).then((result) => {
-    if (result.isConfirmed) {
-      $.ajax({
-        method: "GET",
-        url: "{% url 'block_refferal' %}",
-        data : data,
-        success:function(response){
-          Swal.fire(
-            'Refferal Deactivated',
-            'The selected Refferal code successfully deactivated.',
-            'success'
-          )
-        location.reload();
-
-        }
-      })
-     
-    }
-  })
-}
-
-
-function actRefferal(couponId){
-  var data = { 'couponId' : couponId}
-  
-  Swal.fire({
-    title: 'Activate this offer',
-    text: "You are going to activate this offer",
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonColor: '#3085d6',
-    cancelButtonColor: '#d33',
-    confirmButtonText: 'Activate User.!'
-  }).then((result) => {
-    if (result.isConfirmed) {
-      $.ajax({
-        method: "GET",
-        url: "{% url 'activate_refferal' %}",
-        data : data,
-        success:function(response){
-         
-          Swal.fire(
-            'Refferal Activated',
-            'Refferal code has been successfully activated.',
-            'success'
-          )
-        location.reload();
-
-        }
-      })
-     
-    }
-  })
-}
-
-function delRefferal(couponId){
-  var data = { 'couponId' : couponId}
-  
-  Swal.fire({
-    title: 'Delete this offer !',
-    text: "Are you sure? You will not be able to revert this..",
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonColor: '#3085d6',
-    cancelButtonColor: '#d33',
-    confirmButtonText: 'Delete Refferal code.'
-  }).then((result) => {
-    if (result.isConfirmed) {
-      $.ajax({
-        method: "GET",
-        url: "{% url 'delete_refferal' %}",
-        data : data,
-        success:function(response){
-         
-          Swal.fire(
-            'Refferal code Deleted',
-            'Refferal code has been successfully Deleted.',
-            'success'
-          )
-        location.reload();
-
-        }
-      })
-     
-    }
-  })
-}
 
 
 

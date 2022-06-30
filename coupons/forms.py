@@ -5,7 +5,7 @@ from coupons.models import Coupon
 
 
 class DateInput(forms.DateTimeInput):
-    input_type = 'date'
+    input_type = 'datetime-local'
     
 class CouponApplyForm(forms.ModelForm):
     class Meta:

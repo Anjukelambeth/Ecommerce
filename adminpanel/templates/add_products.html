@@ -1,7 +1,13 @@
 {% load static %}
+{% load crispy_forms_tags %}
 <!DOCTYPE html>
 <html lang="en">
-
+  <style>
+    .error{
+      color: red;
+        font-style: italic;
+    }
+  </style>
 <head>
     <title>{% block title %}
       Products-Add
@@ -83,6 +89,13 @@
                     </li>
                     <li data-username="Charts Morris" class="nav-item active"><a href="/admin_order" class="nav-link "><span class="pcoded-micon"><i class="feather icon-pie-chart"></i></span><span class="pcoded-mtext">Orders</span></a></li>
                     
+                    <li data-username="Table bootstrap datatable footable" class="nav-item active  pcoded-hasmenu">
+                        <a href="javascript:" class="nav-link "><span class="pcoded-micon"><i class="feather icon-clipboard"></i></span><span class="pcoded-mtext">Reports</span></a>
+                        <ul class="pcoded-submenu">
+                            <li class=""><a href="{% url 'sales_report2' %}" class="" target="_blank">Monthly/Yearly Report</a></li>
+                            <li class=""><a href="{% url 'sales_report' %}" class="" target="_blank">Sales Report</a></li>
+                        </ul>
+                    </li>
             </div>
         </div>
     </nav>
@@ -244,6 +257,68 @@ src="https://pagead2.googlesyndication.com/pagead/show_ads.js">
       console.log(error);
     }
     </script>
+    
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.js"></script>
+    <script>
+    
+      $('#file').validate({
+        rules:{
+          product_name:{
+            required:true,
+            minlength:3,
+          },
+          description:{
+            required:true,
+            minlength:3,
+          },
+          price:{
+            required:true,
+            min:0,
+          },
+          images:{
+            required:true,
+          },     
+          stock:{
+            required:true,
+            min:0,
+          }, 
+              
+          category:{
+            required:true,
+          }, 
+        
+        },
+        messages:{
+          product_name:{
+            required:"Enter a unique Product name.",
+            minlength:"Minimum 3 characters needed.",
+          },
+          description:{
+            required:"Please add some description.",
+            minlength:"Minimum 3 characters needed.",
+          },  
+          price:{
+            required:"You need to enter MRP of this product.",
+            min:"Price must be more than Zero.",
+          },
+          images:{
+            required:"Select and upload image of the product.",
+          },
+      
+          stock:{
+            required:"You need to enter the Stock quantity.",
+            min:"Stock quantity must be greater than Zero.",
+          },
+          category:{
+            required:"Please select the product category.",
+          }, 
+         
+        }
+        })
+      ;
+    
+    </script>
+
 {% endblock %}
 <!-- <script src="{% static 'assets/js/vendor-all.min.js' %}"></script> -->
     <script src="{% static 'assets/plugins/bootstrap/js/bootstrap.min.js' %}"></script>

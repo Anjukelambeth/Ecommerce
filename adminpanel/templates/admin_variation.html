@@ -1,0 +1,71 @@
+{% extends 'admin_base.html' %}
+{% block title %}
+    Products-List
+{% endblock %}
+
+{% block content%} 
+
+{% for message in messages %}
+<div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+    <strong>Message:</strong> {{ message }}
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+<span aria-hidden="true">&times;</span>
+</button>
+</div>
+{% endfor %}
+
+<div class="pl-5">
+<!-- <div class="pt-3 pl-5 row">
+<form class="form-inline pt-3 pl-3 my-lg-0" method="POST" action="{% url 'admin_panel' %}">
+    {% csrf_token %}
+    <input class="form-control mr-sm-2" type="search" placeholder="Search for username" aria-label="Search" name="searched">
+    <button class="btn btn-outline-secondary my-2 my-sm-0" type="submit">Search</button>
+  </form>  &nbsp &nbsp &nbsp
+  <div class="mr-auto">
+  <button type="submit" value="submit"  class="btn btn-primary  mx-auto " ><a href="/add" class="btn btn-primary">Add New User</a></button>  &nbsp &nbsp &nbsp
+  <button type="submit" value="submit"  class="btn btn-primary mr-auto"><a href="/signout" class="btn btn-primary">signout</a></button>  
+</div> -->
+<!-- </div> -->
+
+<div class="p-5 justify-content-center pull-left" style="line-height: 1">
+<table class="table table-bordered table-hover table-active table-responsive" >  
+    <thead class="thead-dark ">  
+    <tr class="col-9">  
+        <th scope="col">ID Number</th>  
+        <th scope="col">Product Name</th> 
+        <th scope="col">Variation Category</th>  
+        <th scope="col">Variation Value</th>  
+        <th scope="col">Active </th>  
+        <th scope="col">Created Date</th>  
+        <th scope="col">Category </th>  
+    </tr>  
+    </thead>  
+    <tbody>  
+{% for product in variation %}  
+    <tr class="col-9 ">  
+        <td>{{ product.id }}</td>
+        <td>{{ product.product }}</td>  
+        <td >{{ product.variation_category}}</td>  
+        <td>{{ product.variation_value }}</td> 
+        <td>{{ product.is_active }}</td> 
+        <td>{{ product.created_date }}</td>  
+        <td>{{ product.product.category}}</td>  
+        <!-- <td>  
+            <a href="/edit_products/{{product.id}}"><span class="glyphicon glyphicon-pencil" >Edit</span></a>  
+            &nbsp &nbsp &nbsp
+            <a href="{% url 'delete_products' product.id%}">Delete</a>  
+        </td>   -->
+    </tr>  
+{% endfor %}  
+    </tbody>  
+</table>  
+<div class="mr-auto row "> 
+ <!-- <button type="submit" value="submit"  class="btn btn-primary  mx-auto " ><a href="/add_products" class="btn btn-primary">Add New Products</a></button>  &nbsp &nbsp &nbsp -->
+<div class="colum ">
+    <button type="submit" value="submit"  class="btn btn-primary  mx-auto " ><a href="{% url 'add_prod_variation' %}" class="btn btn-primary"> Add Product Variation</a></button> 
+</div>
+</div>
+
+</div>
+</div>
+{% endblock %} 

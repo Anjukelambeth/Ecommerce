@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 
-from refferalcode.models import Refferal
+from refferalcode.models import ReferralCode, Refferal
 
 # Register your models here.
 class RefferalAdmin(admin.ModelAdmin):
@@ -10,3 +10,4 @@ class RefferalAdmin(admin.ModelAdmin):
     search_fields = ['code']
 
 admin.site.register(Refferal,RefferalAdmin)
+admin.site.register(ReferralCode)

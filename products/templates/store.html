@@ -7,11 +7,11 @@
 
 <!-- ========================= SECTION PAGETOP ========================= -->
 <section class="section-pagetop bg">
-    <div class="container">
+    <div class="container p-3 text-center">
         {% if 'search' in request.path %}
-            <h2 class="title-page">Search Results</h2>
+            <h2 class="title-page text-success">Search Results of  {{keyword}}</h2>
         {%else%}
-            <h2 class="title-page">Our Store</h2>
+            <h2 class="title-page text-primary">Our Store</h2>
         {%endif%}
     </div> <!-- container //  -->
     </section>
@@ -23,7 +23,11 @@
     
     <div class="row">
         <aside class="col-md-3">
+            {% if 'search' in request.path %}
+
             
+            
+            {%else%}
     <div class="card">
         <article class="filter-group">
             <header class="card-header">
@@ -36,7 +40,7 @@
                 <div class="card-body">
                     
                     <ul class="list-menu">
-                        <li><a href="{% url 'store'%}">All products</a></li>
+                        <li><a href="{% url 'store' %}">All products</a></li>
                         {%for category in links%}
                     <li><a href="{{category.get_url}}">{{category.category_name}}</a></li>
                     {%endfor%}
@@ -46,48 +50,57 @@
             </div>
         </article> 
         <!-- Color Start -->
-        <!-- <div class="border-bottom mb-4 pb-4">
-            <h5 class="font-weight-semi-bold mb-4">Filter by color</h5>
-            <form>
-                <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                    <input type="checkbox" class="custom-control-input" checked id="color-all">
-                    <label class="custom-control-label" for="price-all">All Color</label>
-                    <span class="badge border font-weight-normal">1000</span>
+        
+        <div class="border-bottom mb-4 pb-4">
+            {% if 'toys' in request.path %}
+
+            {%else%}
+            <header class="card-header">
+                <a href="#" data-toggle="collapse" data-target="#collapse_3" aria-expanded="true" class="">
+                    <div class="row">
+                    <h6 class="title">By Color </h6> <i class="icon-control fa fa-chevron-down pl-1 py-1"></i>
                 </div>
-                <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                    <input type="checkbox" class="custom-control-input" id="color-1">
-                    <label class="custom-control-label" for="color-1">Black</label>
-                    <span class="badge border font-weight-normal">150</span>
-                </div>
-                <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                    <input type="checkbox" class="custom-control-input" id="color-2">
-                    <label class="custom-control-label" for="color-2">White</label>
-                    <span class="badge border font-weight-normal">295</span>
-                </div>
-                <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                    <input type="checkbox" class="custom-control-input" id="color-3">
-                    <label class="custom-control-label" for="color-3">Red</label>
-                    <span class="badge border font-weight-normal">246</span>
-                </div>
-                <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                    <input type="checkbox" class="custom-control-input" id="color-4">
-                    <label class="custom-control-label" for="color-4">Blue</label>
-                    <span class="badge border font-weight-normal">145</span>
-                </div>
-                <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between">
-                    <input type="checkbox" class="custom-control-input" id="color-5">
-                    <label class="custom-control-label" for="color-5">Green</label>
-                    <span class="badge border font-weight-normal">168</span>
-                </div>
-            </form>
-        </div> -->
+                </a>
+            </header>
+            <div class="widget-body">
+
+                       
+                            <a class="btn btn-light w-100" data-toggle="collapse" href="#multiCollapseExample1" role="button" aria-expanded="false" aria-controls="multiCollapseExample1">Select Color</a>
+                       
+                        
+                        
+                      
+                        <div class="row">
+
+                                <div class="col w-100">
+                                    <div class="collapse multi-collapse" id="multiCollapseExample1">
+                                    <div class="card card-body">
+                                        {% for i in values %}
+                                            
+                                            <a href="?color={{i}}">{{i}}</a>
+                    
+                                        {% endfor %}
+                                        
+                                    </div>
+                                    </div>
+                                </div>
+                               
+
+                        </div>
+        
+                    
+            </div>
+            {%endif%}
+        </div>
+        
         <!-- Color End -->
         
         <article class="filter-group">
             <header class="card-header">
                 <a href="#" data-toggle="collapse" data-target="#collapse_3" aria-expanded="true" class="">
-                    <i class="icon-control fa fa-chevron-down"></i>
-                    <h6 class="title">Price range </h6>
+                    <div class="row">
+                    <h6 class="title">Price range </h6> <i class="icon-control fa fa-chevron-down pl-1 py-1"></i>
+                </div>
                 </a>
             </header>
             
@@ -118,11 +131,12 @@
                         </h3> -->
                         <div class="widget-body">
                             <select  onchange="location = this.value;" class="form-control">
-                                <option value="" id="price-placeholder" disabled selected hidden>...</option>
+                                <option value="" id="price-placeholder" disabled selected hidden>Select Price Range</option>
                                 <option id="pr500" value='?price=500' >less than 500</option>
-                                <!-- <option id="pr1000" value='?price=1000' >less than 1000</option> -->
+                                <!-- <option id="pr1500" value='?price=1500' >less than 1500</option> -->
                                 <option id="pr5000" value='?price=5000' >less than 5000</option>
                                 <!-- <option id="pr10000" value='?price=1000' >less than 10000</option> -->
+                                <!-- <option id="pr5500" value='?price=5500' >less than 5500</option> -->
                               </select>
                                 
                         </div>
@@ -152,13 +166,13 @@
                     </div>
                     </div> form-row.// -->
                     <br>
-                    <button class="btn btn-block btn-primary" id="priceFilterBtn">Apply</button>
+                    <!-- <button class="btn btn-block btn-primary" id="priceFilterBtn">Apply</button> -->
                 </div><!-- card-body.// -->
             </div>
         </article> <!-- filter-group .// -->
         
     </div> <!-- card.// -->
-    
+    {%endif%}
         </aside> <!-- col.// -->
         <main class="col-md-9">
     
@@ -186,6 +200,9 @@
                             <div class="price-wrap mt-2">
                                 {% if product.product_offer%} 
                                 <h6>₹{{product.product_offer.discount|mul:product.price|div:100|sub:product.price|abs}}</h6>  <h6 class="text-muted ml-2"><del>₹{{product.price}}</del></h6>
+                                {% elif product.category.category_offer %} 
+                            
+                                <h6>₹{{product.category.category_offer.discount|mul:product.price|div:100|sub:product.price|abs}}</h6>  <h6 class="text-muted ml-2"><del>₹{{product.price}}</del></h6>
                                 {% else%}
                                 <h6>₹{{product.price}}</h6>
                                 {% endif%}

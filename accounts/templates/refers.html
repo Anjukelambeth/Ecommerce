@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+{% load mathfilters %}
+{% load static %}
+{% block title %}  Profile
+{% endblock %}
+<link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/sweetalert2@10.10.1/dist/sweetalert2.min.css'>
+{% block content %}
+{% for message in messages %}
+<div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+    <strong>Message:</strong> {{ message }}
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+<span aria-hidden="true">&times;</span>
+</button>
+</div>
+{% endfor %}
+
+{% url 'referrals' as referral %}
+{% url 'user_profile' as profile %}
+{% url 'my_address' as address %}
+{% url 'my_order' as order %}
+{% url 'change_password' as password %}
+<section class="pl-0" style="background-color: #eee;">
+  <div class="container pt-3 pl-0">
+  <div class="container mx-auto">
+      <div class="row">
+          <div class="col-md-3">
+              <!-- <div class="card mb-4" > -->
+              <!-- <div class="card-body text-center" style="color: rgb(138, 133, 133);"> -->
+              <div class="nav flex-column nav-pills" aria-orientation="vertical">
+                  <a class="nav-link {%if  request.path == referral %} active {%endif%}" href="{% url 'referrals' %}"><i class="fa fa-tachometer-alt"></i>Refferal</a>
+                  <a class="nav-link {%if  request.path == order %} active {%endif%}"  href="/my_order" ><i class="fa fa-shopping-bag"></i>Orders</a>
+                  <a class="nav-link {%if  request.path == password %} active {%endif%}" href="/change_password" ><i class="fa fa-credit-card"></i>Change Password</a>
+                  <a class="nav-link {%if  request.path == address %} active {%endif%}"  href="/my_address" ><i class="fa fa-map-marker-alt"></i>Address</a>
+                  <a class="nav-link {%if  request.path == profile %} active {%endif%}"  href="{% url 'user_profile' %}"><i class="fa fa-user"></i>Account Details</a>
+                  <a class="nav-link " href="/signout"><i class="fa fa-sign-out-alt"></i>Logout</a>
+              </div>
+          <!-- </div> -->
+      <!-- </div> -->
+  </div><div class="col-lg-8 pl-5">
+    <div class="col-lg-10 p-4 bg-light">
+        <strong class="d-inline-block mr-3">Your Referrals :</strong>
+
+									
+                            {% if my_recommends %}
+                            <ul>
+                                {% for p  in my_recommends %}
+                                <li style="margin-left: 65px;"><b></b> {{p.user.first_name}}</li>
+                                {% endfor %}
+                            </ul>
+                            {% else %}
+                            <h6 class="text-danger text-center">You don't have any Recommadations</h6>
+                            {% endif %}
+
+                            <h5 class="d-inline">Your Referral Link : </h5> 	
+                            <div>
+                                <!-- <textarea id="textbox"></textarea><br /> -->
+                                <!-- <input value="www.{{ request.get_host }}/{{ your_code }}" type="text" value="Hello World" id="textbox">
+                                <button onclick="copyText()">Copy</button>
+                                <br />
+                                <h1>Copied Text:</h1><br /> -->
+                                <div class="input-group mt-2 ml-5 ">
+                                    <!-- <input value="www.{{ request.get_host }}/{{ your_code }}" type="text" id="textbox" class="form-control" placeholder="Recipient's username" aria-label="Recipient's username" aria-describedby="button-addon2"> -->
+                                    <input  class="text-info"  value="{{ request.get_host }}/code/{{ your_code }}" type="text" id="textbox">
+                                    <button onclick="copyText()" class="btn btn-outline bg-secondary ml-1">Click to Copy</button>
+                                    </div>
+                            </div>
+                            <br>
+                            <div>
+                                <strong class="d-inline-block mr-3">Total amount earned by reffering :</strong>
+                                ₹{{count|mul:50}}/-only <br>
+                                <h6 class="d-inline text-secondary pl-5">(For each refferal you will get ₹50)</h6> 
+                            </div>
+ 
+
+                        </div>
+                    </div><!-- End .col-lg-9 -->
+                </div><!-- End .row -->
+            </div><!-- End .container -->
+        </div><!-- End .dashboard -->
+   
+       
+{% block scripts %}
+<script>
+	function copyText() {
+      
+		/* Select text area by id*/
+		var Text = document.getElementById("textbox");
+
+		/* Select the text inside text area. */
+		Text.select();
+
+		/* Copy selected text into clipboard */
+		navigator.clipboard.writeText(Text.value);
+
+		/* Set the copied text as text for 
+		div with id clipboard */
+		document.getElementById("clipboard")
+			.innerHTML = Text.value;
+	}
+	function myFunction() {
+		var copyText = document.getElementById("myInput");
+		copyText.select();
+		copyText.setSelectionRange(0, 99999);
+		navigator.clipboard.writeText(copyText.value);
+		
+		var tooltip = document.getElementById("myTooltip");
+		tooltip.innerHTML = "Copied: " + copyText.value;
+	  }
+	  
+	  function outFunc() {
+		var tooltip = document.getElementById("myTooltip");
+		tooltip.innerHTML = "Copy to clipboard";
+	  }
+	</script>
+{% endblock scripts %}
+{% endblock %}

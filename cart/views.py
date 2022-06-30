@@ -19,15 +19,17 @@ def _cart_id(request):
     return cart
 
 def offer_check_function(item):
+    print(item,'*******************************************************')
     product = Products.objects.get(product_name=item)
-    print(product)
+    print(product,'jithin Ej mm')
     if ProductOffer.objects.filter(product=product).exists():
         if product.product_offer:
             sub_total =  product.price -  ((product.price*product.product_offer.discount)/100) 
-    elif CategoryOffer.objects.filter(category=item.product.category).exists():
-           if item.product.category.category_offer:
-            sub_total =  product.price -  ((product.price*item.product.category.category_offer.discount)/100) 
-    
+            print(sub_total)
+    elif CategoryOffer.objects.filter(category=product.category).exists():
+        if product.category.category_offer:
+            sub_total =  product.price - ((product.price*product.category.category_offer.discount)/100) 
+            print(sub_total)
     else:
         sub_total=product.price
         print(sub_total)
@@ -201,7 +203,7 @@ def remove_cart(request,product_id,cart_item_id):
             cart_item   = CartItem.objects.get(product = product, cart = cart, id=cart_item_id)
         
         if cart_item.quantity >1:
-            cart_item.quantity -=1
+            cart_item.quantity -= 1
             cart_item.save()
         else:
             cart_item.delete()
