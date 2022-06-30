@@ -14,7 +14,7 @@
 
 {% url 'referrals' as referral %}
 {% url 'user_profile' as profile %}
-{% url 'my_address' as address %}
+{% url 'my_addresses' as address %}
 {% url 'my_order' as order %}
 {% url 'change_password' as password %}
 <section class="pl-0" style="background-color: #eee;">
@@ -28,7 +28,7 @@
                   <a class="nav-link {%if  request.path == referral %} active {%endif%}" href="{% url 'referrals' %}"><i class="fa fa-tachometer-alt"></i>Refferal</a>
                   <a class="nav-link {%if  request.path == order %} active {%endif%}"  href="/my_order" ><i class="fa fa-shopping-bag"></i>Orders</a>
                   <a class="nav-link {%if  request.path == password %} active {%endif%}" href="/change_password" ><i class="fa fa-credit-card"></i>Change Password</a>
-                  <a class="nav-link {%if  request.path == address %} active {%endif%}"  href="/my_address" ><i class="fa fa-map-marker-alt"></i>Address</a>
+                  <a class="nav-link {%if  request.path == address %} active {%endif%}"  href="/my_addresses" ><i class="fa fa-map-marker-alt"></i>Address</a>
                   <a class="nav-link {%if  request.path == profile %} active {%endif%}"  href="{% url 'user_profile' %}"><i class="fa fa-user"></i>Account Details</a>
                   <a class="nav-link " href="/signout"><i class="fa fa-sign-out-alt"></i>Logout</a>
               </div>
