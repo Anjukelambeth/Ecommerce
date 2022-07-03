@@ -13,18 +13,20 @@
 </button>
 </div>
 {% endfor %}
-<div class="p-5 justify-content-center pull-left" style="line-height: 1">
-<!-- <div class="pt-3 pl-5 row">
-<form class="form-inline pt-3 pl-3 my-lg-0" method="POST" action="{% url 'admin_panel' %}">
-    {% csrf_token %}
-    <input class="form-control mr-sm-2" type="search" placeholder="Search for username" aria-label="Search" name="searched">
-    <button class="btn btn-outline-secondary my-2 my-sm-0" type="submit">Search</button>
-  </form>  &nbsp &nbsp &nbsp
-  <div class="mr-auto">
-  <button type="submit" value="submit"  class="btn btn-primary  mx-auto " ><a href="/add" class="btn btn-primary">Add New User</a></button>  &nbsp &nbsp &nbsp
-  <button type="submit" value="submit"  class="btn btn-primary mr-auto"><a href="/signout" class="btn btn-primary">signout</a></button>  
-</div> -->
-<!-- </div> -->
+<div class="pl-5 justify-content-center pull-left" style="line-height: 1">
+    <div class="pl-5">
+        <div class="pt-3 pl-5 row">
+            <form method="get">
+        
+                {{filters.form}}
+            
+                <input type="submit" value="Search" name="">
+            
+            </form>
+            
+        </div>
+        </div>
+        
 
 <div class="p-5 justify-content-center ">
 <table class="table text-center table-bordered table-hover table-active " >  

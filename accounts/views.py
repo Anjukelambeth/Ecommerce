@@ -1,8 +1,13 @@
 import code
+from re import I
 from django.core.paginator import Paginator
 from inspect import modulesbyfile
 from itertools import product
 from multiprocessing import context
+from django.http import HttpResponseRedirect
+
+from django.urls import reverse
+from razorpay import Item
 from adminpanel.models import CategoryOffer, ProductOffer
 from category.models import category
 from cart.models import Cart, CartItem
@@ -368,7 +373,7 @@ def add_address(request):
         if request.method == "POST":
             # print("Got a POST request")
             form = AddAddressForm(request.POST)
-            # print("checking the form validation")
+             # print("checking the form validation")
             if form.is_valid():
                 # print("Validation done collectiong, collecting data")
                 user = Account.objects.get(id = request.user.id)
@@ -390,6 +395,47 @@ def add_address(request):
 
                 messages.success(request,"Your address has been registered. ")
                 return redirect ('checkout')
+        else:
+            form = AddAddressForm()    
+            context = {
+                    'form':form,
+                    'add':add,
+            }
+    
+            return render(request,'add_address.html',context)
+    else:
+        return redirect('signin')
+
+
+@login_required(login_url='signin')
+def add_Newaddress(request):
+    add=UserAddresses.objects.filter(user=request.user)
+    if request.user.is_authenticated:            
+        if request.method == "POST":
+            # print("Got a POST request")
+            form = AddAddressForm(request.POST)
+            # print("checking the form validation")
+            if form.is_valid():
+                # print("Validation done collectiong, collecting data")
+                user = Account.objects.get(id = request.user.id)
+                first_name = form.cleaned_data['first_name']
+                last_name = form.cleaned_data['last_name']
+                address_line_1 = form.cleaned_data['address_line_1']
+                address_line_2 = form.cleaned_data['address_line_2']
+                mobile = form.cleaned_data['mobile']
+                email = form.cleaned_data['email']
+                city = form.cleaned_data['city']
+                state = form.cleaned_data['state']
+                country = form.cleaned_data['country']
+                zipcode= form.cleaned_data['zipcode']
+                
+                address = UserAddresses.objects.create(user=user,first_name=first_name,last_name=last_name,address_line_1=address_line_1,address_line_2=address_line_2, email=email, mobile=mobile, city=city, state=state, country=country, zipcode=zipcode)
+                # print("going to save address")
+                address.save()
+                # print("address saved")       
+
+                messages.success(request,"Your address has been registered. ")
+                return redirect ('my_addresses')
         else:
             form = AddAddressForm()    
             context = {
@@ -442,12 +488,12 @@ def delete_address(request,add_id):
     context = {
         "addresses":addresses,
     }
-    return render(request,'my_addresses.html', context)
+    return redirect('my_addresses')
 
 def edit_address(request,id):
-    instance = UserAddresses.objects.get(id=id)
-    # instance = get_object_or_404(UserAddresses, id=id)
-    form = UserAddressForm(request.POST or None, instance=instance)
+    # instance = UserAddresses.objects.get(id=id)
+    instance = get_object_or_404(UserAddresses, id=id)
+    form = AddAddressForm(request.POST or None, instance=instance)
 
     if request.method == "POST":
         if form.is_valid():

@@ -69,7 +69,7 @@
                                   </div>
                               </div>
                               <label for="add_address_btn">Address not in the list?? Add new address here..</label>
-                              <a href="{% url 'add_address' %}" class="btn btn-primary m-2" id="add-address_btn"> Add Address</a>
+                              <a href="{% url 'add_Buy_address' %}" class="btn btn-primary m-2" id="add-address_btn"> Add Address</a>
                           </div>
                          
           </aside> 	<!-- col.// -->
@@ -92,14 +92,26 @@
                               <tr>
                                 <td class="align-middle"><img src="{{item.images.url}}" alt="" style="width: 50px;"> {{item.product_name}}</td>
                                 <td class="align-middle">
-                                  {% if item.product_offer%}
-                                     ₹{{item.product_offer.discount|mul:item.price|div:100|sub:item.price|abs}}
+                                    {% if item.product_offer%}
+                                        ₹{{item.product_offer.discount|mul:item.price|div:100|sub:item.price|abs}}
+                                    {% elif item.category.category_offer %} 
+                                    
+                                        ₹{{item.category.category_offer.discount|mul:item.price|div:100|sub:item.price|abs}}
                                     {% else%}
-                                       ₹{{item.price}}
+                                        ₹{{item.price}}
                                     {% endif%}
                                 </td>
                                 <td class="align-middle">{{item.quantity}} </td>
-                                <td class="align-middle">₹{{item.price}}</td>
+                                <td class="align-middle">
+                                    {% if item.product_offer%}
+                                        ₹{{item.product_offer.discount|mul:item.price|div:100|sub:item.price|abs}}
+                                    {% elif item.category.category_offer %} 
+                                    
+                                        ₹{{item.category.category_offer.discount|mul:item.price|div:100|sub:item.price|abs}}
+                                    {% else%}
+                                        ₹{{item.price}}
+                                    {% endif%}
+                                </td>
                            
                                 
                                   

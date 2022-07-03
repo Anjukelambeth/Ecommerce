@@ -13,21 +13,28 @@
 </button>
 </div>
 {% endfor %}
-
+<div class="pl-5 justify-content-center pull-left" style="line-height: 1">
 <div class="pl-5">
-<!-- <div class="pt-3 pl-5 row">
-<form class="form-inline pt-3 pl-3 my-lg-0" method="POST" action="{% url 'admin_panel' %}">
-    {% csrf_token %}
-    <input class="form-control mr-sm-2" type="search" placeholder="Search for username" aria-label="Search" name="searched">
-    <button class="btn btn-outline-secondary my-2 my-sm-0" type="submit">Search</button>
-  </form>  &nbsp &nbsp &nbsp
-  <div class="mr-auto">
-  <button type="submit" value="submit"  class="btn btn-primary  mx-auto " ><a href="/add" class="btn btn-primary">Add New User</a></button>  &nbsp &nbsp &nbsp
-  <button type="submit" value="submit"  class="btn btn-primary mr-auto"><a href="/signout" class="btn btn-primary">signout</a></button>  
-</div> -->
-<!-- </div> -->
+<div class="pt-3 pl-5 row">
+    <form method="get">
 
-<div class="p-5 justify-content-center pull-left" style="line-height: 1">
+        {{filters.form}}
+    
+        <input type="submit" value="Search" name="">
+    
+    </form>
+    
+</div>
+</div>
+<div class="mr-auto row justify-content-center py-3"> 
+    <button type="submit" value="submit"  class="btn btn-light " ><a href="/add_products" class="btn btn-primary">Add New Products</a></button>  &nbsp &nbsp &nbsp
+   <div class="colum ">
+       <button type="submit" value="submit"  class="btn btn-light " ><a href="{% url 'admin_variation_table' %}" class="btn btn-primary"> Click to see Variation Details</a></button> 
+       <!-- <button type="submit" value="submit"  class="btn btn-primary  mx-auto " ><a href="{% url 'add_prod_variation' %}" class="btn btn-primary"> Add Product Variation</a></button>  -->
+   </div>
+   </div>
+<div class="pl-5 justify-content-center pull-left" style="line-height: 1">
+    <form method="get">
 <table class="table table-bordered table-hover table-active table-responsive" >  
     <thead class="thead-dark ">  
     <tr class="col-9">  
@@ -41,7 +48,7 @@
     </tr>  
     </thead>  
     <tbody>  
-{% for product in products %}  
+{% for product in filters.qs %}  
     <tr class="col-9 ">  
         <td>{{ product.id }}</td>
         <td>{{ product.product_name }}</td>  
@@ -59,14 +66,9 @@
 {% endfor %}  
     </tbody>  
 </table>  
-<div class="mr-auto row "> 
- <button type="submit" value="submit"  class="btn btn-primary  mx-auto " ><a href="/add_products" class="btn btn-primary">Add New Products</a></button>  &nbsp &nbsp &nbsp
-<div class="colum ">
-    <button type="submit" value="submit"  class="btn btn-primary  mx-auto " ><a href="{% url 'admin_variation_table' %}" class="btn btn-primary"> Click to see Variation Details</a></button> 
-    <!-- <button type="submit" value="submit"  class="btn btn-primary  mx-auto " ><a href="{% url 'add_prod_variation' %}" class="btn btn-primary"> Add Product Variation</a></button>  -->
-</div>
-</div>
+</form>
 
 </div>
+<script ></script>
 </div>
 {% endblock %} 

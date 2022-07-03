@@ -1,10 +1,12 @@
 import calendar
 from itertools import product
+from multiprocessing import context
 from django.http import FileResponse, HttpResponse
 from django.shortcuts import render,redirect,get_object_or_404
 from django.contrib.auth import authenticate,login,logout
 from django.contrib import messages
 from accounts.models import Account
+from adminpanel.filters import FilterAccount, FilterCategory, FilterOrder, FilterProducts
 from adminpanel.forms import CategoryOfferForm, OrderEditForm, ProductOfferForm
 from adminpanel.models import CategoryOffer, ProductOffer
 from category.models import category
@@ -190,11 +192,18 @@ def admin_signout(request):
         logout(request)
     messages.success(request, "Logged Out Successfully!!")
     return redirect('admin_panel')
+
 @login_required(login_url='admin_panel')
 def admin_usersview(request):  
-    if request.user.is_authenticated:
-        users = Account.objects.all()
-        return render(request,'admin_usersview.html',{'users':users})
+    # if request.user.is_authenticated:
+    users = Account.objects.all()
+    filters = FilterAccount(request.GET, queryset=users)
+    users=filters.qs
+    context={
+        'users':users,
+        'filters':filters,
+    }
+    return render(request,'admin_usersview.html',context)
     return redirect('admin_home')
 
 # @login_required(login_url='admin_panel')
@@ -219,9 +228,15 @@ def userunblock(request,id):
 
 @login_required(login_url='admin_panel')    
 def admin_category(request):  
-    if request.user.is_authenticated:
-        categories = category.objects.all()
-        return render(request,'admin_categoryview.html',{'category':categories})
+    # if request.user.is_authenticated:
+    categories = category.objects.all()
+    filters = FilterCategory(request.GET, queryset=categories)
+    categories=filters.qs
+    context={
+        'category':categories,
+        'filters':filters,
+    }
+    return render(request,'admin_categoryview.html',context)
     return redirect('admin_home')
 
 @login_required(login_url='admin_panel')
@@ -258,10 +273,15 @@ def delete_category(request,id):
     return redirect(admin_category)  
 
 @login_required(login_url='admin_panel')
-def admin_products(request):  
-    if request.user.is_authenticated:
-        product = Products.objects.all()
-        return render(request,'admin_products.html',{'products':product})
+def admin_products(request): 
+    product = Products.objects.all() 
+    filters = FilterProducts(request.GET, queryset=product) 
+    # if request.user.is_authenticated:
+    #     product = Products.objects.all() 
+	    
+
+	    
+    return render(request,'admin_products.html',{'filters':filters})
     return redirect('admin_home')
 
 @login_required(login_url='admin_panel')
@@ -327,13 +347,21 @@ def admin_variation_table(request):
 @login_required(login_url='admin_panel')
 def admin_order(request):
     orders = OrderProduct.objects.all()
-    
+  
+    filters = FilterOrder(request.GET, queryset=orders)
+    orders=filters.qs
+
+    # paginator = Paginator(orderss, 15) # Show 25 contacts per page.
+    # page_number = request.GET.get('page')
+    # orders = paginator.get_page(page_number)
+
     context = {
         'orders':orders,
-        
+        'filters':filters,
     }
     return render (request,'admin_order.html',context)
-    
+
+
 @login_required(login_url='admin_panel')
 def order_cancel(request,order_number):
     orders = Order.objects.get(order_number=order_number)
@@ -823,11 +851,15 @@ def sales_report(request):
         return render(request,'sales_report.html',context)
 
 def sales_report2(request):
-    salesreport = Order.objects.all().order_by('-created_at')
+    salesreports = Order.objects.all().order_by('-created_at')
     total = 0
-    total= salesreport.aggregate(Sum('order_total')).get('order_total__sum')
+    total= salesreports.aggregate(Sum('order_total')).get('order_total__sum')
     RoundTotal =("{:0.2f}".format(total))
     
+    paginator = Paginator(salesreports, 10) # Show 25 contacts per page.
+    page_number = request.GET.get('page')
+    salesreport = paginator.get_page(page_number)
+
     context = {
         'salesreport': salesreport ,
         'total':    total,
@@ -947,3 +979,5 @@ def add_prod_variation(request):
             'form'     : form,
             }
         return render(request, 'add_prod_variation.html',context)
+
+	

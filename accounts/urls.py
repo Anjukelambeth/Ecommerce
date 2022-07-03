@@ -2,7 +2,7 @@
 
 from . import views
 from django.urls import path
-
+import cart.views 
 urlpatterns = [
     path('',views.index,name='index'),
     path('code/<str:ref_code>/',views.ref_register,name='ref_register'),
@@ -16,6 +16,8 @@ urlpatterns = [
     path('user_profile/',views.user_profile,name='user_profile'),
     path('user_profile_edit/',views.user_profile_edit,name='user_profile_edit'),
     path('add_address/',views.add_address,name='add_address'),
+    path('add_Newaddress/',views.add_Newaddress,name='add_Newaddress'),
+    path('add_Buy_address/',cart.views.add_Buy_address,name='add_Buy_address'),
     path('my_addresses/',views.my_addresses,name='my_addresses'),
     path('delete_address/<int:add_id>/',views.delete_address,name='delete_address'),
     path('edit_address/<int:id>',views.edit_address, name='edit_address'),

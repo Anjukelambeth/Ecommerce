@@ -4,7 +4,7 @@
 {% block title %}  Store 
 {% endblock %}
 {% block content %}
-
+{%url '?color=Red' as color %}
 <!-- ========================= SECTION PAGETOP ========================= -->
 <section class="section-pagetop bg">
     <div class="container p-3 text-center">
@@ -13,10 +13,11 @@
         {%else%}
             <h2 class="title-page text-primary">Our Store</h2>
         {%endif%}
+        
     </div> <!-- container //  -->
     </section>
     <!-- ========================= SECTION INTRO END// ========================= -->
-    
+       
     <!-- ========================= SECTION CONTENT ========================= -->
     <section class="section-content padding-y">
     <div class="container">
@@ -31,20 +32,20 @@
     <div class="card">
         <article class="filter-group">
             <header class="card-header">
-                <a href="#" data-toggle="collapse" data-target="#collapse_1" aria-expanded="true" class="">
+                <!-- <a href="#" data-toggle="collapse" data-target="#collapse_1" aria-expanded="true" class="">
                     <i class="icon-control fa fa-chevron-down"></i>
                     <h6 class="title">Categories</h6>
-                </a>
+                </a> -->
             </header>
             <div class="filter-content collapse show" id="collapse_1" >
                 <div class="card-body">
                     
-                    <ul class="list-menu">
+                    <!-- <ul class="list-menu">
                         <li><a href="{% url 'store' %}">All products</a></li>
                         {%for category in links%}
                     <li><a href="{{category.get_url}}">{{category.category_name}}</a></li>
                     {%endfor%}
-                    </ul>
+                    </ul> -->
     
                 </div> <!-- card-body.// -->
             </div>
@@ -56,16 +57,16 @@
 
             {%else%}
             <header class="card-header">
-                <a href="#" data-toggle="collapse" data-target="#collapse_3" aria-expanded="true" class="">
+                <a href="#" data-toggle="collapse" data-target="#collapse_2" aria-expanded="true" class="">
                     <div class="row">
-                    <h6 class="title">By Color </h6> <i class="icon-control fa fa-chevron-down pl-1 py-1"></i>
+                    <h6 class="title">By Color </h6> 
                 </div>
                 </a>
             </header>
             <div class="widget-body">
 
                        
-                            <a class="btn btn-light w-100" data-toggle="collapse" href="#multiCollapseExample1" role="button" aria-expanded="false" aria-controls="multiCollapseExample1">Select Color</a>
+                            <a class="btn btn-light w-100" data-toggle="collapse_2" href="#multiCollapseExample1" role="button" aria-expanded="false" aria-controls="multiCollapseExample1">Select Color</a>
                        
                         
                         
@@ -73,19 +74,22 @@
                         <div class="row">
 
                                 <div class="col w-100">
-                                    <div class="collapse multi-collapse" id="multiCollapseExample1">
+                                    <div >
                                     <div class="card card-body">
                                         {% for i in values %}
+                                        <li class="list-group-item">
+
+                                            <a href="?color={{i}}"  >{{i}}</a>&nbsp;  
                                             
-                                            <a href="?color={{i}}">{{i}}</a>
+                                        </li>   
+                                       
                     
                                         {% endfor %}
                                         
                                     </div>
                                     </div>
                                 </div>
-                               
-
+                                
                         </div>
         
                     
@@ -109,64 +113,24 @@
                     
                     <div class="form-row">
                     <div class="form-group col-md-12">
-                        <!-- <h3 class="widget-title">
-                            <a data-toggle="collapse" href="#widget-6" role="button" aria-expanded="true" aria-controls="widget-5">
-                                Sort by:
-                            </a>
-                        </h3>
-                        <div class="widget-body">
-                            <select  onchange="location = this.value;" class="form-control">
-                                <option value="" id="price-placeholder" disabled selected hidden>...</option>
-                                <option value="?sort=l2h">Price: Low to High</option>
-                                <option value="?sort=h2l">Price: High to Low</option>
-                                <option value="?sort=date">Newest First</option>
-                            </select>
-                                
-                        </div>
-                        <br> -->
-                        <!-- <h3 class="widget-title">
-                            <a data-toggle="collapse" href="#widget-5" role="button" aria-expanded="true" aria-controls="widget-5">
-                               Price:
-                            </a>
-                        </h3> -->
-                        <div class="widget-body">
-                            <select  onchange="location = this.value;" class="form-control">
-                                <option value="" id="price-placeholder" disabled selected hidden>Select Price Range</option>
-                                <option id="pr500" value='?price=500' >less than 500</option>
-                                <!-- <option id="pr1500" value='?price=1500' >less than 1500</option> -->
-                                <option id="pr5000" value='?price=5000' >less than 5000</option>
-                                <!-- <option id="pr10000" value='?price=1000' >less than 10000</option> -->
-                                <!-- <option id="pr5500" value='?price=5500' >less than 5500</option> -->
-                              </select>
-                                
-                        </div>
-                      <!-- <label>Min</label> -->
-                      <!-- <input class="form-control" placeholder="$0" type="number"> -->
-                          <!-- <select class="mr-2 form-control">
-                            <option value="0">₹0</option>
-                            <option value="50">₹50</option>
-                            <option value="100">₹100</option>
-                            <option value="150">₹150</option>
-                            <option value="200">₹200</option>
-                            <option value="500">₹500</option>
-                            <option value="1000">₹1000</option>
-                        </select>
-                    </div>
-                    <div class="form-group text-right col-md-6">
-                      <label>Max</label>
-                          <select class="mr-2 form-control">
-                            <option value="50">₹50</option>
-                            <option value="100">₹100</option>
-                            <option value="150">₹150</option>
-                            <option value="200">₹200</option>
-                            <option value="500">₹500</option>
-                            <option value="1000">₹1000</option>
-                            <option value="2000">₹2000+</option>
-                        </select>
-                    </div>
-                    </div> form-row.// -->
+                        
+                        <div class="collapse show" id="widget-5">
+                            <div class="widget-body">
+                                    <select class="form-select form-control" onchange="location=this.value" name="price" id="price-list" style="margin-left: auto;" >
+                                        <option value="" id="price-placeholder">Select</option>
+                                        <option id="pr500" value="?price=500" >less than 500</option>
+                                        <option id="pr1000" value="?price=1000"  >less than 1000</option>
+                                        <option id="pr5000" value="?price=5000" >less than 5000</option>
+                                        <option id="pr10000" value="?price=10000" >less than 10000</option>
+                                      </select>
+                                      <br>
+                                   
+                                    
+                            </div><!-- End .widget-body -->
+                        </div><!-- End .collapse -
+                     
                     <br>
-                    <!-- <button class="btn btn-block btn-primary" id="priceFilterBtn">Apply</button> -->
+                   <button class="btn btn-block btn-primary" id="priceFilterBtn">Apply</button> -->
                 </div><!-- card-body.// -->
             </div>
         </article> <!-- filter-group .// -->
@@ -254,69 +218,5 @@
     </section>
     <!-- ========================= SECTION CONTENT END// ========================= -->
 
+    
 {% endblock %}
-<script>
-
-  
-    $(document).ready(function(){
-        $(".ajaxLoader").hide();
-        // Product Filter Start
-        $("#priceFilterBtn").on('click',function(){
-            var _filterObj={};
-            var _minPrice=$('#maxPrice').attr('min');
-            var _maxPrice=$('#maxPrice').val();
-            _filterObj.minPrice=_minPrice;
-            _filterObj.maxPrice=_maxPrice;
-            $(".filter-checkbox").each(function(index,ele){
-                var _filterVal=$(this).val();
-                var _filterKey=$(this).data('filter');
-                _filterObj[_filterKey]=Array.from(document.querySelectorAll('input[data-filter='+_filterKey+']:checked')).map(function(el){
-                     return el.value;
-                });
-            });
-    
-            // Run Ajax
-            $.ajax({
-                url:'/filter-data',
-                data:_filterObj,
-                dataType:'json',
-                beforeSend:function(){
-                    $(".ajaxLoader").show();
-                },
-                success:function(res){
-                    console.log(res);
-                    $("#filteredProducts").html(res.data);
-                    $(".ajaxLoader").hide();
-                }
-            });
-        });
-        // End
-    
-        // Filter Product According to the price
-        $("#maxPrice").on('blur',function(){
-            var _min=$(this).attr('min');
-            var _max=$(this).attr('max');
-            var _value=$(this).val();
-            console.log(_value,_min,_max);
-            if(_value < parseInt(_min) || _value > parseInt(_max)){
-                alert('Values should be '+_min+'-'+_max);
-                $(this).val(_min);
-                $(this).focus();
-                $("#rangeInput").val(_min);
-                return false;
-            }
-        });
-        // End
-    });
-    </script>
-    <!-- <script>
-        // for getting url after applying price filtering
-        function finalurl2() {
-           var url = new URL(window.location.href);
-           var search_params = url.searchParams;
-           search_params.set('price', document.getElementById("price-list").value);
-           url.search = search_params.toString();
-           var new_url = url.toString();
-           return new_url
-         }
-   </script> -->

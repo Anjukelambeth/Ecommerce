@@ -1,10 +1,11 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
-from django.http import JsonResponse
+from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
-from accounts.forms import UserAddressForm
-from accounts.models import UserAddresses
+from django.urls import reverse
+from accounts.forms import AddAddressForm, UserAddressForm
+from accounts.models import Account, UserAddresses
 from adminpanel.models import CategoryOffer, ProductOffer
 from cart.models import Cart, CartItem
 from django.views.decorators.csrf import csrf_exempt
@@ -39,6 +40,7 @@ def add_cart(request,product_id):
 
     current_user = request.user
     product     = Products.objects.get(id = product_id)
+    
     # if the user is authenticated
     if current_user.is_authenticated:
         product_variation = []
@@ -80,24 +82,31 @@ def add_cart(request,product_id):
                 existing_variation = item.variations.all()
                 ex_var_list.append(list(existing_variation))
                 id.append(item.id)
+            stock_count=product.stock-item.quantity
+            print(stock_count)
+            print(999999)
+            if stock_count >0:
             #checke
-            if product_variation in ex_var_list:
-                # add the new quantity
-                index = ex_var_list.index(product_variation)
-                item_id = id[index]
-                item = CartItem.objects.get(product=product, id=item_id)
-                item.quantity += 1
-                item.save()
+                if product_variation in ex_var_list:
+                    # add the new quantity
+                    index = ex_var_list.index(product_variation)
+                    item_id = id[index]
+                    item = CartItem.objects.get(product=product, id=item_id)
+                    item.quantity += 1
+                    item.save()
 
+                else:
+                    # Getting a request to add a producct
+                    # create a new cart item
+                    item = CartItem.objects.create(product=product, cart=cart,quantity=1, user=current_user)
+                    if len(product_variation) > 0:
+                        item.variations.clear()
+                        item.variations.add(*product_variation)
+                        # adding a star will make surea that the star is whole thing is getting added.
+                    item.save()
             else:
-               # Getting a request to add a producct
-                # create a new cart item
-                item = CartItem.objects.create(product=product, cart=cart,quantity=1, user=current_user)
-                if len(product_variation) > 0:
-                    item.variations.clear()
-                    item.variations.add(*product_variation)
-                    # adding a star will make surea that the star is whole thing is getting added.
-                item.save() 
+                messages.error(request,'Outof Stock')
+               
         # If item does not exist, create the 'cart_item'
         else:
             cart_item       = CartItem.objects.create(
@@ -159,23 +168,28 @@ def add_cart(request,product_id):
                 # the result of the below will be a queryset. this is converted to list.
                 ex_var_list.append(list(existing_variation))
                 id.append(item.id)
-            
-            if product_variation in ex_var_list:
-                # add the new quantity
-                index = ex_var_list.index(product_variation)
-                item_id = id[index]
-                item = CartItem.objects.get(product=product, id=item_id)
-                item.quantity += 1
-                item.save()
+            stock_count=product.stock-item.quantity
+            print(stock_count)
+            print(999999)
+            if stock_count >0:
+                if product_variation in ex_var_list:
+                    # add the new quantity
+                    index = ex_var_list.index(product_variation)
+                    item_id = id[index]
+                    item = CartItem.objects.get(product=product, id=item_id)
+                    item.quantity += 1
+                    item.save()
 
-            else:
-                # create a new cart item
-                item = CartItem.objects.create(product=product, quantity=1, cart=cart)
-                if len(product_variation) > 0:
-                    item.variations.clear()
-                    item.variations.add(*product_variation)
-                    # adding a star will make surea that the star is whole thing is getting added.
-                item.save() 
+                else:
+                    # create a new cart item
+                    item = CartItem.objects.create(product=product, quantity=1, cart=cart)
+                    if len(product_variation) > 0:
+                        item.variations.clear()
+                        item.variations.add(*product_variation)
+                        # adding a star will make surea that the star is whole thing is getting added.
+                    item.save() 
+            else: messages.error(request,'Outof Stock')
+
         # If item does not exist, create the 'cart_item'
         else:
             
@@ -279,7 +293,7 @@ def checkout(request,total=0, quantity=0, cart_items=0):
         # cart=Cart.objects.get(cart_id=_cart_id(request))
         # cart_items=CartItem.objects.filter(cart=cart,is_active=True)
             address=UserAddresses.objects.filter(user=request.user.id).order_by('-id')[:3]
-            # form = UserAddressForm(instance=request.user)
+            
             for cart_item in cart_items:
                 new_price = offer_check_function(cart_item)
                 total +=(new_price * cart_item.quantity)
@@ -289,6 +303,7 @@ def checkout(request,total=0, quantity=0, cart_items=0):
 
     except:
         pass
+    # form = AddAddressForm(instance=request.user)
     context={
         'total': total,
         'quantity': quantity,
@@ -378,6 +393,7 @@ def remove_cart_ajax(request):
         pass    
     return JsonResponse({'success':'Item successfully Removed'})
 
+
 @login_required(login_url='signin')
 def buyNow(request,category_slug,product_slug,total=0, quantity=0,):
     grand_total=0
@@ -393,8 +409,8 @@ def buyNow(request,category_slug,product_slug,total=0, quantity=0,):
             total += new_price * 1
             
         grand_total=total+100
-        
-
+        request.session['item.slug']=item.slug
+        request.session['item.category.slug']=item.category.slug
     except:
         pass
     context={
@@ -407,5 +423,47 @@ def buyNow(request,category_slug,product_slug,total=0, quantity=0,):
         'profile':request.user
     }
     return render(request,'buyNow.html',context)
+
+@login_required(login_url='signin')
+def add_Buy_address(request):
+    add=UserAddresses.objects.filter(user=request.user)
+    itemslug= request.session['item.slug']
+    itemcatslug=request.session['item.category.slug']
+    if request.user.is_authenticated:            
+        if request.method == "POST":
+            # print("Got a POST request")
+            form = AddAddressForm(request.POST)
+             # print("checking the form validation")
+            if form.is_valid():
+                # print("Validation done collectiong, collecting data")
+                user = Account.objects.get(id = request.user.id)
+                first_name = form.cleaned_data['first_name']
+                last_name = form.cleaned_data['last_name']
+                address_line_1 = form.cleaned_data['address_line_1']
+                address_line_2 = form.cleaned_data['address_line_2']
+                mobile = form.cleaned_data['mobile']
+                email = form.cleaned_data['email']
+                city = form.cleaned_data['city']
+                state = form.cleaned_data['state']
+                country = form.cleaned_data['country']
+                zipcode= form.cleaned_data['zipcode']
+                
+                address = UserAddresses.objects.create(user=user,first_name=first_name,last_name=last_name,address_line_1=address_line_1,address_line_2=address_line_2, email=email, mobile=mobile, city=city, state=state, country=country, zipcode=zipcode)
+                # print("going to save address")
+                address.save()
+                # print("address saved")       
+
+                messages.success(request,"Your address has been registered. ")
+                return HttpResponseRedirect(reverse('buyNow', args=(itemcatslug,itemslug)))
+        else:
+            form = AddAddressForm()    
+            context = {
+                    'form':form,
+                    'add':add,
+            }
+    
+            return render(request,'add_address.html',context)
+    else:
+        return redirect('signin')
 
 

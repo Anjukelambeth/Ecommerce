@@ -45,10 +45,11 @@ def place_order(request, total=0, quantity=0):
         grand_total = 0
         tax = 0
         for cart_item in cart_items:
-            total   += (cart_item.product.price * cart_item.quantity)
+            new_price = offer_check_function(cart_item)
+            total   += (new_price * cart_item.quantity)
             quantity += cart_item.quantity
-        tax = round((5 * total)/100,2)
-        grand_total = round(total + tax,2)
+        # tax = round((5 * total)/100,2)
+        grand_total = round(total + 100)
 
         # print('found one order and rendering')
 
@@ -59,6 +60,7 @@ def place_order(request, total=0, quantity=0):
             'total' : total,
             'tax' : tax,
             'grand_total' : grand_total,
+            'new_price':new_price,
             # 'form':form
         }
         return render(request,'payments.html',context)
@@ -74,10 +76,11 @@ def place_order(request, total=0, quantity=0):
         grand_total = 0
         tax = 0
         for cart_item in cart_items:
-            total   += (cart_item.product.price * cart_item.quantity)
+            new_price = offer_check_function(cart_item)
+            total   += (new_price * cart_item.quantity)
             quantity += cart_item.quantity
-        tax = round((5 * total)/100,2)
-        grand_total = round(total + tax,2)
+        # tax = round((5 * total)/100,2)
+        grand_total = round(total + 100)
         # print('going to check the post request')
         if request.method == "POST":
             # form = OrderForm(request.POST)
@@ -292,7 +295,7 @@ def paypal_complete(request):
         order_id = request.session.get('order_id')
         del request.session['order_id']
     else:
-        return redirect('home')
+        return redirect('index')
     order = Order.objects.get(order_number = order_id )
     order_product = OrderProduct.objects.filter(order=order)
     transID = OrderProduct.objects.filter(order=order).first()
@@ -410,10 +413,11 @@ def buy_place_order(request,category_slug,product_slug, total=0):
     tax = 0
     items.quantity=1
     # for cart_item in cart_items:
-    total   += (items.price * 1)
+    new_price = offer_check_function(items)
+    total   += (new_price)
     # quantity += item.quantity
-    tax = round((5 * total)/100,2)
-    grand_total = round(total + tax,2)
+    # tax = round((5 * total)/100,2)
+    grand_total = round(total + 100)
     # print('going to check the post request')
     if request.method == "POST":
         # form = OrderForm(request.POST)
@@ -534,32 +538,31 @@ def buy_cash_on_delivery(request,category_slug,product_slug,order_number):
     
     order.payment=payment
     order.save()
-    items  = Products.objects.get(category__slug=category_slug,slug=product_slug)
+    item  = Products.objects.get(category__slug=category_slug,slug=product_slug)
     
     
     #taking order_id to show the invoice
 
     
    
-    for item in items:
+   
        
-        OrderProduct.objects.create(
+    OrderProduct.objects.create(
         order = order,
-        product = item.product,
+        product = item,
         user = current_user,
-        quantity = item.quantity,
-        product_price = item.product.price,
+        quantity = 1,
+        product_price = item.price,
         payment = payment,
         ordered = True,
         )
 
 
-        #decrease the product quantity from product
-        orderproduct = Products.objects.filter(id=item.product_id).first()
-        orderproduct.stock = orderproduct.stock-item.quantity
-        orderproduct.save()
-        #delete cart item from usercart after ordered
-        CartItem.objects.filter(user=current_user).delete()
+    #decrease the product quantity from product
+    orderproduct = Products.objects.filter(id=item.id).first()
+    orderproduct.stock = orderproduct.stock-1
+    orderproduct.save()
+        
 
     order = Order.objects.get(order_number = order_number )
     order_product = OrderProduct.objects.filter(order=order)
@@ -571,3 +574,56 @@ def buy_cash_on_delivery(request,category_slug,product_slug,order_number):
         'item':item,
     }
     return render(request,'buy_success.html',context)
+
+
+def buy_payments(request,category_slug,product_slug, total=0):
+    # body=json.loads(request.body)
+    # print(body)
+    # return render(request,'payments.html')
+    body = json.loads(request.body)
+    print('BODY:',body)
+    current_user = request.user
+    #transaction details store
+    payment = Payment()
+    payment.user= current_user
+    payment.payment_id = body['transID']
+    payment.payment_method = body['payment_method']
+    payment.amount_paid = body['total']
+    payment.status = body['status']
+    payment.save()
+
+    
+
+    #create payment details and order product table
+    
+    item = Products.objects.get(category__slug=category_slug,slug=product_slug)
+    order_id = str(body['orderID'])
+    print(order_id)
+    #taking order_id to show the invoice
+    request.session['order_id']=order_id
+    order_data = Order.objects.get(order_number = order_id)
+
+    order_data.payment=payment
+    order_data.save()
+    
+   
+        
+    OrderProduct.objects.create(
+        order = order_data,
+        product = item,
+        user = current_user,
+        quantity = 1,
+        product_price = item.price,
+        payment = payment,
+        ordered = True,
+        )
+
+
+    #decrease the product quantity from product
+    orderproduct = Products.objects.filter(id=item.id).first()
+    orderproduct.stock = orderproduct.stock-1
+    orderproduct.save()
+        #delete cart item from usercart after ordered
+        # CartItem.objects.filter(user=current_user).delete()
+  
+    return JsonResponse({'completed':'success'})

@@ -62,7 +62,7 @@ input{
                                                 <li>{{order.user.user_name}}</li>
                                                 <li>{{order.phone_number}}</li>
                                                 <li>{{order.email}}</li>
-                                                <li>{{order.country}}</li>
+                                                <li>{{order.state}}{{order.country}}</li>
                                             </ul>
                                         </div>
                                     </div>
@@ -93,30 +93,40 @@ input{
                                                         </tr>
                                                     </thead>
                                                     <tbody>   
-                                                        {% for item in  order_product %}
+                                                       
                                                         <tr>
-                                                            <td>{{item.product.product_name}} - {{item.product.description}}</td>
+                                                            <td>{{item.product_name}} - {{item.description}}</td>
                                                             <td class="text-center">{{item.quantity}}</td>
-                                                            <td class="text-center">{{item.product.price}}</td>
+                                                            <td class="text-center">
+                                                                {% if item.product_offer%}
+                                                                ₹{{item.product_offer.discount|mul:item.price|div:100|sub:item.price|abs}}
+                                                                {% elif item.category.category_offer %} 
+                                                        
+                                                                ₹{{item.category.category_offer.discount|mul:item.price|div:100|sub:item.price|abs}}
+                                                                {% else%}
+                                                                ₹{{item.price}}
+                                                                {% endif%}
+                                                            </td>
                                                         </tr>
                                                           
-                                                        {% endfor %}
+                                                       
 
 
                                                     </tbody>
                                                     <tfoot>
                                                         <tr>
-                                                            <th colspan="2" class="text-right">Sub Total:</th>
-                                                            <th class="text-center">{{order.order_total}}</th>
-                                                        </tr>
-                                                        <tr>
                                                             <th colspan="2" class="text-right">Delivery charge:</th>
                                                             <th class="text-center">100</th>
                                                         </tr>
+                                                        <tr>
+                                                            <th colspan="2" class="text-right">Sub Total:</th>
+                                                            <th class="text-center">{{order.order_total}}</th>
+                                                        </tr>
+                                                       
                                                         
                                                         <tr>
                                                             <th colspan="2" class="text-right">Grand Total:</th>
-                                                            <th class="text-center">{{order.order_total|add:100}}</th>
+                                                            <th class="text-center">{{order.order_total}}</th>
                                                         </tr>
                                                     </tfoot>
                                                 </table>

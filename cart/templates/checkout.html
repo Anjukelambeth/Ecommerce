@@ -36,7 +36,7 @@
           <aside class="col-lg-6">
               <div class="card">
                   <div class="card-body">
-                      <h4 class="card-title mb-4">Billing Address</h4>
+                      <h4 class="card-title mb-4">Shipping Address</h4>
                           
                           <form action="{% url 'place_order' %}" method="POST">
                               {% csrf_token %}
@@ -93,10 +93,13 @@
                                 <td class="align-middle"><img src="{{cart_item.product.images.url}}" alt="" style="width: 50px;"> {{cart_item.product.product_name}}</td>
                                 <td class="align-middle">
                                   {% if cart_item.product.product_offer%}
-                                     ₹{{cart_item.product.product_offer.discount|mul:cart_item.product.price|div:100|sub:cart_item.product.price|abs}}
-                                    {% else%}
-                                       ₹{{cart_item.product.price}}
-                                    {% endif%}
+                            ₹{{cart_item.product.product_offer.discount|mul:cart_item.product.price|div:100|sub:cart_item.product.price|abs}}
+                            {% elif cart_item.product.category.category_offer %} 
+                            
+                            ₹{{cart_item.product.category.category_offer.discount|mul:cart_item.product.price|div:100|sub:cart_item.product.price|abs}}
+                            {% else%}
+                            ₹{{cart_item.product.price}}
+                            {% endif%}
                                 </td>
                                 <td class="align-middle">{{cart_item.quantity}} </td>
                                 <td class="align-middle">₹{{cart_item.sub_total}}</td>

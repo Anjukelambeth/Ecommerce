@@ -3,7 +3,7 @@
 <html lang="en">
 
 <head>
-    <title>{% block title %}Admin-home{% endblock %}</title>
+    <title>{% block title %}Admin-report{% endblock %}</title>
     <!-- HTML5 Shim and Respond.js IE11 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 11]>
@@ -220,28 +220,14 @@
                       <td>{{order.city}}</td>
                       <td>{{order.state}}</td>
                       <td class="text-right">₹ {{order.order_total}}</td>
-                      <td>{{order.status}}</td>
+                      <td>{{order.is_ordered}}</td>
                       
                     </tr>
                   
                     {% endfor %}
 
             </tbody>
-            <tfoot>
-                <tr>
-                      <th>Customer Name</th>
-                      <th>Order No</th>
-                      {% comment %} <th>Phone No</th> {% endcomment %}
-                      <!-- <th>Email</th> -->
-                      <th>Order Dt</th>
-                      <th>City</th>
-                      <th>State</th>
-                      <th>Order Value</th>
-                      <th>Status</th>
-                   
-                      {% comment %} <th></th> {% endcomment %}
-                </tr>
-            </tfoot>
+            
         </table>
     </div>
 </div>

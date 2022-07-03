@@ -82,19 +82,19 @@ def store(request,category_slug=None):
         total_count = Products.objects.all().filter(is_available=True).order_by('product_name').count()
 
         # filter by 
-        filter_by = request.GET.get("price") 
-        if filter_by == "500":  
-             products = Products.objects.all().filter(price__lte=500).order_by('-price')
-        elif filter_by == "1000":  
+        order_by = request.GET.get("price") 
+        if order_by == "500":  
+             products = Products.objects.all().filter(price__lte=500)
+        elif order_by == "1000":  
              products = Products.objects.all().filter(price__lte=1000).order_by('-price')
-        elif filter_by == "5000":  
+        elif order_by == "5000":  
              products = Products.objects.all().filter(price__lte=5000).order_by('-price')
-        elif filter_by == "10000":  
+        elif order_by == "10000":  
              products = Products.objects.all().filter(price__lte=10000).order_by('-price')
         
         
 
-        p = Paginator(products, 6)
+        p = Paginator(products, 9)
         page = request.GET.get('page')
         page_products = p.get_page(page)
         product_count = products.count()    
@@ -108,9 +108,44 @@ def store(request,category_slug=None):
         'total_count' : total_count,
 
         }
-   
     
     return render(request,'store.html',context)
+
+def filter_data(request):
+    products = Products.objects.all().filter(is_available=True).order_by('product_name')
+    total_count = Products.objects.all().filter(is_available=True).order_by('product_name').count()
+
+    # filter by 
+    order_by = request.GET.get("price") 
+    if order_by == "500":  
+            products = Products.objects.all().filter(price__lte=500)
+    elif order_by == "1000":  
+            products = Products.objects.all().filter(price__lte=1000).order_by('-price')
+    elif order_by == "5000":  
+            products = Products.objects.all().filter(price__lte=5000).order_by('-price')
+    elif order_by == "10000":  
+            products = Products.objects.all().filter(price__lte=10000).order_by('-price')
+    
+    
+
+    p = Paginator(products, 9)
+    page = request.GET.get('page')
+    page_products = p.get_page(page)
+    product_count = products.count()    
+
+        
+
+    context = { 
+        # 'values':values,
+        'products' : page_products,
+        'product_count' : product_count,
+        'total_count' : total_count,
+
+        }
+    
+    t=render_to_string('store.html',{'data':page_products})
+    return JsonResponse({'data':t})
+
 
 def product_detail(request,category_slug,product_slug):
     try:

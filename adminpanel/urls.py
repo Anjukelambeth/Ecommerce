@@ -61,5 +61,5 @@ urlpatterns = [
     # path('weekly_report/<int:date>/', views.weekly_report, name='weekly_report'),
     path('add_prod_variation/',views.add_prod_variation, name = 'add_prod_variation'),
     path('admin_variation_table',views.admin_variation_table, name = 'admin_variation_table'),
-
+    # path('admin_order2/',views.admin_order2,name='admin_order2'), 
 ]

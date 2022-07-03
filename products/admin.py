@@ -2,7 +2,7 @@ from django.contrib import admin
 from .models import  Products, Variation
 # Register your models here.
 class ProductAdmin(admin.ModelAdmin):
-    list_display=('product_name','price','category')
+    list_display=('product_name','price','category','product_description')
     prepopulated_fields = {'slug':('product_name',)}
 
 class VariationAdmin(admin.ModelAdmin):
