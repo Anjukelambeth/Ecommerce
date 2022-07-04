@@ -28,6 +28,8 @@
 <!-- </div> -->
 
 <div class="p-5 justify-content-center pull-left" style="line-height: 1">
+    <button type="submit" value="submit"  class="btn btn-light " ><a href="{% url 'add_prod_variation' %}" class="btn btn-primary">Add Product Variation</a></button>  &nbsp &nbsp &nbsp
+    
 <table class="table table-bordered table-hover table-active table-responsive" >  
     <thead class="thead-dark ">  
     <tr class="col-9">  
@@ -35,7 +37,7 @@
         <th scope="col">Product Name</th> 
         <th scope="col">Variation Category</th>  
         <th scope="col">Variation Value</th>  
-        <th scope="col">Active </th>  
+        <th scope="col">Stock </th>  
         <th scope="col">Created Date</th>  
         <th scope="col">Category </th>  
     </tr>  
@@ -47,7 +49,7 @@
         <td>{{ product.product }}</td>  
         <td >{{ product.variation_category}}</td>  
         <td>{{ product.variation_value }}</td> 
-        <td>{{ product.is_active }}</td> 
+        <td>{{ product.stock_count }}</td> 
         <td>{{ product.created_date }}</td>  
         <td>{{ product.product.category}}</td>  
         <!-- <td>  
@@ -59,12 +61,7 @@
 {% endfor %}  
     </tbody>  
 </table>  
-<div class="mr-auto row "> 
- <!-- <button type="submit" value="submit"  class="btn btn-primary  mx-auto " ><a href="/add_products" class="btn btn-primary">Add New Products</a></button>  &nbsp &nbsp &nbsp -->
-<div class="colum ">
-    <button type="submit" value="submit"  class="btn btn-primary  mx-auto " ><a href="{% url 'add_prod_variation' %}" class="btn btn-primary"> Add Product Variation</a></button> 
-</div>
-</div>
+
 
 </div>
 </div>

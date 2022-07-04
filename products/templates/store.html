@@ -17,7 +17,19 @@
     </div> <!-- container //  -->
     </section>
     <!-- ========================= SECTION INTRO END// ========================= -->
-       
+    {% if selected %}
+    <!-- <h2 class="title-page text-success">Products with amount lessthan 500</h2> -->
+    <div class="alert alert-info text-center" role="alert">
+        Products with amount lessthan {{selected}}
+      </div>
+    {%endif%}
+    {% if selected_color %}
+    <!-- <h2 class="title-page text-success">Products with amount lessthan 500</h2> -->
+    <div class="alert alert-info text-center" role="alert">
+        Products with color {{selected_color}}
+      </div>
+    {%endif%}
+    
     <!-- ========================= SECTION CONTENT ========================= -->
     <section class="section-content padding-y">
     <div class="container">
@@ -26,7 +38,7 @@
         <aside class="col-md-3">
             {% if 'search' in request.path %}
 
-            
+           
             
             {%else%}
     <div class="card">

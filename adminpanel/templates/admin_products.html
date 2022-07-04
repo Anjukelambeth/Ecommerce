@@ -35,14 +35,16 @@
    </div>
 <div class="pl-5 justify-content-center pull-left" style="line-height: 1">
     <form method="get">
-<table class="table table-bordered table-hover table-active table-responsive" >  
+<table class="table table-bordered table-hover table-active table-responsive p-5" >  
     <thead class="thead-dark ">  
     <tr class="col-9">  
         <th scope="col">ID</th>  
         <th scope="col">Product Name</th> 
-        <th scope="col">Product Description</th>  
+        <th scope="col">Category Name</th> 
+        <!-- <th scope="col">Product Description</th>   -->
         <th scope="col">Price</th>  
         <th scope="col">Image</th>  
+        <th scope="col">Created Date</th> 
         <th scope="col">Stock</th>  
         <th scope="col">Actions</th>  
     </tr>  
@@ -52,9 +54,11 @@
     <tr class="col-9 ">  
         <td>{{ product.id }}</td>
         <td>{{ product.product_name }}</td>  
-        <td >{{ product.product_description}}</td>  
+        <td>{{ product.category}}</td>  
+        <!-- <td >{{ product.product_description}}</td>   -->
         <td>{{ product.price }}</td> 
         <td><img width=30rem src="{{product.images.url}}" alt="">
+        <td>{{ product.created_date}}</td> 
         </td>  
         <td>{{ product.stock }}</td>  
         <td>  
