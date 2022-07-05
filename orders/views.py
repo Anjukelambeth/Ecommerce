@@ -1,14 +1,17 @@
 import json
 from django.contrib import messages
 from multiprocessing import context
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import redirect, render
 from datetime import datetime
+from django.views.decorators.cache import cache_control
+from django.urls import reverse
 from accounts.forms import UserAddressForm
 from accounts.models import Account, UserAddresses
 from cart.models import CartItem
 from cart.views import offer_check_function
 from coupons.forms import CouponApplyForm
+from coupons.models import Coupon
 from orders.forms import OrderForm
 from orders.models import Order, OrderProduct, Payment, RazorPay
 import datetime
@@ -53,7 +56,7 @@ def place_order(request, total=0, quantity=0):
 
         # print('found one order and rendering')
 
-
+        
         context             = {
             'order' : order,
             'cart_items' : cart_items,
@@ -62,6 +65,8 @@ def place_order(request, total=0, quantity=0):
             'grand_total' : grand_total,
             'new_price':new_price,
             # 'form':form
+            # 'new_total':new_total,
+            # 'coupon_id':coupon_id,
         }
         return render(request,'payments.html',context)
 
@@ -140,7 +145,7 @@ def place_order(request, total=0, quantity=0):
             order               = Order.objects.get(user=current_user, is_ordered=False, order_number=order_number)
             # print('order value selected and passed to context')
              # authorize razorpay client with API Keys.
-           
+            
             #createe cliten
             razorpay_client = razorpay.Client(
             auth=(settings.RAZOR_KEY_ID, settings.RAZOR_KEY_SECRET))
@@ -183,6 +188,7 @@ def place_order(request, total=0, quantity=0):
             # print('entered else case/GET case and redirecting to checkout')
             return redirect('checkout')
 
+@cache_control(max_age=0, no_cache=True, no_store=True, must_revalidate=True)
 def payments(request):
     # body=json.loads(request.body)
     # print(body)
@@ -213,6 +219,7 @@ def payments(request):
     order_data.payment=payment
     order_data.save()
     
+    
     for item in cart_item:
         
         OrderProduct.objects.create(
@@ -235,9 +242,9 @@ def payments(request):
   
     return JsonResponse({'completed':'success'})
 
+@cache_control(max_age=0, no_cache=True, no_store=True, must_revalidate=True)
 def cash_on_delivery(request,order_number):
-    # if request.user.is_authenticated :
-    #     return redirect('cash_on_delivery')
+    
     current_user = request.user
     order= Order.objects.get(order_number=order_number)
     
@@ -307,6 +314,7 @@ def paypal_complete(request):
     return render(request,'success.html',context)
 
 @csrf_exempt
+@cache_control(max_age=0, no_cache=True, no_store=True, must_revalidate=True)
 def razor_success(request):
     print('razor suuuuujjjjjjjjjjj')
     transID = request.POST.get('razorpay_payment_id')

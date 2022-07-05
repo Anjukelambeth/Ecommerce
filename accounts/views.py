@@ -105,7 +105,12 @@ def signin(request):
             except:
                 pass
             login(request,user)
-            return render(request,'index.html')
+            products= Products.objects.all().filter(is_available=True)
+            context={
+                    'products':products,
+
+                    }
+            return render(request,'index.html',context)
         
         else:
             messages.error(request, "Bad Credentials!!")
