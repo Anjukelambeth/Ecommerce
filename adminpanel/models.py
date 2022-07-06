@@ -1,4 +1,4 @@
-from tkinter import S
+
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 from category.models import category
