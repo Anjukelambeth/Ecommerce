@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
 from pathlib import Path
+import os
 from django.contrib.messages import constants as messages
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -151,6 +152,7 @@ STATICFILES_DIRS = [
 #media files
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR/'media'
+STATIC_ROOT = os.path.join(BASE_DIR, "ecommerce/statics")
 
 #message tags
 MESSAGE_TAGS = {
