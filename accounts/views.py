@@ -24,7 +24,7 @@ from accounts.models import Account,UserAddresses,MyAccountManager
 from twilio.rest import Client
 import random
 from django.contrib.auth.decorators import login_required
-
+from .private import TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_SERVICE_SID
 from refferalcode.models import ReferralCode
 
 
@@ -128,11 +128,11 @@ def verification(request):
             messages.info(request,'Phone number not registred, Kindly register')
             return redirect('register')
 
-        account_sid="ACa03806fc4b0964cdfe06651f493789fa"
-        auth_token="71136cbf562d9a504a273875e24366e6"
+        account_sid=TWILIO_ACCOUNT_SID
+        auth_token=TWILIO_AUTH_TOKEN
         client=Client(account_sid,auth_token)
         verification = client.verify \
-                     .services("VAdf9ac283af0407b66228fa8b2d8e4fd0") \
+                     .services(TWILIO_SERVICE_SID) \
                      .verifications \
                      .create(to=phone_number,channel='sms')
         print(verification.status)
@@ -153,11 +153,11 @@ def verification1(request):
         otpvalue = request.POST['otp']
         # user = authenticate(id=customer)
         
-        account_sid = "ACa03806fc4b0964cdfe06651f493789fa"
-        auth_token = "71136cbf562d9a504a273875e24366e6"
+        account_sid = TWILIO_ACCOUNT_SID
+        auth_token = TWILIO_AUTH_TOKEN
         client = Client(account_sid, auth_token)
         verification_check = client.verify \
-                                .services("VAdf9ac283af0407b66228fa8b2d8e4fd0") \
+                                .services(TWILIO_SERVICE_SID) \
                                 .verification_checks \
                                 .create(to=mobile_num, code= otpvalue)
         # if otpvalue ==  otp:
@@ -198,11 +198,11 @@ def register(request):
             user.save()
             refcode=ReferralCode.objects.create(user=user)
             print(refcode)
-            account_sid="ACa03806fc4b0964cdfe06651f493789fa"
-            auth_token="71136cbf562d9a504a273875e24366e6"
+            account_sid=TWILIO_ACCOUNT_SID
+            auth_token=TWILIO_AUTH_TOKEN
             client=Client(account_sid,auth_token)
             verification = client.verify \
-                        .services("VAdf9ac283af0407b66228fa8b2d8e4fd0") \
+                        .services(TWILIO_SERVICE_SID) \
                         .verifications \
                         .create(to=phone_number,channel='sms')
             print(verification.status)
@@ -253,11 +253,11 @@ def ref_register(request,*args, **kwargs):
                 registered_profile = ReferralCode.objects.get(user=registered_user) 
                 registered_profile.recommended_by = recommended_by_profile.user
                 registered_profile.save()
-            account_sid="ACa03806fc4b0964cdfe06651f493789fa"
-            auth_token="71136cbf562d9a504a273875e24366e6"
+            account_sid=TWILIO_ACCOUNT_SID
+            auth_token=TWILIO_AUTH_TOKEN
             client=Client(account_sid,auth_token)
             verification = client.verify \
-                        .services("VAdf9ac283af0407b66228fa8b2d8e4fd0") \
+                        .services(TWILIO_SERVICE_SID) \
                         .verifications \
                         .create(to=phone_number,channel='sms')
             print(verification.status)
@@ -284,12 +284,12 @@ def verify_otp(request):
         user_mobile = request.session['user_mobile']
         user_email = request.session['user_email']        
         # print(user_mobile)   
-        account_sid = "ACa03806fc4b0964cdfe06651f493789fa"
-        auth_token = "71136cbf562d9a504a273875e24366e6"
+        account_sid = TWILIO_ACCOUNT_SID
+        auth_token = TWILIO_AUTH_TOKEN
         client = Client(account_sid, auth_token)
         
         verification_check = client.verify \
-                                .services("VAdf9ac283af0407b66228fa8b2d8e4fd0") \
+                                .services(TWILIO_SERVICE_SID) \
                                 .verification_checks \
                                 .create(to= user_mobile, code= otp_input)
     

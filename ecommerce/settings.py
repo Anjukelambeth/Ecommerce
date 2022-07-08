@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 from pathlib import Path
 import os
 from django.contrib.messages import constants as messages
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -22,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-!%)m_hu(-rcpny-vws4xq5re$_z3(#2rs95$_=p2)v)vsdn1ww'
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -175,8 +176,8 @@ MESSAGE_TAGS = {
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-RAZOR_KEY_SECRET = 'mlPV94Zso2JPG3lVCMwbPFze'
-RAZOR_KEY_ID='rzp_test_uTxLZg7wSicq7Y'
+RAZOR_KEY_SECRET = config('RAZOR_KEY_SECRET')
+RAZOR_KEY_ID= config('RAZOR_KEY_ID')
 
 #to secure cookie in razor payment
 CSRF_COOKIE_SECURE = True
