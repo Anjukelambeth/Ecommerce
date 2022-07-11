@@ -7,7 +7,7 @@ db.sqlite3
 media
 
 private.py
-
+.env
 # Backup files # 
 *.bak 
 
